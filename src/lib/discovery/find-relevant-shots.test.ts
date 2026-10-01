@@ -7,6 +7,8 @@ const shot: DiscoverableShot = {
   name: "Third Shot Drop",
   courtXMin: -10,
   courtXMax: 0,
+  courtXLeftMin: 0,
+  courtXLeftMax: 10,
   courtYMin: 20,
   courtYMax: 30,
   ballHeightMin: 5,
@@ -20,11 +22,25 @@ const matchingSituation = {
   courtY: 25,
   ballHeight: 7,
   intent: 75,
+  handedness: "Right" as const,
 };
 
 describe("shot discovery", () => {
   it("matches a point inside every range", () => {
     expect(isShotRelevant(shot, matchingSituation)).toBe(true);
+  });
+
+  it("uses the mirrored range for left-handed players", () => {
+    expect(
+      isShotRelevant(shot, {
+        ...matchingSituation,
+        courtX: 5,
+        handedness: "Left",
+      }),
+    ).toBe(true);
+    expect(
+      isShotRelevant(shot, { ...matchingSituation, handedness: "Left" }),
+    ).toBe(false);
   });
 
   it.each([
@@ -45,6 +61,7 @@ describe("shot discovery", () => {
         courtY: 30,
         ballHeight: 5,
         intent: 90,
+        handedness: "Right",
       }),
     ).toBe(true);
   });

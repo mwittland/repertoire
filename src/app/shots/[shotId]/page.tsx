@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getShotById } from "@/lib/shots/queries";
 import { getRepertoireEntry } from "@/lib/repertoire/queries";
@@ -6,6 +6,7 @@ import { addToRepertoire } from "@/app/actions/repertoire";
 import { ConfidenceForm } from "@/components/confidence-form";
 import { listDrillsForShot } from "@/lib/drills/queries";
 import { ShotRangePreview } from "@/components/shot-range-preview";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function ShotPage({
   params,
@@ -13,8 +14,26 @@ export default async function ShotPage({
   params: Promise<{ shotId: string }>;
 }) {
   const { shotId } = await params;
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect(`/login?next=/shots/${shotId}`);
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("handedness")
+    .eq("id", user.id)
+    .maybeSingle();
   const shot = await getShotById(shotId);
   if (!shot) notFound();
+  const viewerShot =
+    profile?.handedness === "Left"
+      ? {
+          ...shot,
+          courtXMin: shot.courtXLeftMin,
+          courtXMax: shot.courtXLeftMax,
+        }
+      : shot;
   const repertoireEntry = await getRepertoireEntry(shotId);
   const relatedDrills = await listDrillsForShot(shotId);
 
@@ -29,9 +48,7 @@ export default async function ShotPage({
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
               Shot lesson
             </p>
-            <h1 className="mt-4 text-6xl leading-none">
-              {shot.name}
-            </h1>
+            <h1 className="mt-4 text-6xl leading-none">{shot.name}</h1>
             <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
               {shot.description}
             </p>
@@ -43,7 +60,7 @@ export default async function ShotPage({
             </section>
           </div>
           <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
-            <ShotRangePreview range={shot} embedded />
+            <ShotRangePreview range={viewerShot} embedded />
             {repertoireEntry ? (
               <ConfidenceForm
                 shotId={shotId}
@@ -102,4 +119,3 @@ export default async function ShotPage({
     </main>
   );
 }
-
