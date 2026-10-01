@@ -27,6 +27,8 @@ Repertoire is a pickleball shot-learning app. Its central workflow is point-base
 5. Apply migrations and seed data with `supabase db reset`.
 6. Start Next.js with `npm run dev` and open `http://localhost:3000`.
 
+Local Supabase Studio is available at [http://127.0.0.1:54323/](http://127.0.0.1:54323/). Use it to inspect the local database, view tables, manage local Auth users, and run SQL queries. This URL only accesses the local Supabase project.
+
 Useful checks:
 
 ```bash
