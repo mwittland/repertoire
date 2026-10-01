@@ -13,15 +13,15 @@ const shot: DiscoverableShot = {
   courtYMax: 30,
   ballHeightMin: 5,
   ballHeightMax: 8,
-  intentMin: 60,
-  intentMax: 90,
+  shotType: "Drop",
+  aggressionScore: 40,
+  difficulty: 60,
 };
 
 const matchingSituation = {
   courtX: -5,
   courtY: 25,
   ballHeight: 7,
-  intent: 75,
   handedness: "Right" as const,
 };
 
@@ -47,7 +47,6 @@ describe("shot discovery", () => {
     ["court X", { courtX: 5 }],
     ["court Y", { courtY: 19 }],
     ["ball height", { ballHeight: 9 }],
-    ["intent", { intent: 59 }],
   ])("rejects a point outside the %s range", (_, change) => {
     expect(isShotRelevant(shot, { ...matchingSituation, ...change })).toBe(
       false,
@@ -60,7 +59,6 @@ describe("shot discovery", () => {
         courtX: -10,
         courtY: 30,
         ballHeight: 5,
-        intent: 90,
         handedness: "Right",
       }),
     ).toBe(true);
@@ -77,7 +75,7 @@ describe("shot discovery", () => {
 
   it("returns an empty list when nothing matches", () => {
     expect(
-      findRelevantShots([shot], { ...matchingSituation, intent: 0 }),
+      findRelevantShots([shot], { ...matchingSituation, courtY: 0 }),
     ).toEqual([]);
   });
 });

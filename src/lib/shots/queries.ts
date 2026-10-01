@@ -3,7 +3,7 @@ import type { DiscoverableShot, DiscoveryInput } from "@/lib/discovery/types";
 import { createClient } from "@/lib/supabase/server";
 
 const shotFields =
-  "id,name,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max,intent_min,intent_max,video_url,description,difficulty,instructions";
+  "id,name,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max,shot_type,aggression_score,video_url,description,difficulty,instructions";
 
 function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
   return {
@@ -17,8 +17,8 @@ function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
     courtYMax: Number(shot.court_y_max),
     ballHeightMin: Number(shot.ball_height_min),
     ballHeightMax: Number(shot.ball_height_max),
-    intentMin: Number(shot.intent_min),
-    intentMax: Number(shot.intent_max),
+    shotType: String(shot.shot_type) as DiscoverableShot["shotType"],
+    aggressionScore: Number(shot.aggression_score),
     videoUrl: typeof shot.video_url === "string" ? shot.video_url : null,
     description: String(shot.description ?? ""),
     difficulty: Number(shot.difficulty),
@@ -32,7 +32,7 @@ export async function findRelevantShotsFromDatabase(situation: DiscoveryInput) {
     situation.handedness === "Left" ? "court_x_left_min" : "court_x_min";
   const xMaxColumn =
     situation.handedness === "Left" ? "court_x_left_max" : "court_x_max";
-  const { data, error } = await supabase
+  let query = supabase
     .from("shots")
     .select(shotFields)
     .gte(xMaxColumn, situation.courtX)
@@ -40,9 +40,9 @@ export async function findRelevantShotsFromDatabase(situation: DiscoveryInput) {
     .gte("court_y_max", situation.courtY)
     .lte("court_y_min", situation.courtY)
     .gte("ball_height_max", situation.ballHeight)
-    .lte("ball_height_min", situation.ballHeight)
-    .gte("intent_max", situation.intent)
-    .lte("intent_min", situation.intent);
+    .lte("ball_height_min", situation.ballHeight);
+  if (situation.shotType) query = query.eq("shot_type", situation.shotType);
+  const { data, error } = await query;
 
   if (error) throw new Error(`Unable to find shots: ${error.message}`);
 
@@ -82,10 +82,6 @@ export async function listShots(filters?: Partial<ShotCatalogFilters>) {
     query = query
       .gte("ball_height_max", filters.ballHeight)
       .lte("ball_height_min", filters.ballHeight);
-  if (filters?.intent !== undefined)
-    query = query
-      .gte("intent_max", filters.intent)
-      .lte("intent_min", filters.intent);
   if (filters?.difficulty !== undefined)
     query = query.eq("difficulty", filters.difficulty);
 

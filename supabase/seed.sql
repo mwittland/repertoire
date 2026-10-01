@@ -1,8 +1,8 @@
-insert into public.shots (name, court_x_min, court_x_max, court_x_left_min, court_x_left_max, court_y_min, court_y_max, ball_height_min, ball_height_max, intent_min, intent_max, difficulty, description, instructions)
+insert into public.shots (name, court_x_min, court_x_max, court_x_left_min, court_x_left_max, court_y_min, court_y_max, ball_height_min, ball_height_max, shot_type, aggression_score, difficulty, description, instructions)
 values
-  ('Third Shot Drop', -10, 2, -2, 10, 18, 30, 5, 8, 60, 90, 3, 'A soft reset that gives you time to move forward.', 'Use a relaxed swing and let the ball arc deep into the kitchen.'),
-  ('Forehand Drive', -5, 5, -5, 5, 15, 30, 3, 6, 60, 95, 2, 'A firm, attacking shot from the back half of the court.', 'Contact the ball in front and finish toward your target.'),
-  ('Crosscourt Dink', 0, 15, -15, 0, 0, 15, 1, 4, 30, 70, 2, 'A patient diagonal dink that moves your opponent laterally.', 'Keep the paddle face open and clear the net by a small margin.');
+  ('Third Shot Drop', -10, 2, -2, 10, 18, 30, 5, 8, 'Drop', 40, 60, 'A soft reset that gives you time to move forward.', 'Use a relaxed swing and let the ball arc deep into the kitchen.'),
+  ('Forehand Drive', -5, 5, -5, 5, 15, 30, 3, 6, 'Drive', 75, 40, 'A firm, attacking shot from the back half of the court.', 'Contact the ball in front and finish toward your target.'),
+  ('Crosscourt Dink', 0, 15, -15, 0, 0, 15, 1, 4, 'Dink', 30, 40, 'A patient diagonal dink that moves your opponent laterally.', 'Keep the paddle face open and clear the net by a small margin.');
 
 insert into public.drills (name, description)
 values

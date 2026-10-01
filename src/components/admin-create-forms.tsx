@@ -7,7 +7,10 @@ import {
   type AdminFormState,
 } from "@/app/actions/admin";
 import { AdminShotRangeEditor } from "@/components/admin-shot-range-editor";
-import { AssociationPicker, type AssociationOption } from "@/components/association-picker";
+import {
+  AssociationPicker,
+  type AssociationOption,
+} from "@/components/association-picker";
 
 function Field({
   name,
@@ -42,7 +45,11 @@ function Field({
   );
 }
 
-export function CreateShotForm({ drills = [] }: { drills?: AssociationOption[] }) {
+export function CreateShotForm({
+  drills = [],
+}: {
+  drills?: AssociationOption[];
+}) {
   const [state, action, pending] = useActionState<AdminFormState, FormData>(
     createShot,
     {},
@@ -51,8 +58,43 @@ export function CreateShotForm({ drills = [] }: { drills?: AssociationOption[] }
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
       <AdminShotRangeEditor />
-      <AssociationPicker name="drillIds" label="Related drills" options={drills} />
-      <Field name="difficulty" label="Difficulty (0 to 5)" type="number" min={0} max={5} step="1" />
+      <AssociationPicker
+        name="drillIds"
+        label="Related drills"
+        options={drills}
+      />
+      <label className="block text-sm text-[var(--muted)]">
+        Shot type
+        <select
+          name="shotType"
+          defaultValue="Reset"
+          className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
+        >
+          {["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"].map(
+            (type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ),
+          )}
+        </select>
+      </label>
+      <Field
+        name="aggressionScore"
+        label="Aggression (0 to 100)"
+        type="number"
+        min={0}
+        max={100}
+        step="1"
+      />
+      <Field
+        name="difficulty"
+        label="Difficulty (0 to 100)"
+        type="number"
+        min={0}
+        max={100}
+        step="1"
+      />
       <Field
         name="videoUrl"
         label="Video URL (optional)"
@@ -90,7 +132,11 @@ export function CreateShotForm({ drills = [] }: { drills?: AssociationOption[] }
   );
 }
 
-export function CreateDrillForm({ shots = [] }: { shots?: AssociationOption[] }) {
+export function CreateDrillForm({
+  shots = [],
+}: {
+  shots?: AssociationOption[];
+}) {
   const [state, action, pending] = useActionState<AdminFormState, FormData>(
     createDrill,
     {},
@@ -98,7 +144,11 @@ export function CreateDrillForm({ shots = [] }: { shots?: AssociationOption[] })
   return (
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
-      <AssociationPicker name="shotIds" label="Shots in this drill" options={shots} />
+      <AssociationPicker
+        name="shotIds"
+        label="Shots in this drill"
+        options={shots}
+      />
       <label className="block text-sm text-[var(--muted)]">
         Description
         <textarea

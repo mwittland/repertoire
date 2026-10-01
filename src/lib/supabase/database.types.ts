@@ -19,8 +19,8 @@ export type Database = {
           court_y_max: number;
           ball_height_min: number;
           ball_height_max: number;
-          intent_min: number;
-          intent_max: number;
+          shot_type: string;
+          aggression_score: number;
           video_url: string | null;
           description: string;
           difficulty: number;

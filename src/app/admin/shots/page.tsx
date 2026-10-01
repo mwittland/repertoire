@@ -35,9 +35,9 @@ export default async function AdminShotsPage() {
             >
               <div>
                 <h2 className="text-2xl">{shot.name}</h2>
-                <p className="mt-1 text-sm text-[var(--muted)]">
-                  Difficulty {shot.difficulty} / 5
-                </p>
+                  <p className="mt-1 text-sm text-[var(--muted)]">
+                    {shot.shotType} · Difficulty {shot.difficulty} / 100
+                  </p>
               </div>
               <div className="flex items-center gap-4">
                 <Link

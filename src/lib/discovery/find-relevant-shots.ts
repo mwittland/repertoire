@@ -15,12 +15,7 @@ export function isShotRelevant(
   return (
     isWithinRange(situation.courtX, courtXMin, courtXMax) &&
     isWithinRange(situation.courtY, shot.courtYMin, shot.courtYMax) &&
-    isWithinRange(
-      situation.ballHeight,
-      shot.ballHeightMin,
-      shot.ballHeightMax,
-    ) &&
-    isWithinRange(situation.intent, shot.intentMin, shot.intentMax)
+    isWithinRange(situation.ballHeight, shot.ballHeightMin, shot.ballHeightMax)
   );
 }
 
