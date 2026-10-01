@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { signOut } from "@/app/actions/auth";
 import { createClient } from "@/lib/supabase/client";
 
 export function AuthNav() {
   const [supabase] = useState(createClient);
+  const pathname = usePathname();
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export function AuthNav() {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [pathname, supabase]);
 
   if (authenticated === null) {
     return (
@@ -37,19 +38,11 @@ export function AuthNav() {
   }
 
   return authenticated ? (
-    <form action={signOut}>
-      <button
-        type="submit"
-        className="nav-action px-4 py-2"
-      >
-        Sign out
-      </button>
-    </form>
+    <Link href="/profile" className="nav-action px-4 py-2">
+      Profile
+    </Link>
   ) : (
-    <Link
-      href="/login"
-      className="nav-action px-4 py-2"
-    >
+    <Link href="/login" className="nav-action px-4 py-2">
       Sign in
     </Link>
   );

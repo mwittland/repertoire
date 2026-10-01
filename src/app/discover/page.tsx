@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
 import type { DiscoverableShot } from "@/lib/discovery/types";
+import { AnonymousHandedness } from "@/components/anonymous-handedness";
 
 const canvasRange = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
 
@@ -13,6 +14,7 @@ export default function DiscoverPage() {
   const [courtY, setCourtY] = useState(20);
   const [ballHeight, setBallHeight] = useState(5);
   const [intent, setIntent] = useState(60);
+  const [handedness, setHandedness] = useState<"Right" | "Left">("Right");
   const [shots, setShots] = useState<DiscoverableShot[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,10 @@ export default function DiscoverPage() {
 
   useEffect(() => {
     if (shots !== null) {
-      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   }, [shots]);
 
@@ -137,6 +142,7 @@ export default function DiscoverPage() {
             <div className="mt-8">
               <IntentInput value={intent} onChange={setIntent} />
             </div>
+            <AnonymousHandedness value={handedness} onChange={setHandedness} />
             <button
               onClick={async () => {
                 setLoading(true);
@@ -150,6 +156,7 @@ export default function DiscoverPage() {
                       courtY,
                       ballHeight,
                       intent,
+                      handedness,
                     }),
                   });
                   const result = (await response.json()) as {
@@ -184,7 +191,10 @@ export default function DiscoverPage() {
           </section>
         </section>
         {shots && (
-          <section ref={resultsRef} className="scroll-mt-24 border-t border-[var(--line)] pb-20 pt-12">
+          <section
+            ref={resultsRef}
+            className="scroll-mt-24 border-t border-[var(--line)] pb-20 pt-12"
+          >
             <div className="flex items-end justify-between gap-6">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">

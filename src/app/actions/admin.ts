@@ -67,14 +67,32 @@ async function requireAdmin(nextPath = "/admin") {
 
 const idsSchema = z.array(z.string().uuid());
 
-async function syncShotDrills(supabase: Awaited<ReturnType<typeof requireAdmin>>, shotId: string, drillIds: string[]) {
+async function syncShotDrills(
+  supabase: Awaited<ReturnType<typeof requireAdmin>>,
+  shotId: string,
+  drillIds: string[],
+) {
   await supabase.from("shot_drills").delete().eq("shot_id", shotId);
-  if (drillIds.length) await supabase.from("shot_drills").insert(drillIds.map((drillId) => ({ shot_id: shotId, drill_id: drillId })));
+  if (drillIds.length)
+    await supabase
+      .from("shot_drills")
+      .insert(
+        drillIds.map((drillId) => ({ shot_id: shotId, drill_id: drillId })),
+      );
 }
 
-async function syncDrillShots(supabase: Awaited<ReturnType<typeof requireAdmin>>, drillId: string, shotIds: string[]) {
+async function syncDrillShots(
+  supabase: Awaited<ReturnType<typeof requireAdmin>>,
+  drillId: string,
+  shotIds: string[],
+) {
   await supabase.from("shot_drills").delete().eq("drill_id", drillId);
-  if (shotIds.length) await supabase.from("shot_drills").insert(shotIds.map((shotId) => ({ shot_id: shotId, drill_id: drillId })));
+  if (shotIds.length)
+    await supabase
+      .from("shot_drills")
+      .insert(
+        shotIds.map((shotId) => ({ shot_id: shotId, drill_id: drillId })),
+      );
 }
 
 export async function createShot(
@@ -88,22 +106,29 @@ export async function createShot(
     };
   const supabase = await requireAdmin("/admin/shots/new");
   const drillIds = idsSchema.parse(formData.getAll("drillIds"));
-  const { data: createdShot, error } = await supabase.from("shots").insert({
-    name: parsed.data.name,
-    court_x_min: parsed.data.courtXMin,
-    court_x_max: parsed.data.courtXMax,
-    court_y_min: parsed.data.courtYMin,
-    court_y_max: parsed.data.courtYMax,
-    ball_height_min: parsed.data.ballHeightMin,
-    ball_height_max: parsed.data.ballHeightMax,
-    intent_min: parsed.data.intentMin,
-    intent_max: parsed.data.intentMax,
-    difficulty: parsed.data.difficulty,
-    video_url: parsed.data.videoUrl,
-    description: parsed.data.description,
-    instructions: parsed.data.instructions,
-  }).select("id").single();
-  if (error || !createdShot) return { error: "Unable to create this shot right now." };
+  const { data: createdShot, error } = await supabase
+    .from("shots")
+    .insert({
+      name: parsed.data.name,
+      court_x_min: parsed.data.courtXMin,
+      court_x_max: parsed.data.courtXMax,
+      court_x_left_min: -parsed.data.courtXMax,
+      court_x_left_max: -parsed.data.courtXMin,
+      court_y_min: parsed.data.courtYMin,
+      court_y_max: parsed.data.courtYMax,
+      ball_height_min: parsed.data.ballHeightMin,
+      ball_height_max: parsed.data.ballHeightMax,
+      intent_min: parsed.data.intentMin,
+      intent_max: parsed.data.intentMax,
+      difficulty: parsed.data.difficulty,
+      video_url: parsed.data.videoUrl,
+      description: parsed.data.description,
+      instructions: parsed.data.instructions,
+    })
+    .select("id")
+    .single();
+  if (error || !createdShot)
+    return { error: "Unable to create this shot right now." };
   await syncShotDrills(supabase, createdShot.id, drillIds);
   revalidatePath("/shots");
   redirect("/admin");
@@ -120,12 +145,17 @@ export async function createDrill(
     };
   const supabase = await requireAdmin("/admin/drills/new");
   const shotIds = idsSchema.parse(formData.getAll("shotIds"));
-  const { data: createdDrill, error } = await supabase.from("drills").insert({
-    name: parsed.data.name,
-    description: parsed.data.description,
-    video_url: parsed.data.videoUrl,
-  }).select("id").single();
-  if (error || !createdDrill) return { error: "Unable to create this drill right now." };
+  const { data: createdDrill, error } = await supabase
+    .from("drills")
+    .insert({
+      name: parsed.data.name,
+      description: parsed.data.description,
+      video_url: parsed.data.videoUrl,
+    })
+    .select("id")
+    .single();
+  if (error || !createdDrill)
+    return { error: "Unable to create this drill right now." };
   await syncDrillShots(supabase, createdDrill.id, shotIds);
   revalidatePath("/drills");
   redirect("/admin");
@@ -151,6 +181,8 @@ export async function updateShot(
       name: parsed.data.name,
       court_x_min: parsed.data.courtXMin,
       court_x_max: parsed.data.courtXMax,
+      court_x_left_min: -parsed.data.courtXMax,
+      court_x_left_max: -parsed.data.courtXMin,
       court_y_min: parsed.data.courtYMin,
       court_y_max: parsed.data.courtYMax,
       ball_height_min: parsed.data.ballHeightMin,

@@ -3,7 +3,7 @@ import type { DiscoverableShot, DiscoveryInput } from "@/lib/discovery/types";
 import { createClient } from "@/lib/supabase/server";
 
 const shotFields =
-  "id,name,court_x_min,court_x_max,court_y_min,court_y_max,ball_height_min,ball_height_max,intent_min,intent_max,video_url,description,difficulty,instructions";
+  "id,name,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max,intent_min,intent_max,video_url,description,difficulty,instructions";
 
 function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
   return {
@@ -11,6 +11,8 @@ function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
     name: String(shot.name),
     courtXMin: Number(shot.court_x_min),
     courtXMax: Number(shot.court_x_max),
+    courtXLeftMin: Number(shot.court_x_left_min),
+    courtXLeftMax: Number(shot.court_x_left_max),
     courtYMin: Number(shot.court_y_min),
     courtYMax: Number(shot.court_y_max),
     ballHeightMin: Number(shot.ball_height_min),
@@ -26,11 +28,15 @@ function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
 
 export async function findRelevantShotsFromDatabase(situation: DiscoveryInput) {
   const supabase = await createClient();
+  const xMinColumn =
+    situation.handedness === "Left" ? "court_x_left_min" : "court_x_min";
+  const xMaxColumn =
+    situation.handedness === "Left" ? "court_x_left_max" : "court_x_max";
   const { data, error } = await supabase
     .from("shots")
     .select(shotFields)
-    .gte("court_x_max", situation.courtX)
-    .lte("court_x_min", situation.courtX)
+    .gte(xMaxColumn, situation.courtX)
+    .lte(xMinColumn, situation.courtX)
     .gte("court_y_max", situation.courtY)
     .lte("court_y_min", situation.courtY)
     .gte("ball_height_max", situation.ballHeight)
@@ -64,11 +70,24 @@ export async function listShots(filters?: Partial<ShotCatalogFilters>) {
   const supabase = await createClient();
   let query = supabase.from("shots").select(shotFields).order("name");
 
-  if (filters?.courtX !== undefined) query = query.gte("court_x_max", filters.courtX).lte("court_x_min", filters.courtX);
-  if (filters?.courtY !== undefined) query = query.gte("court_y_max", filters.courtY).lte("court_y_min", filters.courtY);
-  if (filters?.ballHeight !== undefined) query = query.gte("ball_height_max", filters.ballHeight).lte("ball_height_min", filters.ballHeight);
-  if (filters?.intent !== undefined) query = query.gte("intent_max", filters.intent).lte("intent_min", filters.intent);
-  if (filters?.difficulty !== undefined) query = query.eq("difficulty", filters.difficulty);
+  if (filters?.courtX !== undefined)
+    query = query
+      .gte("court_x_max", filters.courtX)
+      .lte("court_x_min", filters.courtX);
+  if (filters?.courtY !== undefined)
+    query = query
+      .gte("court_y_max", filters.courtY)
+      .lte("court_y_min", filters.courtY);
+  if (filters?.ballHeight !== undefined)
+    query = query
+      .gte("ball_height_max", filters.ballHeight)
+      .lte("ball_height_min", filters.ballHeight);
+  if (filters?.intent !== undefined)
+    query = query
+      .gte("intent_max", filters.intent)
+      .lte("intent_min", filters.intent);
+  if (filters?.difficulty !== undefined)
+    query = query.eq("difficulty", filters.difficulty);
 
   const { data, error } = await query;
   if (error) throw new Error(`Unable to list shots: ${error.message}`);

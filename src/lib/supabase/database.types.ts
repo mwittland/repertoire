@@ -36,7 +36,7 @@ export type Database = {
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
-      gender: "Male" | "Female";
+      handedness: "Right" | "Left";
       shot_request_status: "pending" | "approved" | "rejected";
     };
     CompositeTypes: Record<string, never>;

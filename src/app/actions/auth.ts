@@ -11,10 +11,22 @@ const credentialsSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
 });
 
+const signupSchema = credentialsSchema.extend({
+  handedness: z.enum(["Right", "Left"]),
+});
+
 function readCredentials(formData: FormData) {
   return credentialsSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
+  });
+}
+
+function readSignup(formData: FormData) {
+  return signupSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+    handedness: formData.get("handedness"),
   });
 }
 
@@ -43,14 +55,18 @@ export async function signUp(
   _: AuthState,
   formData: FormData,
 ): Promise<AuthState> {
-  const credentials = readCredentials(formData);
+  const credentials = readSignup(formData);
   if (!credentials.success)
     return {
       error: credentials.error.issues[0]?.message ?? "Check your details.",
     };
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp(credentials.data);
+  const { data, error } = await supabase.auth.signUp({
+    email: credentials.data.email,
+    password: credentials.data.password,
+    options: { data: { handedness: credentials.data.handedness } },
+  });
   if (error) return { error: error.message };
   if (data.session) redirect("/repertoire");
   redirect("/login?message=Check your email to confirm your account.");

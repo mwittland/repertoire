@@ -27,6 +27,20 @@ export function AuthForm({
           className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-4 py-3 text-[var(--ink)]"
         />
       </label>
+      {!isLogin && (
+        <label className="block text-sm text-[var(--muted)]">
+          Handedness
+          <select
+            name="handedness"
+            required
+            defaultValue="Right"
+            className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-4 py-3 text-[var(--ink)]"
+          >
+            <option value="Right">Right handed</option>
+            <option value="Left">Left handed</option>
+          </select>
+        </label>
+      )}
       <label className="block text-sm text-[var(--muted)]">
         Password
         <input
