@@ -55,6 +55,62 @@ supabase db push
 5. Create the first production user, then set `profiles.is_admin = true` through the production Supabase SQL editor.
 6. Deploy through GitHub to Vercel after CI passes.
 
+## Production database workflow
+
+The production database is updated from version-controlled Supabase migrations. Vercel deploys the application code, but it does not automatically apply database changes.
+
+### Schema changes
+
+Create a migration locally:
+
+```powershell
+supabase migration new describe_the_change
+```
+
+Edit the new file under `supabase/migrations/`. Include tables, columns, constraints, indexes, RLS policies, or functions required by the change. Do not edit a migration that has already been applied to production; create a new migration instead.
+
+Reset the local database and run the application checks:
+
+```powershell
+supabase db reset
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+Commit the migration and open a pull request. GitHub Actions must pass before merging to `main`. After the change is approved, apply it to production from a trusted machine:
+
+```powershell
+supabase link --project-ref YOUR_PRODUCTION_PROJECT_REF
+supabase db push
+```
+
+The CLI link is local configuration; it does not move local data into production. Review the migration output carefully before confirming. Keep the production Supabase project separate from the local project.
+
+### Adding shots and drills
+
+For normal editorial content, sign in as an admin in the production app and use:
+
+- `/admin/shots/new` to add a shot
+- `/admin/drills/new` to add a drill
+- `/admin/shots` and `/admin/drills` to edit or delete existing content
+- `/admin/requests` to review submitted shot and drill requests
+
+These actions use the database RLS policies and admin checks. Rejected requests can be moved back to `pending` if they need another review.
+
+### Bulk content
+
+For many records, create a dedicated data migration instead of editing production tables manually:
+
+```powershell
+supabase migration new add_new_shot_catalog
+```
+
+Put validated `insert` or idempotent `upsert` statements in that migration, test with `supabase db reset`, commit it, and apply it with `supabase db push` after review. Use `supabase/seed.sql` only for local development data; `supabase db push` does not apply the seed file.
+
+Never commit passwords, service-role keys, or production environment files. Take a production backup before destructive changes, and prefer archiving over deletion when content may need to be restored.
+
 ## Current gaps
 
 - End-to-end browser tests and RLS integration tests are not yet included.
