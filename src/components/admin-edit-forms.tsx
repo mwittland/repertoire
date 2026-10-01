@@ -8,6 +8,7 @@ import {
 } from "@/app/actions/admin";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 import type { Drill } from "@/lib/drills/queries";
+import { AdminShotRangeEditor } from "@/components/admin-shot-range-editor";
 
 function Input({
   name,
@@ -51,80 +52,8 @@ export function EditShotForm({ shot }: { shot: DiscoverableShot }) {
     <form action={action} className="mt-8 space-y-6">
       <input type="hidden" name="id" value={shot.id} />
       <Input name="name" label="Name" defaultValue={shot.name} />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Input
-          name="courtXMin"
-          label="Court X minimum"
-          type="number"
-          min={-15}
-          max={15}
-          defaultValue={shot.courtXMin}
-        />
-        <Input
-          name="courtXMax"
-          label="Court X maximum"
-          type="number"
-          min={-15}
-          max={15}
-          defaultValue={shot.courtXMax}
-        />
-        <Input
-          name="courtYMin"
-          label="Court Y minimum"
-          type="number"
-          min={0}
-          max={30}
-          defaultValue={shot.courtYMin}
-        />
-        <Input
-          name="courtYMax"
-          label="Court Y maximum"
-          type="number"
-          min={0}
-          max={30}
-          defaultValue={shot.courtYMax}
-        />
-        <Input
-          name="ballHeightMin"
-          label="Ball height minimum"
-          type="number"
-          min={0}
-          max={10}
-          defaultValue={shot.ballHeightMin}
-        />
-        <Input
-          name="ballHeightMax"
-          label="Ball height maximum"
-          type="number"
-          min={0}
-          max={10}
-          defaultValue={shot.ballHeightMax}
-        />
-        <Input
-          name="intentMin"
-          label="Intent minimum"
-          type="number"
-          min={0}
-          max={100}
-          defaultValue={shot.intentMin}
-        />
-        <Input
-          name="intentMax"
-          label="Intent maximum"
-          type="number"
-          min={0}
-          max={100}
-          defaultValue={shot.intentMax}
-        />
-        <Input
-          name="difficulty"
-          label="Difficulty (0 to 5)"
-          type="number"
-          min={0}
-          max={5}
-          defaultValue={shot.difficulty}
-        />
-      </div>
+      <AdminShotRangeEditor initial={{ courtXMin: shot.courtXMin, courtXMax: shot.courtXMax, courtYMin: shot.courtYMin, courtYMax: shot.courtYMax, ballHeightMin: shot.ballHeightMin, ballHeightMax: shot.ballHeightMax, intentMin: shot.intentMin, intentMax: shot.intentMax }} />
+      <Input name="difficulty" label="Difficulty (0 to 5)" type="number" min={0} max={5} defaultValue={shot.difficulty} />
       <Input
         name="videoUrl"
         label="Video URL (optional)"

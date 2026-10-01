@@ -5,6 +5,7 @@ import { getRepertoireEntry } from "@/lib/repertoire/queries";
 import { addToRepertoire } from "@/app/actions/repertoire";
 import { ConfidenceForm } from "@/components/confidence-form";
 import { listDrillsForShot } from "@/lib/drills/queries";
+import { ShotRangePreview } from "@/components/shot-range-preview";
 
 export default async function ShotPage({
   params,
@@ -19,11 +20,11 @@ export default async function ShotPage({
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-6xl">
         <Link href="/discover" className="text-sm font-bold text-[var(--teal)]">
           ← Back to discovery
         </Link>
-        <div className="mt-12 grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="mt-12 grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
               Shot lesson
@@ -42,27 +43,7 @@ export default async function ShotPage({
             </section>
           </div>
           <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--muted)]">
-              Useful when
-            </p>
-            <dl className="mt-6 space-y-5 text-sm">
-              <Range
-                label="Court X"
-                value={`${shot.courtXMin} to ${shot.courtXMax}`}
-              />
-              <Range
-                label="Court Y"
-                value={`${shot.courtYMin} to ${shot.courtYMax}`}
-              />
-              <Range
-                label="Ball height"
-                value={`${shot.ballHeightMin} to ${shot.ballHeightMax}`}
-              />
-              <Range
-                label="Intent"
-                value={`${shot.intentMin} to ${shot.intentMax}`}
-              />
-            </dl>
+            <ShotRangePreview range={shot} embedded />
             {repertoireEntry ? (
               <ConfidenceForm
                 shotId={shotId}
@@ -122,11 +103,3 @@ export default async function ShotPage({
   );
 }
 
-function Range({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
-      <dt className="text-[var(--muted)]">{label}</dt>
-      <dd className="font-bold">{value}</dd>
-    </div>
-  );
-}
