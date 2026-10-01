@@ -19,7 +19,7 @@ export default async function RepertoirePage() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Your collection
           </p>
-          <h1 className="mt-4 text-6xl leading-none tracking-[-0.04em]">
+          <h1 className="mt-4 text-6xl leading-none">
             Your repertoire.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">

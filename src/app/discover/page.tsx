@@ -66,7 +66,7 @@ export default function DiscoverPage() {
             <p className="mb-5 text-sm font-bold uppercase tracking-[0.25em] text-[var(--coral)]">
               Your next shot is here
             </p>
-            <h1 className="max-w-xl text-6xl leading-[0.95] tracking-[-0.04em] sm:text-7xl">
+            <h1 className="max-w-xl text-6xl leading-[0.95] sm:text-7xl">
               Play the moment, not the guess.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-[var(--muted)]">
