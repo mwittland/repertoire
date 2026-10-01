@@ -6,6 +6,7 @@ import {
   createShot,
   type AdminFormState,
 } from "@/app/actions/admin";
+import { AdminShotRangeEditor } from "@/components/admin-shot-range-editor";
 
 function Field({
   name,
@@ -48,72 +49,8 @@ export function CreateShotForm() {
   return (
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          name="courtXMin"
-          label="Court X minimum"
-          type="number"
-          min={-15}
-          max={15}
-        />
-        <Field
-          name="courtXMax"
-          label="Court X maximum"
-          type="number"
-          min={-15}
-          max={15}
-        />
-        <Field
-          name="courtYMin"
-          label="Court Y minimum"
-          type="number"
-          min={0}
-          max={30}
-        />
-        <Field
-          name="courtYMax"
-          label="Court Y maximum"
-          type="number"
-          min={0}
-          max={30}
-        />
-        <Field
-          name="ballHeightMin"
-          label="Ball height minimum"
-          type="number"
-          min={0}
-          max={10}
-        />
-        <Field
-          name="ballHeightMax"
-          label="Ball height maximum"
-          type="number"
-          min={0}
-          max={10}
-        />
-        <Field
-          name="intentMin"
-          label="Intent minimum"
-          type="number"
-          min={0}
-          max={100}
-        />
-        <Field
-          name="intentMax"
-          label="Intent maximum"
-          type="number"
-          min={0}
-          max={100}
-        />
-        <Field
-          name="difficulty"
-          label="Difficulty (0 to 5)"
-          type="number"
-          min={0}
-          max={5}
-          step="1"
-        />
-      </div>
+      <AdminShotRangeEditor />
+      <Field name="difficulty" label="Difficulty (0 to 5)" type="number" min={0} max={5} step="1" />
       <Field
         name="videoUrl"
         label="Video URL (optional)"
