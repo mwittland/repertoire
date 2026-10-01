@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
@@ -16,11 +16,18 @@ export default function DiscoverPage() {
   const [shots, setShots] = useState<DiscoverableShot[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const resultsRef = useRef<HTMLElement>(null);
   const xPercent =
     ((courtX - canvasRange.xMin) / (canvasRange.xMax - canvasRange.xMin)) * 100;
   const yPercent =
     100 -
     ((courtY - canvasRange.yMin) / (canvasRange.yMax - canvasRange.yMin)) * 100;
+
+  useEffect(() => {
+    if (shots !== null) {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [shots]);
 
   function setCourtPosition(x: number, y: number) {
     setCourtX(
@@ -177,7 +184,7 @@ export default function DiscoverPage() {
           </section>
         </section>
         {shots && (
-          <section className="border-t border-[var(--line)] pb-20 pt-12">
+          <section ref={resultsRef} className="scroll-mt-24 border-t border-[var(--line)] pb-20 pt-12">
             <div className="flex items-end justify-between gap-6">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">

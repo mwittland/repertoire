@@ -31,6 +31,16 @@ export async function listDrills() {
   return (data ?? []).map((drill) => toDrill(drill));
 }
 
+export async function searchDrills(searchTerm = "") {
+  const supabase = await createClient();
+  let query = supabase.from("drills").select("id,name,description,video_url").order("name");
+  const term = searchTerm.trim();
+  if (term) query = query.ilike("name", `%${term}%`);
+  const { data, error } = await query;
+  if (error) throw new Error(`Unable to search drills: ${error.message}`);
+  return (data ?? []).map((drill) => toDrill(drill));
+}
+
 export async function getDrillById(id: string) {
   const supabase = await createClient();
   const { data: drill, error: drillError } = await supabase
@@ -76,4 +86,11 @@ export async function listDrillsForShot(shotId: string) {
       return record.id ? [toDrill(record)] : [];
     });
   });
+}
+
+export async function listDrillIdsForShot(shotId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("shot_drills").select("drill_id").eq("shot_id", shotId);
+  if (error) throw new Error(`Unable to load shot drills: ${error.message}`);
+  return (data ?? []).map((link) => String(link.drill_id));
 }

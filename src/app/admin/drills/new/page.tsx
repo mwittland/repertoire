@@ -2,9 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CreateDrillForm } from "@/components/admin-create-forms";
 import { createClient } from "@/lib/supabase/server";
+import { listShots } from "@/lib/shots/queries";
 
 export default async function NewDrillPage() {
   await requireAdmin();
+  const shots = await listShots();
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-3xl">
@@ -15,7 +17,7 @@ export default async function NewDrillPage() {
         <p className="mt-4 text-[var(--muted)]">
           Create the practice exercise first; shot associations can follow.
         </p>
-        <CreateDrillForm />
+        <CreateDrillForm shots={shots.map((shot) => ({ id: shot.id, name: shot.name }))} />
       </div>
     </main>
   );
