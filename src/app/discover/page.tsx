@@ -19,6 +19,38 @@ export default function DiscoverPage() {
   const yPercent =
     100 - ((courtY - range.yMin) / (range.yMax - range.yMin)) * 100;
 
+  function setCourtPosition(x: number, y: number) {
+    setCourtX(Math.max(range.xMin, Math.min(range.xMax, Math.round(x))));
+    setCourtY(Math.max(range.yMin, Math.min(range.yMax, Math.round(y))));
+  }
+
+  function handleCourtClick(event: React.MouseEvent<HTMLDivElement>) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x =
+      range.xMin +
+      ((event.clientX - bounds.left) / bounds.width) *
+        (range.xMax - range.xMin);
+    const y =
+      range.yMax -
+      ((event.clientY - bounds.top) / bounds.height) *
+        (range.yMax - range.yMin);
+    setCourtPosition(x, y);
+  }
+
+  function handleCourtKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    const step = event.shiftKey ? 5 : 1;
+    const offsets: Record<string, [number, number]> = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, step],
+      ArrowDown: [0, -step],
+    };
+    const offset = offsets[event.key];
+    if (!offset) return;
+    event.preventDefault();
+    setCourtPosition(courtX + offset[0], courtY + offset[1]);
+  }
+
   return (
     <main className="min-h-screen overflow-hidden">
       <div className="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-12">
@@ -52,7 +84,14 @@ export default function DiscoverPage() {
                 Point input
               </span>
             </div>
-            <div className="relative mx-auto aspect-[1.55] max-w-lg overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd]">
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label={`Selected court position: X ${courtX}, Y ${courtY}. Click to move the position.`}
+              onClick={handleCourtClick}
+              onKeyDown={handleCourtKeyDown}
+              className="relative mx-auto aspect-[1.55] max-w-lg cursor-crosshair overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] outline-none transition focus:ring-4 focus:ring-[#f3b59c]"
+            >
               <div className="absolute inset-x-0 top-1/2 border-t-2 border-dashed border-[#7aa996]" />
               <div className="absolute inset-y-0 left-1/2 border-l border-[#7aa996]" />
               <div className="absolute left-3 top-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
@@ -67,28 +106,18 @@ export default function DiscoverPage() {
               />
             </div>
             <div className="mt-5 grid grid-cols-2 gap-4">
-              <label className="text-sm text-[var(--muted)]">
+              <div className="rounded-xl border border-[var(--line)] px-3 py-2 text-sm text-[var(--muted)]">
                 Court X{" "}
-                <input
-                  type="number"
-                  min={-15}
-                  max={15}
-                  value={courtX}
-                  onChange={(event) => setCourtX(Number(event.target.value))}
-                  className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
-                />
-              </label>
-              <label className="text-sm text-[var(--muted)]">
+                <strong className="float-right text-[var(--ink)]">
+                  {courtX}
+                </strong>
+              </div>
+              <div className="rounded-xl border border-[var(--line)] px-3 py-2 text-sm text-[var(--muted)]">
                 Court Y{" "}
-                <input
-                  type="number"
-                  min={0}
-                  max={30}
-                  value={courtY}
-                  onChange={(event) => setCourtY(Number(event.target.value))}
-                  className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
-                />
-              </label>
+                <strong className="float-right text-[var(--ink)]">
+                  {courtY}
+                </strong>
+              </div>
             </div>
             <div className="mt-8 space-y-7 border-t border-[var(--line)] pt-7">
               <RangeInput
