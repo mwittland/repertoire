@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ShotCard } from "@/components/shot-card";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 
-const range = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
+const canvasRange = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
 
 export default function DiscoverPage() {
   const [courtX, setCourtX] = useState(0);
@@ -15,25 +15,31 @@ export default function DiscoverPage() {
   const [shots, setShots] = useState<DiscoverableShot[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const xPercent = ((courtX - range.xMin) / (range.xMax - range.xMin)) * 100;
+  const xPercent =
+    ((courtX - canvasRange.xMin) / (canvasRange.xMax - canvasRange.xMin)) * 100;
   const yPercent =
-    100 - ((courtY - range.yMin) / (range.yMax - range.yMin)) * 100;
+    100 -
+    ((courtY - canvasRange.yMin) / (canvasRange.yMax - canvasRange.yMin)) * 100;
 
   function setCourtPosition(x: number, y: number) {
-    setCourtX(Math.max(range.xMin, Math.min(range.xMax, Math.round(x))));
-    setCourtY(Math.max(range.yMin, Math.min(range.yMax, Math.round(y))));
+    setCourtX(
+      Math.max(canvasRange.xMin, Math.min(canvasRange.xMax, Math.round(x))),
+    );
+    setCourtY(
+      Math.max(canvasRange.yMin, Math.min(canvasRange.yMax, Math.round(y))),
+    );
   }
 
   function handleCourtClick(event: React.MouseEvent<HTMLDivElement>) {
     const bounds = event.currentTarget.getBoundingClientRect();
     const x =
-      range.xMin +
+      canvasRange.xMin +
       ((event.clientX - bounds.left) / bounds.width) *
-        (range.xMax - range.xMin);
+        (canvasRange.xMax - canvasRange.xMin);
     const y =
-      range.yMax -
+      canvasRange.yMax -
       ((event.clientY - bounds.top) / bounds.height) *
-        (range.yMax - range.yMin);
+        (canvasRange.yMax - canvasRange.yMin);
     setCourtPosition(x, y);
   }
 
@@ -92,19 +98,31 @@ export default function DiscoverPage() {
               onKeyDown={handleCourtKeyDown}
               className="relative mx-auto aspect-[1.55] max-w-lg cursor-crosshair overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] outline-none transition focus:ring-4 focus:ring-[#f3b59c]"
             >
-              <div className="pointer-events-none absolute inset-x-0 top-0 border-t-4 border-white/80" />
-              <div className="pointer-events-none absolute inset-x-0 top-[23%] border-t-2 border-white/80" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 border-b-4 border-white/80" />
-              <div className="pointer-events-none absolute bottom-0 left-1/2 top-[23%] border-l-2 border-white/80" />
-              <div className="pointer-events-none absolute left-3 top-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                Net
+              <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
+                <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
+                <div className="absolute inset-x-0 top-0 border-t-4 border-white/90" />
+                <div className="absolute inset-x-0 top-[31.82%] border-t-2 border-white/90" />
+                <div className="absolute inset-x-0 bottom-0 border-b-4 border-white/90" />
+                <div className="absolute bottom-0 left-1/2 top-[31.82%] border-l-2 border-white/90" />
+                <span className="absolute left-2 top-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                  Net
+                </span>
+                <span className="absolute left-2 top-[34%] text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                  Kitchen
+                </span>
+                <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                  Baseline
+                </span>
               </div>
-              <div className="pointer-events-none absolute left-3 top-[25%] text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                Kitchen
-              </div>
-              <div className="pointer-events-none absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                Baseline
-              </div>
+              <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
+                Out of bounds
+              </span>
+              <span className="pointer-events-none absolute left-1 top-1/2 -rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
+                Out
+              </span>
+              <span className="pointer-events-none absolute right-1 top-1/2 rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
+                Out
+              </span>
               <div
                 className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-[var(--coral)] shadow-lg transition-all"
                 style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
