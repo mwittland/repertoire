@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 
@@ -79,83 +80,55 @@ export default function DiscoverPage() {
             </div>
           </div>
           <section className="rounded-[2rem] border border-[var(--line)] bg-[var(--card)] p-6 shadow-[0_20px_80px_rgba(24,50,45,0.08)] sm:p-9">
-            <div className="mb-8 flex items-start justify-between">
+            <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(210px,0.65fr)]">
               <div>
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--muted)]">
-                  01 / Current situation
-                </p>
-                <h2 className="mt-2 text-3xl">Where are you?</h2>
+                <h2 className="mb-3 text-2xl">Court location</h2>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Selected court position: X ${courtX}, Y ${courtY}. Click to move the position.`}
+                  onClick={handleCourtClick}
+                  onKeyDown={handleCourtKeyDown}
+                  className="relative mx-auto h-[18rem] w-full max-w-lg cursor-crosshair overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] outline-none transition focus:ring-4 focus:ring-[#f3b59c]"
+                >
+                  <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
+                    <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
+                    <div className="absolute inset-x-0 top-0 border-t-4 border-white/90" />
+                    <div className="absolute inset-x-0 top-[31.82%] border-t-2 border-white/90" />
+                    <div className="absolute inset-x-0 bottom-0 border-b-4 border-white/90" />
+                    <div className="absolute bottom-0 left-1/2 top-[31.82%] border-l-2 border-white/90" />
+                    <span className="absolute left-2 top-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                      Net
+                    </span>
+                    <span className="absolute left-2 top-[34%] text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                      Kitchen
+                    </span>
+                    <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                      Baseline
+                    </span>
+                  </div>
+                  <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
+                    Out of bounds
+                  </span>
+                  <span className="pointer-events-none absolute left-1 top-1/2 -rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
+                    Out
+                  </span>
+                  <span className="pointer-events-none absolute right-1 top-1/2 rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
+                    Out
+                  </span>
+                  <div
+                    className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-[var(--coral)] shadow-lg transition-all"
+                    style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
+                  />
+                </div>
               </div>
-              <span className="rounded-full bg-[#e5f0e9] px-3 py-1 text-xs font-bold text-[var(--teal)]">
-                Point input
-              </span>
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
-              aria-label={`Selected court position: X ${courtX}, Y ${courtY}. Click to move the position.`}
-              onClick={handleCourtClick}
-              onKeyDown={handleCourtKeyDown}
-              className="relative mx-auto aspect-[1.55] max-w-lg cursor-crosshair overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] outline-none transition focus:ring-4 focus:ring-[#f3b59c]"
-            >
-              <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
-                <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
-                <div className="absolute inset-x-0 top-0 border-t-4 border-white/90" />
-                <div className="absolute inset-x-0 top-[31.82%] border-t-2 border-white/90" />
-                <div className="absolute inset-x-0 bottom-0 border-b-4 border-white/90" />
-                <div className="absolute bottom-0 left-1/2 top-[31.82%] border-l-2 border-white/90" />
-                <span className="absolute left-2 top-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                  Net
-                </span>
-                <span className="absolute left-2 top-[34%] text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                  Kitchen
-                </span>
-                <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                  Baseline
-                </span>
-              </div>
-              <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
-                Out of bounds
-              </span>
-              <span className="pointer-events-none absolute left-1 top-1/2 -rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
-                Out
-              </span>
-              <span className="pointer-events-none absolute right-1 top-1/2 rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
-                Out
-              </span>
-              <div
-                className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-[var(--coral)] shadow-lg transition-all"
-                style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
-              />
-            </div>
-            <div className="mt-5 grid grid-cols-2 gap-4">
-              <div className="rounded-xl border border-[var(--line)] px-3 py-2 text-sm text-[var(--muted)]">
-                Court X{" "}
-                <strong className="float-right text-[var(--ink)]">
-                  {courtX}
-                </strong>
-              </div>
-              <div className="rounded-xl border border-[var(--line)] px-3 py-2 text-sm text-[var(--muted)]">
-                Court Y{" "}
-                <strong className="float-right text-[var(--ink)]">
-                  {courtY}
-                </strong>
-              </div>
-            </div>
-            <div className="mt-8 space-y-7 border-t border-[var(--line)] pt-7">
               <VerticalHeightInput
                 value={ballHeight}
                 onChange={setBallHeight}
               />
-              <RangeInput
-                label="Intent"
-                hint="How much pressure do you want to apply?"
-                value={intent}
-                min={0}
-                max={100}
-                onChange={setIntent}
-                suffix="/ 100"
-              />
+            </div>
+            <div className="mt-8">
+              <IntentInput value={intent} onChange={setIntent} />
             </div>
             <button
               onClick={async () => {
@@ -243,46 +216,6 @@ export default function DiscoverPage() {
   );
 }
 
-function RangeInput({
-  label,
-  hint,
-  value,
-  min,
-  max,
-  suffix,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  value: number;
-  min: number;
-  max: number;
-  suffix: string;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <label className="block">
-      <span className="flex items-baseline justify-between">
-        <span>
-          <strong className="text-base">{label}</strong>
-          <span className="ml-2 text-sm text-[var(--muted)]">{hint}</span>
-        </span>
-        <strong className="text-base text-[var(--coral)]">
-          {value} <span className="text-xs text-[var(--muted)]">{suffix}</span>
-        </strong>
-      </span>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        className="mt-4 w-full accent-[var(--coral)]"
-      />
-    </label>
-  );
-}
-
 function VerticalHeightInput({
   value,
   onChange,
@@ -290,50 +223,17 @@ function VerticalHeightInput({
   value: number;
   onChange: (value: number) => void;
 }) {
-  const ballPosition = `${(value / 10) * 100}%`;
-
   return (
     <div>
-      <div className="flex items-baseline justify-between">
-        <span>
-          <strong className="text-base">Ball height</strong>
-          <span className="ml-2 text-sm text-[var(--muted)]">
-            Tap or drag the ball
-          </span>
-        </span>
-        <strong className="text-base text-[var(--coral)]">
-          {value} <span className="text-xs text-[var(--muted)]">/ 10 ft</span>
-        </strong>
-      </div>
-      <div className="mt-5 grid grid-cols-[1fr_auto] gap-5 rounded-2xl border border-[var(--line)] bg-[#edf4ec] p-4">
-        <div className="relative h-64 overflow-hidden rounded-xl border border-[#c7d9c8] bg-[#f8fbf5]">
-          <div className="absolute inset-x-0 bottom-0 border-t border-dashed border-[#b3cbb5]" />
-          <div className="absolute bottom-0 left-[30%] h-[60%] w-1 -translate-x-1/2 bg-[#314b43]" />
-          <div className="absolute bottom-[60%] left-[30%] h-5 w-5 -translate-x-1/2 rounded-full bg-[#314b43]" />
-          <div className="absolute bottom-[12%] left-[30%] h-[48%] w-5 -translate-x-1/2 rounded-t-lg bg-[#55766a]" />
-          <div className="absolute bottom-0 left-[25%] h-[13%] w-1 -rotate-[8deg] bg-[#314b43]" />
-          <div className="absolute bottom-0 left-[35%] h-[13%] w-1 rotate-[8deg] bg-[#314b43]" />
-          <div className="absolute bottom-[28.3%] left-[58%] right-[8%] border-t-2 border-[#7d9d88]" />
-          <div className="absolute bottom-[28.3%] left-[58%] h-3 w-1 bg-[#7d9d88]" />
-          <div className="absolute bottom-0 left-[58%] h-[28.3%] border-l border-dashed border-[#a8beb0]" />
-          <div className="absolute left-[8%] top-[4%] text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
-            10 ft
-          </div>
-          <div className="absolute bottom-[28.3%] right-[8%] translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
-            34 in net
-          </div>
-          <div className="absolute bottom-0 left-[8%] translate-y-0 text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
-            0 ft
-          </div>
-          <div className="absolute right-3 top-3 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
-            6 ft
-            <br />
-            player
-          </div>
-          <div
-            className="absolute right-0 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white bg-[var(--coral)] shadow"
-            style={{ bottom: ballPosition }}
-            aria-hidden="true"
+      <h2 className="mb-3 text-2xl">Ball height</h2>
+      <div className="h-[18rem] grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 rounded-2xl border border-[var(--line)] bg-[#edf4ec] p-4">
+        <div className="relative mx-auto aspect-[0.63] h-full w-full max-w-[11.34rem] overflow-hidden rounded-xl border border-[#c7d9c8] bg-[#f8fbf5]">
+          <Image
+            src="/ballHeight.jpg"
+            alt="Six-foot pickleball player standing beside a regulation-height net"
+            fill
+            sizes="(max-width: 640px) 60vw, 220px"
+            className="object-cover"
           />
         </div>
         <input
@@ -344,9 +244,46 @@ function VerticalHeightInput({
           step={1}
           value={value}
           onChange={(event) => onChange(Number(event.target.value))}
-          className="h-64 w-8 accent-[var(--coral)] [writing-mode:vertical-lr] [direction:rtl]"
+          className="h-full w-8 accent-[var(--coral)] [writing-mode:vertical-lr] [direction:rtl]"
         />
       </div>
     </div>
+  );
+}
+
+function IntentInput({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const label =
+    value < 20
+      ? "Defend"
+      : value < 40
+        ? "Reset"
+        : value < 60
+          ? "Build"
+          : value < 80
+            ? "Attack"
+            : "Finish";
+
+  return (
+    <label className="block">
+      <span className="flex items-baseline justify-between">
+        <h2 className="text-2xl">Intent</h2>
+        <strong className="text-base text-[var(--coral)]">{label}</strong>
+      </span>
+      <input
+        aria-label={`Intent: ${label}`}
+        type="range"
+        min={0}
+        max={100}
+        value={value}
+        onChange={(event) => onChange(Number(event.target.value))}
+        className="mt-4 w-full accent-[var(--coral)]"
+      />
+    </label>
   );
 }
