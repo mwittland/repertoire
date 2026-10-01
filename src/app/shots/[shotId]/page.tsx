@@ -1,0 +1,132 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { getShotById } from "@/lib/shots/queries";
+import { getRepertoireEntry } from "@/lib/repertoire/queries";
+import { addToRepertoire } from "@/app/actions/repertoire";
+import { ConfidenceForm } from "@/components/confidence-form";
+import { listDrillsForShot } from "@/lib/drills/queries";
+
+export default async function ShotPage({
+  params,
+}: {
+  params: Promise<{ shotId: string }>;
+}) {
+  const { shotId } = await params;
+  const shot = await getShotById(shotId);
+  if (!shot) notFound();
+  const repertoireEntry = await getRepertoireEntry(shotId);
+  const relatedDrills = await listDrillsForShot(shotId);
+
+  return (
+    <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
+      <div className="mx-auto max-w-5xl">
+        <Link href="/discover" className="text-sm font-bold text-[var(--teal)]">
+          ← Back to discovery
+        </Link>
+        <div className="mt-12 grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
+              Shot lesson
+            </p>
+            <h1 className="mt-4 text-6xl leading-none tracking-[-0.04em]">
+              {shot.name}
+            </h1>
+            <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
+              {shot.description}
+            </p>
+            <section className="mt-12 border-t border-[var(--line)] pt-7">
+              <h2 className="text-2xl">How to play it</h2>
+              <p className="mt-4 leading-7 text-[var(--muted)]">
+                {shot.instructions}
+              </p>
+            </section>
+          </div>
+          <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--muted)]">
+              Useful when
+            </p>
+            <dl className="mt-6 space-y-5 text-sm">
+              <Range
+                label="Court X"
+                value={`${shot.courtXMin} to ${shot.courtXMax}`}
+              />
+              <Range
+                label="Court Y"
+                value={`${shot.courtYMin} to ${shot.courtYMax}`}
+              />
+              <Range
+                label="Ball height"
+                value={`${shot.ballHeightMin} to ${shot.ballHeightMax}`}
+              />
+              <Range
+                label="Intent"
+                value={`${shot.intentMin} to ${shot.intentMax}`}
+              />
+            </dl>
+            {repertoireEntry ? (
+              <ConfidenceForm
+                shotId={shotId}
+                initialConfidence={repertoireEntry.confidence}
+              />
+            ) : (
+              <form action={addToRepertoire}>
+                <input type="hidden" name="shotId" value={shotId} />
+                <button className="mt-9 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white">
+                  Add to repertoire
+                </button>
+              </form>
+            )}
+          </aside>
+        </div>
+        <section className="mt-16 border-t border-[var(--line)] pt-8">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
+                Keep practicing
+              </p>
+              <h2 className="mt-3 text-3xl">Related drills</h2>
+            </div>
+            <Link
+              href="/drills"
+              className="text-sm font-bold text-[var(--teal)]"
+            >
+              All drills →
+            </Link>
+          </div>
+          {relatedDrills.length > 0 ? (
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {relatedDrills.map((drill) => (
+                <Link
+                  key={drill.id}
+                  href={`/drills/${drill.id}`}
+                  className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 transition hover:border-[var(--teal)]"
+                >
+                  <h3 className="text-xl">{drill.name}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+                    {drill.description}
+                  </p>
+                  <span className="mt-4 inline-block text-sm font-bold text-[var(--teal)]">
+                    Open drill →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-6 rounded-2xl border border-dashed border-[var(--line)] p-6 text-[var(--muted)]">
+              No drills are linked to this shot yet.
+            </div>
+          )}
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function Range({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+      <dt className="text-[var(--muted)]">{label}</dt>
+      <dd className="font-bold">{value}</dd>
+    </div>
+  );
+}

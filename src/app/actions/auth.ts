@@ -1,0 +1,58 @@
+"use server";
+
+import { z } from "zod";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export type AuthState = { error?: string };
+
+const credentialsSchema = z.object({
+  email: z.string().email("Enter a valid email address."),
+  password: z.string().min(8, "Password must be at least 8 characters."),
+});
+
+function readCredentials(formData: FormData) {
+  return credentialsSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+}
+
+export async function signIn(
+  _: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const credentials = readCredentials(formData);
+  if (!credentials.success)
+    return {
+      error: credentials.error.issues[0]?.message ?? "Check your details.",
+    };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword(credentials.data);
+  if (error) return { error: "Those credentials did not work." };
+  redirect("/repertoire");
+}
+
+export async function signUp(
+  _: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const credentials = readCredentials(formData);
+  if (!credentials.success)
+    return {
+      error: credentials.error.issues[0]?.message ?? "Check your details.",
+    };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signUp(credentials.data);
+  if (error) return { error: error.message };
+  if (data.session) redirect("/repertoire");
+  redirect("/login?message=Check your email to confirm your account.");
+}
+
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/discover");
+}

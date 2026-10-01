@@ -1,0 +1,189 @@
+"use client";
+
+import { useActionState } from "react";
+import {
+  createDrill,
+  createShot,
+  type AdminFormState,
+} from "@/app/actions/admin";
+
+function Field({
+  name,
+  label,
+  type = "text",
+  min,
+  max,
+  step = "any",
+  required = true,
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  min?: number;
+  max?: number;
+  step?: string;
+  required?: boolean;
+}) {
+  return (
+    <label className="block text-sm text-[var(--muted)]">
+      {label}
+      <input
+        name={name}
+        type={type}
+        min={min}
+        max={max}
+        step={step}
+        required={required}
+        className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
+      />
+    </label>
+  );
+}
+
+export function CreateShotForm() {
+  const [state, action, pending] = useActionState<AdminFormState, FormData>(
+    createShot,
+    {},
+  );
+  return (
+    <form action={action} className="mt-8 space-y-6">
+      <Field name="name" label="Name" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          name="courtXMin"
+          label="Court X minimum"
+          type="number"
+          min={-15}
+          max={15}
+        />
+        <Field
+          name="courtXMax"
+          label="Court X maximum"
+          type="number"
+          min={-15}
+          max={15}
+        />
+        <Field
+          name="courtYMin"
+          label="Court Y minimum"
+          type="number"
+          min={0}
+          max={30}
+        />
+        <Field
+          name="courtYMax"
+          label="Court Y maximum"
+          type="number"
+          min={0}
+          max={30}
+        />
+        <Field
+          name="ballHeightMin"
+          label="Ball height minimum"
+          type="number"
+          min={0}
+          max={10}
+        />
+        <Field
+          name="ballHeightMax"
+          label="Ball height maximum"
+          type="number"
+          min={0}
+          max={10}
+        />
+        <Field
+          name="intentMin"
+          label="Intent minimum"
+          type="number"
+          min={0}
+          max={100}
+        />
+        <Field
+          name="intentMax"
+          label="Intent maximum"
+          type="number"
+          min={0}
+          max={100}
+        />
+        <Field
+          name="difficulty"
+          label="Difficulty (0 to 5)"
+          type="number"
+          min={0}
+          max={5}
+          step="1"
+        />
+      </div>
+      <Field
+        name="videoUrl"
+        label="Video URL (optional)"
+        type="url"
+        required={false}
+      />
+      <label className="block text-sm text-[var(--muted)]">
+        Description
+        <textarea
+          name="description"
+          required
+          className="mt-2 min-h-24 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
+        />
+      </label>
+      <label className="block text-sm text-[var(--muted)]">
+        Instructions
+        <textarea
+          name="instructions"
+          required
+          className="mt-2 min-h-32 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
+        />
+      </label>
+      {state.error && (
+        <p role="alert" className="text-sm text-[var(--coral)]">
+          {state.error}
+        </p>
+      )}
+      <button
+        disabled={pending}
+        className="w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
+      >
+        {pending ? "Creating..." : "Create shot"}
+      </button>
+    </form>
+  );
+}
+
+export function CreateDrillForm() {
+  const [state, action, pending] = useActionState<AdminFormState, FormData>(
+    createDrill,
+    {},
+  );
+  return (
+    <form action={action} className="mt-8 space-y-6">
+      <Field name="name" label="Name" />
+      <label className="block text-sm text-[var(--muted)]">
+        Description
+        <textarea
+          name="description"
+          required
+          className="mt-2 min-h-32 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
+        />
+      </label>
+      <Field
+        name="videoUrl"
+        label="Video URL (optional)"
+        type="url"
+        required={false}
+      />
+      {state.error && (
+        <p role="alert" className="text-sm text-[var(--coral)]">
+          {state.error}
+        </p>
+      )}
+      <button
+        disabled={pending}
+        className="w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
+      >
+        {pending ? "Creating..." : "Create drill"}
+      </button>
+    </form>
+  );
+}
