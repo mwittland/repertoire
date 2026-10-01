@@ -30,7 +30,12 @@ export async function signIn(
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(credentials.data);
-  if (error) return { error: "Those credentials did not work." };
+  if (error) {
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+      return { error: "Please confirm your email before signing in." };
+    }
+    return { error: "Those credentials did not work." };
+  }
   redirect("/repertoire");
 }
 
