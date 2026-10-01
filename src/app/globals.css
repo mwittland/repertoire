@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #18322d;
-  --muted: #5e716a;
-  --paper: #f7f4ec;
-  --card: #fffdf8;
-  --line: #d7ded5;
-  --coral: #e86f51;
-  --teal: #2f776c;
+  --ink: #edf5f0;
+  --muted: #9baca5;
+  --paper: #0c1513;
+  --card: #17231f;
+  --line: #2b3c35;
+  --coral: #e17a57;
+  --teal: #5db8a7;
+  --button: #d96548;
+  --button-hover: #ed8869;
+  --shadow: 0 22px 56px rgba(0, 0, 0, 0.28);
 }
 
 * {
@@ -15,9 +18,151 @@
 }
 body {
   margin: 0;
-  background: var(--paper);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(225, 122, 87, 0.12), transparent 30rem),
+    linear-gradient(135deg, #0c1513 0%, #101d19 52%, #0a1210 100%);
+  background-attachment: fixed;
   color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Trebuchet MS", "Avenir Next", Avenir, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+h1 {
+  font-size: 3.5rem;
+  line-height: 0.98;
+}
+
+@media (min-width: 640px) {
+  h1 {
+    font-size: 4.75rem;
+  }
+}
+
+h2,
+h3 {
+  line-height: 1.05;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.site-nav {
+  background: rgba(12, 21, 19, 0.88);
+  box-shadow: 0 1px 0 rgba(237, 245, 240, 0.06);
+  backdrop-filter: blur(18px);
+}
+
+.nav-link {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  color: var(--ink);
+}
+
+.library-menu {
+  position: relative;
+}
+
+.library-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.library-menu > summary::marker {
+  content: "";
+}
+
+.library-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.75rem);
+  z-index: 10;
+  display: grid;
+  min-width: 9rem;
+  gap: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  padding: 0.55rem;
+  box-shadow: var(--shadow);
+  display: none;
+}
+
+.library-menu:hover .library-menu-panel,
+.library-menu:focus-within .library-menu-panel,
+.library-menu[open] .library-menu-panel {
+  display: grid;
+}
+
+@media (min-width: 640px) {
+  .library-menu[open] .library-menu-panel {
+    display: none;
+  }
+
+  .library-menu:hover .library-menu-panel,
+  .library-menu:focus-within .library-menu-panel {
+    display: grid;
+  }
+}
+
+.library-menu-panel a {
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+}
+
+.library-menu-panel a:hover {
+  background: rgba(93, 184, 167, 0.12);
+}
+
+.nav-action {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.nav-action:hover {
+  border-color: var(--coral);
+  background: var(--coral);
+  color: #101714;
+}
+
+.site-action {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 10px;
+  background: var(--button);
+  color: #101714;
+  font-weight: 700;
+}
+
+.site-action:hover {
+  background: var(--button-hover);
+}
+
+/* Existing action utilities inherit the dark theme without changing form behavior. */
+.bg-\[var\(--ink\)\] {
+  background-color: var(--button) !important;
+  color: #101714 !important;
+}
+
+.bg-\[var\(--ink\)\]:hover {
+  background-color: var(--button-hover) !important;
 }
 button,
 input {
@@ -27,5 +172,5 @@ button {
   cursor: pointer;
 }
 ::selection {
-  background: #f3b59c;
+  background: #8d4938;
 }

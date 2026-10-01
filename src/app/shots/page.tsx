@@ -34,7 +34,7 @@ export default async function ShotsPage({
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             The library
           </p>
-          <h1 className="mt-4 text-6xl leading-none tracking-[-0.04em]">
+          <h1 className="mt-4 text-6xl leading-none">
             Every shot has a moment.
           </h1>
           <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
@@ -45,13 +45,13 @@ export default async function ShotsPage({
         <div className="mt-7 flex flex-wrap gap-3">
           <Link
             href="/request-shot"
-            className="rounded-xl bg-[var(--coral)] px-4 py-3 text-sm font-bold text-white"
+            className="site-action px-4 py-3 text-sm"
           >
             Request a missing shot
           </Link>
           <Link
             href="/request-drill"
-            className="rounded-xl border border-[var(--line)] px-4 py-3 text-sm font-bold text-[var(--teal)]"
+            className="site-action px-4 py-3 text-sm"
           >
             Request a drill
           </Link>

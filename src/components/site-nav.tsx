@@ -4,44 +4,24 @@ import { AuthNav } from "@/components/auth-nav";
 
 export function SiteNav() {
   return (
-    <nav className="border-b border-[var(--line)]">
+    <nav className="site-nav sticky top-0 z-50 border-b border-[var(--line)]">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-12">
-        <Link href="/" className="text-xl font-bold tracking-tight">
-          repertoire<span className="text-[var(--coral)]">.</span>
+        <Link href="/" className="text-xl font-bold tracking-tight text-[var(--ink)]">
+          repertoire<span className="text-[var(--coral)]">pb</span>
         </Link>
         <div className="flex items-center gap-4 text-sm text-[var(--muted)] sm:gap-6">
-          <Link href="/discover" className="hover:text-[var(--ink)]">
+          <Link href="/discover" className="nav-link">
             Discover
           </Link>
-          <Link
-            href="/shots"
-            className="hidden hover:text-[var(--ink)] sm:inline"
-          >
-            Shot library
-          </Link>
-          <Link
-            href="/drills"
-            className="hidden hover:text-[var(--ink)] sm:inline"
-          >
-            Drills
-          </Link>
-          <Link
-            href="/repertoire"
-            className="hidden hover:text-[var(--ink)] sm:inline"
-          >
-            My repertoire
-          </Link>
-          <Link
-            href="/request-shot"
-            className="hidden rounded-full border border-[var(--coral)] px-3 py-1.5 text-[var(--coral)] sm:inline"
-          >
-            Request a shot
-          </Link>
-          <Link
-            href="/request-drill"
-            className="hidden rounded-full border border-[var(--teal)] px-3 py-1.5 text-[var(--teal)] sm:inline"
-          >
-            Request a drill
+          <details className="library-menu">
+            <summary className="nav-link cursor-pointer list-none">Library</summary>
+            <div className="library-menu-panel">
+              <Link href="/shots" className="nav-link">Shots</Link>
+              <Link href="/drills" className="nav-link">Drills</Link>
+            </div>
+          </details>
+          <Link href="/repertoire" className="nav-link">
+            Repertoire
           </Link>
           <AdminLink />
           <AuthNav />

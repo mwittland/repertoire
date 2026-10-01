@@ -12,7 +12,7 @@ export default function RequestDrillPage() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Expand the practice room
           </p>
-          <h1 className="mt-4 text-5xl leading-none tracking-[-0.04em]">
+          <h1 className="mt-4 text-5xl leading-none">
             Need a new drill?
           </h1>
           <p className="mt-6 leading-7 text-[var(--muted)]">

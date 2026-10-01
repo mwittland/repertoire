@@ -21,7 +21,7 @@ export default async function DrillPage({
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Practice drill
           </p>
-          <h1 className="mt-4 text-6xl leading-none tracking-[-0.04em]">
+          <h1 className="mt-4 text-6xl leading-none">
             {drill.name}
           </h1>
           <p className="mt-7 text-lg leading-8 text-[var(--muted)]">

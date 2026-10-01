@@ -12,7 +12,7 @@ export default function RequestShotPage() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Expand the library
           </p>
-          <h1 className="mt-4 text-5xl leading-none tracking-[-0.04em]">
+          <h1 className="mt-4 text-5xl leading-none">
             Can&apos;t find your shot?
           </h1>
           <p className="mt-6 leading-7 text-[var(--muted)]">
