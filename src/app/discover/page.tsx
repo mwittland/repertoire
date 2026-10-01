@@ -143,14 +143,9 @@ export default function DiscoverPage() {
               </div>
             </div>
             <div className="mt-8 space-y-7 border-t border-[var(--line)] pt-7">
-              <RangeInput
-                label="Ball height"
-                hint="How high is the ball?"
+              <VerticalHeightInput
                 value={ballHeight}
-                min={0}
-                max={10}
                 onChange={setBallHeight}
-                suffix="/ 10"
               />
               <RangeInput
                 label="Intent"
@@ -285,5 +280,73 @@ function RangeInput({
         className="mt-4 w-full accent-[var(--coral)]"
       />
     </label>
+  );
+}
+
+function VerticalHeightInput({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const ballPosition = `${(value / 10) * 100}%`;
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <span>
+          <strong className="text-base">Ball height</strong>
+          <span className="ml-2 text-sm text-[var(--muted)]">
+            Tap or drag the ball
+          </span>
+        </span>
+        <strong className="text-base text-[var(--coral)]">
+          {value} <span className="text-xs text-[var(--muted)]">/ 10 ft</span>
+        </strong>
+      </div>
+      <div className="mt-5 grid grid-cols-[1fr_auto] gap-5 rounded-2xl border border-[var(--line)] bg-[#edf4ec] p-4">
+        <div className="relative h-64 overflow-hidden rounded-xl border border-[#c7d9c8] bg-[#f8fbf5]">
+          <div className="absolute inset-x-0 bottom-0 border-t border-dashed border-[#b3cbb5]" />
+          <div className="absolute bottom-0 left-[30%] h-[60%] w-1 -translate-x-1/2 bg-[#314b43]" />
+          <div className="absolute bottom-[60%] left-[30%] h-5 w-5 -translate-x-1/2 rounded-full bg-[#314b43]" />
+          <div className="absolute bottom-[12%] left-[30%] h-[48%] w-5 -translate-x-1/2 rounded-t-lg bg-[#55766a]" />
+          <div className="absolute bottom-0 left-[25%] h-[13%] w-1 -rotate-[8deg] bg-[#314b43]" />
+          <div className="absolute bottom-0 left-[35%] h-[13%] w-1 rotate-[8deg] bg-[#314b43]" />
+          <div className="absolute bottom-[28.3%] left-[58%] right-[8%] border-t-2 border-[#7d9d88]" />
+          <div className="absolute bottom-[28.3%] left-[58%] h-3 w-1 bg-[#7d9d88]" />
+          <div className="absolute bottom-0 left-[58%] h-[28.3%] border-l border-dashed border-[#a8beb0]" />
+          <div className="absolute left-[8%] top-[4%] text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
+            10 ft
+          </div>
+          <div className="absolute bottom-[28.3%] right-[8%] translate-y-1/2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
+            34 in net
+          </div>
+          <div className="absolute bottom-0 left-[8%] translate-y-0 text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
+            0 ft
+          </div>
+          <div className="absolute right-3 top-3 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-[#55766a]">
+            6 ft
+            <br />
+            player
+          </div>
+          <div
+            className="absolute right-0 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-white bg-[var(--coral)] shadow"
+            style={{ bottom: ballPosition }}
+            aria-hidden="true"
+          />
+        </div>
+        <input
+          aria-label="Ball height in feet"
+          type="range"
+          min={0}
+          max={10}
+          step={1}
+          value={value}
+          onChange={(event) => onChange(Number(event.target.value))}
+          className="h-64 w-8 accent-[var(--coral)] [writing-mode:vertical-lr] [direction:rtl]"
+        />
+      </div>
+    </div>
   );
 }
