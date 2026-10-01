@@ -74,3 +74,13 @@ export async function listShots(filters?: Partial<ShotCatalogFilters>) {
   if (error) throw new Error(`Unable to list shots: ${error.message}`);
   return (data ?? []).map((shot) => toDiscoverableShot(shot));
 }
+
+export async function searchShots(searchTerm = "") {
+  const supabase = await createClient();
+  let query = supabase.from("shots").select(shotFields).order("name");
+  const term = searchTerm.trim();
+  if (term) query = query.ilike("name", `%${term}%`);
+  const { data, error } = await query;
+  if (error) throw new Error(`Unable to search shots: ${error.message}`);
+  return (data ?? []).map((shot) => toDiscoverableShot(shot));
+}

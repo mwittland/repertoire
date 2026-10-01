@@ -13,13 +13,7 @@ export function SiteNav() {
           <Link href="/discover" className="nav-link">
             Discover
           </Link>
-          <details className="library-menu">
-            <summary className="nav-link cursor-pointer list-none">Library</summary>
-            <div className="library-menu-panel">
-              <Link href="/shots" className="nav-link">Shots</Link>
-              <Link href="/drills" className="nav-link">Drills</Link>
-            </div>
-          </details>
+          <Link href="/library" className="nav-link">Library</Link>
           <Link href="/repertoire" className="nav-link">
             Repertoire
           </Link>

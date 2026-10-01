@@ -2,9 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CreateShotForm } from "@/components/admin-create-forms";
 import { createClient } from "@/lib/supabase/server";
+import { listDrills } from "@/lib/drills/queries";
 
 export default async function NewShotPage() {
   await requireAdmin();
+  const drills = await listDrills();
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-3xl">
@@ -15,7 +17,7 @@ export default async function NewShotPage() {
         <p className="mt-4 text-[var(--muted)]">
           Shots store ranges; player discovery supplies a single point.
         </p>
-        <CreateShotForm />
+        <CreateShotForm drills={drills.map((drill) => ({ id: drill.id, name: drill.name }))} />
       </div>
     </main>
   );

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { EditShotForm } from "@/components/admin-edit-forms";
 import { createClient } from "@/lib/supabase/server";
 import { getShotById } from "@/lib/shots/queries";
+import { listDrillIdsForShot, listDrills } from "@/lib/drills/queries";
 
 export default async function EditShotPage({
   params,
@@ -13,6 +14,7 @@ export default async function EditShotPage({
   const { shotId } = await params;
   const shot = await getShotById(shotId);
   if (!shot) notFound();
+  const [drills, selectedDrillIds] = await Promise.all([listDrills(), listDrillIdsForShot(shotId)]);
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-3xl">
@@ -23,7 +25,7 @@ export default async function EditShotPage({
           ← Back to shots
         </Link>
         <h1 className="mt-12 text-5xl">Edit shot.</h1>
-        <EditShotForm shot={shot} />
+        <EditShotForm shot={shot} drills={drills.map((drill) => ({ id: drill.id, name: drill.name }))} selectedDrillIds={selectedDrillIds} />
       </div>
     </main>
   );

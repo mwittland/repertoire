@@ -7,6 +7,7 @@ import {
   type AdminFormState,
 } from "@/app/actions/admin";
 import { AdminShotRangeEditor } from "@/components/admin-shot-range-editor";
+import { AssociationPicker, type AssociationOption } from "@/components/association-picker";
 
 function Field({
   name,
@@ -41,7 +42,7 @@ function Field({
   );
 }
 
-export function CreateShotForm() {
+export function CreateShotForm({ drills = [] }: { drills?: AssociationOption[] }) {
   const [state, action, pending] = useActionState<AdminFormState, FormData>(
     createShot,
     {},
@@ -50,6 +51,7 @@ export function CreateShotForm() {
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
       <AdminShotRangeEditor />
+      <AssociationPicker name="drillIds" label="Related drills" options={drills} />
       <Field name="difficulty" label="Difficulty (0 to 5)" type="number" min={0} max={5} step="1" />
       <Field
         name="videoUrl"
@@ -88,7 +90,7 @@ export function CreateShotForm() {
   );
 }
 
-export function CreateDrillForm() {
+export function CreateDrillForm({ shots = [] }: { shots?: AssociationOption[] }) {
   const [state, action, pending] = useActionState<AdminFormState, FormData>(
     createDrill,
     {},
@@ -96,6 +98,7 @@ export function CreateDrillForm() {
   return (
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
+      <AssociationPicker name="shotIds" label="Shots in this drill" options={shots} />
       <label className="block text-sm text-[var(--muted)]">
         Description
         <textarea
