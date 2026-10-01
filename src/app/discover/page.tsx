@@ -92,12 +92,17 @@ export default function DiscoverPage() {
               onKeyDown={handleCourtKeyDown}
               className="relative mx-auto aspect-[1.55] max-w-lg cursor-crosshair overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] outline-none transition focus:ring-4 focus:ring-[#f3b59c]"
             >
-              <div className="absolute inset-x-0 top-1/2 border-t-2 border-dashed border-[#7aa996]" />
-              <div className="absolute inset-y-0 left-1/2 border-l border-[#7aa996]" />
-              <div className="absolute left-3 top-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 border-t-4 border-white/80" />
+              <div className="pointer-events-none absolute inset-x-0 top-[23%] border-t-2 border-white/80" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 border-b-4 border-white/80" />
+              <div className="pointer-events-none absolute bottom-0 left-1/2 top-[23%] border-l-2 border-white/80" />
+              <div className="pointer-events-none absolute left-3 top-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
                 Net
               </div>
-              <div className="absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+              <div className="pointer-events-none absolute left-3 top-[25%] text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
+                Kitchen
+              </div>
+              <div className="pointer-events-none absolute bottom-3 left-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
                 Baseline
               </div>
               <div
