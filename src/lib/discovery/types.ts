@@ -2,9 +2,18 @@ export type DiscoveryInput = {
   courtX: number;
   courtY: number;
   ballHeight: number;
-  intent: number;
   handedness: "Right" | "Left";
+  shotType?: ShotType;
 };
+
+export type ShotType =
+  | "Dink"
+  | "Drop"
+  | "Drive"
+  | "Reset"
+  | "Attack"
+  | "Putaway"
+  | "Lob";
 
 export type ShotRange = {
   courtXMin: number;
@@ -15,15 +24,15 @@ export type ShotRange = {
   courtYMax: number;
   ballHeightMin: number;
   ballHeightMax: number;
-  intentMin: number;
-  intentMax: number;
+  shotType?: ShotType;
+  aggressionScore?: number;
+  difficulty?: number;
 };
 
 export type DiscoverableShot = ShotRange & {
   id: string;
   name: string;
   description?: string;
-  difficulty?: number;
   instructions?: string;
   videoUrl?: string | null;
 };

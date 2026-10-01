@@ -9,7 +9,10 @@ import {
 import type { DiscoverableShot } from "@/lib/discovery/types";
 import type { Drill } from "@/lib/drills/queries";
 import { AdminShotRangeEditor } from "@/components/admin-shot-range-editor";
-import { AssociationPicker, type AssociationOption } from "@/components/association-picker";
+import {
+  AssociationPicker,
+  type AssociationOption,
+} from "@/components/association-picker";
 
 function Input({
   name,
@@ -44,7 +47,15 @@ function Input({
   );
 }
 
-export function EditShotForm({ shot, drills = [], selectedDrillIds = [] }: { shot: DiscoverableShot; drills?: AssociationOption[]; selectedDrillIds?: string[] }) {
+export function EditShotForm({
+  shot,
+  drills = [],
+  selectedDrillIds = [],
+}: {
+  shot: DiscoverableShot;
+  drills?: AssociationOption[];
+  selectedDrillIds?: string[];
+}) {
   const [state, action, pending] = useActionState<AdminFormState, FormData>(
     updateShot,
     {},
@@ -53,9 +64,54 @@ export function EditShotForm({ shot, drills = [], selectedDrillIds = [] }: { sho
     <form action={action} className="mt-8 space-y-6">
       <input type="hidden" name="id" value={shot.id} />
       <Input name="name" label="Name" defaultValue={shot.name} />
-      <AdminShotRangeEditor initial={{ courtXMin: shot.courtXMin, courtXMax: shot.courtXMax, courtYMin: shot.courtYMin, courtYMax: shot.courtYMax, ballHeightMin: shot.ballHeightMin, ballHeightMax: shot.ballHeightMax, intentMin: shot.intentMin, intentMax: shot.intentMax }} />
-      <AssociationPicker name="drillIds" label="Related drills" options={drills} selectedIds={selectedDrillIds} />
-      <Input name="difficulty" label="Difficulty (0 to 5)" type="number" min={0} max={5} defaultValue={shot.difficulty} />
+      <AdminShotRangeEditor
+        initial={{
+          courtXMin: shot.courtXMin,
+          courtXMax: shot.courtXMax,
+          courtYMin: shot.courtYMin,
+          courtYMax: shot.courtYMax,
+          ballHeightMin: shot.ballHeightMin,
+          ballHeightMax: shot.ballHeightMax,
+        }}
+      />
+      <AssociationPicker
+        name="drillIds"
+        label="Related drills"
+        options={drills}
+        selectedIds={selectedDrillIds}
+      />
+      <label className="block text-sm text-[var(--muted)]">
+        Shot type
+        <select
+          name="shotType"
+          defaultValue={shot.shotType}
+          className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]"
+        >
+          {["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"].map(
+            (type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ),
+          )}
+        </select>
+      </label>
+      <Input
+        name="aggressionScore"
+        label="Aggression (0 to 100)"
+        type="number"
+        min={0}
+        max={100}
+        defaultValue={shot.aggressionScore}
+      />
+      <Input
+        name="difficulty"
+        label="Difficulty (0 to 100)"
+        type="number"
+        min={0}
+        max={100}
+        defaultValue={shot.difficulty}
+      />
       <Input
         name="videoUrl"
         label="Video URL (optional)"
@@ -88,7 +144,13 @@ export function EditShotForm({ shot, drills = [], selectedDrillIds = [] }: { sho
   );
 }
 
-export function EditDrillForm({ drill, shots = [] }: { drill: Drill; shots?: AssociationOption[] }) {
+export function EditDrillForm({
+  drill,
+  shots = [],
+}: {
+  drill: Drill;
+  shots?: AssociationOption[];
+}) {
   const [state, action, pending] = useActionState<AdminFormState, FormData>(
     updateDrill,
     {},
@@ -97,7 +159,12 @@ export function EditDrillForm({ drill, shots = [] }: { drill: Drill; shots?: Ass
     <form action={action} className="mt-8 space-y-6">
       <input type="hidden" name="id" value={drill.id} />
       <Input name="name" label="Name" defaultValue={drill.name} />
-      <AssociationPicker name="shotIds" label="Shots in this drill" options={shots} selectedIds={drill.shots.map((shot) => shot.id)} />
+      <AssociationPicker
+        name="shotIds"
+        label="Shots in this drill"
+        options={shots}
+        selectedIds={drill.shots.map((shot) => shot.id)}
+      />
       <TextArea
         name="description"
         label="Description"

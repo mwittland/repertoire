@@ -24,9 +24,17 @@ const shotSchema = z
     courtYMax: z.coerce.number().min(0).max(30),
     ballHeightMin: z.coerce.number().min(0).max(10),
     ballHeightMax: z.coerce.number().min(0).max(10),
-    intentMin: z.coerce.number().min(0).max(100),
-    intentMax: z.coerce.number().min(0).max(100),
-    difficulty: z.coerce.number().int().min(0).max(5),
+    shotType: z.enum([
+      "Dink",
+      "Drop",
+      "Drive",
+      "Reset",
+      "Attack",
+      "Putaway",
+      "Lob",
+    ]),
+    aggressionScore: z.coerce.number().int().min(0).max(100),
+    difficulty: z.coerce.number().int().min(0).max(100),
     videoUrl: optionalUrl,
     description: z.string().trim().min(1),
     instructions: z.string().trim().min(1),
@@ -39,9 +47,6 @@ const shotSchema = z
   })
   .refine((data) => data.ballHeightMin <= data.ballHeightMax, {
     message: "Ball height minimum must be no greater than maximum.",
-  })
-  .refine((data) => data.intentMin <= data.intentMax, {
-    message: "Intent minimum must be no greater than maximum.",
   });
 
 const drillSchema = z.object({
@@ -118,8 +123,8 @@ export async function createShot(
       court_y_max: parsed.data.courtYMax,
       ball_height_min: parsed.data.ballHeightMin,
       ball_height_max: parsed.data.ballHeightMax,
-      intent_min: parsed.data.intentMin,
-      intent_max: parsed.data.intentMax,
+      shot_type: parsed.data.shotType,
+      aggression_score: parsed.data.aggressionScore,
       difficulty: parsed.data.difficulty,
       video_url: parsed.data.videoUrl,
       description: parsed.data.description,
@@ -187,8 +192,8 @@ export async function updateShot(
       court_y_max: parsed.data.courtYMax,
       ball_height_min: parsed.data.ballHeightMin,
       ball_height_max: parsed.data.ballHeightMax,
-      intent_min: parsed.data.intentMin,
-      intent_max: parsed.data.intentMax,
+      shot_type: parsed.data.shotType,
+      aggression_score: parsed.data.aggressionScore,
       difficulty: parsed.data.difficulty,
       video_url: parsed.data.videoUrl,
       description: parsed.data.description,

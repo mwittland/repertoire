@@ -7,8 +7,10 @@ const discoverySchema = z.object({
   courtX: z.number().min(-15).max(15),
   courtY: z.number().min(0).max(30),
   ballHeight: z.number().min(0).max(10),
-  intent: z.number().min(0).max(100),
   handedness: z.enum(["Right", "Left"]).default("Right"),
+  shotType: z
+    .enum(["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"])
+    .optional(),
 });
 
 export async function POST(request: Request) {

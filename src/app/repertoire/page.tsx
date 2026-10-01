@@ -19,9 +19,7 @@ export default async function RepertoirePage() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Your collection
           </p>
-          <h1 className="mt-4 text-6xl leading-none">
-            Your repertoire.
-          </h1>
+          <h1 className="mt-4 text-6xl leading-none">Your repertoire.</h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
             Build confidence one repeatable shot at a time.
           </p>
@@ -35,7 +33,7 @@ export default async function RepertoirePage() {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-                        Difficulty {entry.difficulty} / 5
+                        Difficulty {entry.difficulty} / 100
                       </p>
                       <h2 className="mt-2 text-2xl">{entry.shotName}</h2>
                     </div>

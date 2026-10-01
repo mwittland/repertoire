@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
-import type { DiscoverableShot } from "@/lib/discovery/types";
+import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
 import { AnonymousHandedness } from "@/components/anonymous-handedness";
 
 const canvasRange = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
@@ -13,7 +13,7 @@ export default function DiscoverPage() {
   const [courtX, setCourtX] = useState(0);
   const [courtY, setCourtY] = useState(20);
   const [ballHeight, setBallHeight] = useState(5);
-  const [intent, setIntent] = useState(60);
+  const [shotType, setShotType] = useState<ShotType | "All">("All");
   const [handedness, setHandedness] = useState<"Right" | "Left">("Right");
   const [shots, setShots] = useState<DiscoverableShot[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,6 +24,10 @@ export default function DiscoverPage() {
   const yPercent =
     100 -
     ((courtY - canvasRange.yMin) / (canvasRange.yMax - canvasRange.yMin)) * 100;
+  const filteredShots =
+    shots && shotType !== "All"
+      ? shots.filter((shot) => shot.shotType === shotType)
+      : shots;
 
   useEffect(() => {
     if (shots !== null) {
@@ -139,9 +143,7 @@ export default function DiscoverPage() {
                 onChange={setBallHeight}
               />
             </div>
-            <div className="mt-8">
-              <IntentInput value={intent} onChange={setIntent} />
-            </div>
+            <div className="mt-8"></div>
             <AnonymousHandedness value={handedness} onChange={setHandedness} />
             <button
               onClick={async () => {
@@ -155,7 +157,6 @@ export default function DiscoverPage() {
                       courtX,
                       courtY,
                       ballHeight,
-                      intent,
                       handedness,
                     }),
                   });
@@ -203,12 +204,37 @@ export default function DiscoverPage() {
                 <h2 className="mt-2 text-4xl">Shots for this moment</h2>
               </div>
               <span className="text-sm text-[var(--muted)]">
-                {shots.length} found
+                {filteredShots?.length ?? 0} found
               </span>
             </div>
-            {shots.length > 0 ? (
+            <label className="mt-6 block max-w-xs text-sm text-[var(--muted)]">
+              Filter by shot type
+              <select
+                value={shotType}
+                onChange={(event) =>
+                  setShotType(event.target.value as ShotType | "All")
+                }
+                className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-3 text-[var(--ink)]"
+              >
+                <option value="All">All shot types</option>
+                {[
+                  "Dink",
+                  "Drop",
+                  "Drive",
+                  "Reset",
+                  "Attack",
+                  "Putaway",
+                  "Lob",
+                ].map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {filteredShots && filteredShots.length > 0 ? (
               <div className="mt-7 grid gap-4 md:grid-cols-2">
-                {shots.map((shot) => (
+                {filteredShots.map((shot) => (
                   <ShotCard key={shot.id} shot={shot} />
                 ))}
               </div>
@@ -265,42 +291,5 @@ function VerticalHeightInput({
         />
       </div>
     </div>
-  );
-}
-
-function IntentInput({
-  value,
-  onChange,
-}: {
-  value: number;
-  onChange: (value: number) => void;
-}) {
-  const label =
-    value < 20
-      ? "Defend"
-      : value < 40
-        ? "Reset"
-        : value < 60
-          ? "Build"
-          : value < 80
-            ? "Attack"
-            : "Finish";
-
-  return (
-    <label className="block">
-      <span className="flex items-baseline justify-between">
-        <h2 className="text-2xl">Intent</h2>
-        <strong className="text-base text-[var(--coral)]">{label}</strong>
-      </span>
-      <input
-        aria-label={`Intent: ${label}`}
-        type="range"
-        min={0}
-        max={100}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-        className="mt-4 w-full accent-[var(--coral)]"
-      />
-    </label>
   );
 }
