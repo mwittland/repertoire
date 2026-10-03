@@ -34,6 +34,24 @@ export async function addToRepertoire(formData: FormData) {
   redirect(`/shots/${shotId.data}?added=1`);
 }
 
+export async function quickAddToRepertoire(formData: FormData) {
+  const shotId = z.string().uuid().safeParse(formData.get("shotId"));
+  if (!shotId.success) return { success: false, error: "Invalid shot." };
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase
+    .from("repertoire_entries")
+    .upsert(
+      { user_id: user.id, shot_id: shotId.data, confidence: 0 },
+      { onConflict: "user_id,shot_id", ignoreDuplicates: true },
+    );
+  if (error) return { success: false, error: "Unable to add shot right now." };
+  revalidatePath("/library");
+  revalidatePath("/discover");
+  revalidatePath("/repertoire");
+  revalidatePath("/repertoire/shots");
+  return { success: true };
+}
+
 export async function updateConfidence(formData: FormData) {
   const parsed = entrySchema.safeParse({
     shotId: formData.get("shotId"),
@@ -55,4 +73,21 @@ export async function updateConfidence(formData: FormData) {
   revalidatePath("/repertoire");
   revalidatePath(`/shots/${parsed.data.shotId}`);
   return { success: true };
+}
+
+export async function removeFromRepertoire(formData: FormData) {
+  const shotId = z.string().uuid().safeParse(formData.get("shotId"));
+  if (!shotId.success) return;
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase
+    .from("repertoire_entries")
+    .delete()
+    .eq("user_id", user.id)
+    .eq("shot_id", shotId.data);
+  if (error) throw new Error(`Unable to remove shot: ${error.message}`);
+  revalidatePath("/repertoire");
+  revalidatePath("/repertoire/shots");
+  revalidatePath(`/shots/${shotId.data}`);
+  revalidatePath("/library");
+  revalidatePath("/discover");
 }

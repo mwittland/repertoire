@@ -2,7 +2,10 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getShotById } from "@/lib/shots/queries";
 import { getRepertoireEntry } from "@/lib/repertoire/queries";
-import { addToRepertoire } from "@/app/actions/repertoire";
+import {
+  addToRepertoire,
+  removeFromRepertoire,
+} from "@/app/actions/repertoire";
 import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
 import { listDrillsForShot } from "@/lib/drills/queries";
 import { ShotRangePreview } from "@/components/shot-range-preview";
@@ -67,10 +70,21 @@ export default async function ShotPage({
               </div>
             )}
             {repertoireEntry ? (
-              <ConfidenceForm
-                shotId={shotId}
-                initialConfidence={repertoireEntry.confidence}
-              />
+              <>
+                <ConfidenceForm
+                  shotId={shotId}
+                  initialConfidence={repertoireEntry.confidence}
+                />
+                <form action={removeFromRepertoire} className="mt-3">
+                  <input type="hidden" name="shotId" value={shotId} />
+                  <button
+                    type="submit"
+                    className="w-full rounded-xl border border-[var(--coral)] px-5 py-3 font-bold text-[var(--coral)] transition hover:bg-[var(--coral)] hover:text-white"
+                  >
+                    Remove from repertoire
+                  </button>
+                </form>
+              </>
             ) : (
               <form action={addToRepertoire}>
                 <input type="hidden" name="shotId" value={shotId} />

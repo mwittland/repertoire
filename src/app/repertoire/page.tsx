@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { listRepertoireEntries } from "@/lib/repertoire/queries";
-import { ConfidenceForm } from "@/components/confidence-form";
+import { listRepertoireShots } from "@/lib/repertoire/queries";
+import { HowItWorksMap } from "@/components/how-it-works-map";
 
 export default async function RepertoirePage() {
   const supabase = await createClient();
@@ -10,7 +10,7 @@ export default async function RepertoirePage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/repertoire");
-  const entries = await listRepertoireEntries();
+  const shots = await listRepertoireShots();
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -23,35 +23,25 @@ export default async function RepertoirePage() {
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
             Build confidence one repeatable shot at a time.
           </p>
-          {entries && entries.length > 0 ? (
-            <div className="mt-12 grid gap-4 md:grid-cols-2">
-              {entries.map((entry) => (
-                <article
-                  key={entry.shotId}
-                  className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-                        Difficulty {entry.difficulty} / 100
-                      </p>
-                      <h2 className="mt-2 text-2xl">{entry.shotName}</h2>
-                    </div>
-                    <Link
-                      href={`/shots/${entry.shotId}`}
-                      className="text-sm font-bold text-[var(--teal)]"
-                    >
-                      View →
-                    </Link>
-                  </div>
-                  <ConfidenceForm
-                    shotId={entry.shotId}
-                    initialConfidence={entry.confidence}
-                    compact
-                  />
-                </article>
-              ))}
-            </div>
+          {shots.length > 0 ? (
+            <>
+              <HowItWorksMap
+                shots={shots}
+                heading="See your repertoire at a glance."
+                description="This map shows only the court coverage of shots you have saved. Adjust the controls to see how your repertoire fits different moments."
+              />
+              <Link
+                href="/repertoire/shots"
+                className="mt-8 block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+              >
+                <h2 className="text-2xl">
+                  Browse your shots <span className="float-right text-[var(--teal)]">→</span>
+                </h2>
+                <p className="mt-3 leading-6 text-[var(--muted)]">
+                  Sort, review, and open the shots you are practicing.
+                </p>
+              </Link>
+            </>
           ) : (
             <div className="mt-10 rounded-2xl border border-dashed border-[var(--line)] p-8">
               <h2 className="text-2xl">Your collection is waiting.</h2>

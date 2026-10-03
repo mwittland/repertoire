@@ -86,8 +86,8 @@ export function LibraryTabs({
           </div>
           {visibleShots.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {visibleShots.map((shot) => (
-                <ShotCard key={shot.id} shot={shot} />
+                {visibleShots.map((shot) => (
+                  <ShotCard key={shot.id} shot={shot} editableConfidence={false} />
               ))}
             </div>
           ) : (

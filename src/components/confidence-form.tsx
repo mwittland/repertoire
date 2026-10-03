@@ -17,12 +17,22 @@ export function ConfidenceBar({
 }) {
   const value = confidence ?? 0;
   return (
-    <div className={large ? "text-sm text-[var(--muted)]" : "text-xs text-[var(--muted)]"}>
-      <div className={large ? "mb-2 flex justify-between" : "mb-1 flex justify-between"}>
+    <div
+      className={
+        large ? "text-sm text-[var(--muted)]" : "text-xs text-[var(--muted)]"
+      }
+    >
+      <div
+        className={
+          large ? "mb-2 flex justify-between" : "mb-1 flex justify-between"
+        }
+      >
         <span>Confidence</span>
         <span>{confidence === null ? "?" : confidence}</span>
       </div>
-      <div className={`relative rounded-full bg-[#d4e0d6] ${large ? "h-2" : "h-1.5"}`}>
+      <div
+        className={`relative rounded-full bg-[#d4e0d6] ${large ? "h-2" : "h-1.5"}`}
+      >
         <div
           className="absolute inset-y-0 left-0 rounded-full bg-[var(--teal)] transition-[width]"
           style={{ width: `${value}%` }}
@@ -48,10 +58,12 @@ export function ConfidenceForm({
   shotId,
   initialConfidence,
   compact = false,
+  flush = false,
 }: {
   shotId: string;
   initialConfidence: number | null;
   compact?: boolean;
+  flush?: boolean;
 }) {
   const router = useRouter();
   const [confidence, setConfidence] = useState(initialConfidence);
@@ -78,10 +90,10 @@ export function ConfidenceForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={compact ? "border-t border-[var(--line)] pt-5" : "mt-4"}
+      className={compact ? (flush ? "" : "pt-5") : "mt-4"}
     >
       <input type="hidden" name="shotId" value={shotId} />
-      <div className={compact ? "mt-4" : ""}>
+      <div className={compact && !flush ? "mt-4" : ""}>
         <ConfidenceBar
           confidence={confidence}
           interactive
