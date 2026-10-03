@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState, type PointerEvent, type KeyboardEvent } from "react";
 import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
-import type { Drill } from "@/lib/drills/queries";
+import { drillTypes, type Drill, type DrillType } from "@/lib/drills/types";
 
 const shotTypes: ShotType[] = [
   "Dink",
@@ -89,6 +89,7 @@ export function HowItWorksMap({
   const [selectedHandedness, setSelectedHandedness] = useState<"Right" | "Left">("Right");
   const [mapMode, setMapMode] = useState<"coverage" | "confidence">("coverage");
   const [mapSubject, setMapSubject] = useState<"shots" | "drills">("shots");
+  const [enabledDrillTypes, setEnabledDrillTypes] = useState<DrillType[]>([...drillTypes]);
   const handedness = accountHandedness ?? selectedHandedness;
 
   const visibleShots = shots.filter(
@@ -99,7 +100,10 @@ export function HowItWorksMap({
       shot.ballHeightMin <= maxHeight,
   );
   const visibleDrills = drills.filter(
-    (drill) => drill.ballHeightMax >= minHeight && drill.ballHeightMin <= maxHeight,
+    (drill) =>
+      enabledDrillTypes.includes(drill.type) &&
+      drill.ballHeightMax >= minHeight &&
+      drill.ballHeightMin <= maxHeight,
   );
   const confidenceRegions = (() => {
     const xBoundaries = Array.from(
@@ -202,6 +206,13 @@ export function HowItWorksMap({
         : [...current, type],
     );
   }
+  function toggleDrillType(type: DrillType) {
+    setEnabledDrillTypes((current) =>
+      current.includes(type)
+        ? current.filter((enabledType) => enabledType !== type)
+        : [...current, type],
+    );
+  }
 
   return (
     <section className="mt-16 border-t border-[var(--line)] pt-12">
@@ -212,7 +223,7 @@ export function HowItWorksMap({
         <h2 className="mt-3 text-4xl">{heading}</h2>
         <p className="mt-5 text-lg leading-8 text-[var(--muted)]">{description}</p>
       </div>
-      <div className="mt-8 grid gap-8 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="mt-8 grid gap-8 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 sm:p-7 lg:justify-center lg:gap-7 lg:grid-cols-[minmax(0,42rem)_18rem]">
         {showSubjectToggle && (
           <div className="mx-auto grid w-full max-w-3xl grid-cols-2 rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-2 shadow-[var(--shadow)] lg:col-span-2">
             {(["shots", "drills"] as const).map((subject) => (
@@ -228,7 +239,7 @@ export function HowItWorksMap({
           </div>
         )}
         <div>
-          <div className="relative mx-auto aspect-square w-full max-w-2xl overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd]">
+          <div className="relative aspect-square w-full max-w-2xl overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd]">
             <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
               <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
             </div>
@@ -268,7 +279,7 @@ export function HowItWorksMap({
                   );
                 })
               : mapSubject === "drills"
-                ? drills.map((drill) => {
+                ? visibleDrills.map((drill) => {
                     const xMin = handedness === "Left" ? drill.courtXLeftMin : drill.courtXMin;
                     const xMax = handedness === "Left" ? drill.courtXLeftMax : drill.courtXMax;
                     return (
@@ -337,7 +348,7 @@ export function HowItWorksMap({
             </div>
           )}
         </div>
-        <aside className="space-y-7">
+        <aside className="space-y-7 lg:pr-4">
           {showConfidenceToggle && (
             <fieldset>
               <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
@@ -373,6 +384,24 @@ export function HowItWorksMap({
                     className="h-4 w-4 accent-[var(--teal)]"
                   />
                   <span className="h-3 w-3 rounded-full" style={{ backgroundColor: typeColors[type] }} />
+                  <span>{type}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>}
+          {mapSubject === "drills" && <fieldset>
+            <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
+              Drill types
+            </legend>
+            <div className="mt-4 space-y-3">
+              {drillTypes.map((type) => (
+                <label key={type} className="flex cursor-pointer items-center gap-3 text-sm font-bold">
+                  <input
+                    type="checkbox"
+                    checked={enabledDrillTypes.includes(type)}
+                    onChange={() => toggleDrillType(type)}
+                    className="h-4 w-4 accent-[var(--teal)]"
+                  />
                   <span>{type}</span>
                 </label>
               ))}

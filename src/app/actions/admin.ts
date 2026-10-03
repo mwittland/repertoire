@@ -51,6 +51,7 @@ const shotSchema = z
 
 const drillSchema = z.object({
   name: z.string().trim().min(2),
+  type: z.enum(["Solo", "Wall", "Ball Machine", "Partner+"]),
   courtXMin: z.coerce.number().min(-15).max(15),
   courtXMax: z.coerce.number().min(-15).max(15),
   courtYMin: z.coerce.number().min(0).max(30),
@@ -162,6 +163,7 @@ export async function createDrill(
     .from("drills")
     .insert({
       name: parsed.data.name,
+      type: parsed.data.type,
       court_x_min: parsed.data.courtXMin,
       court_x_max: parsed.data.courtXMax,
       court_x_left_min: -parsed.data.courtXMax,
@@ -252,6 +254,7 @@ export async function updateDrill(
     .from("drills")
     .update({
       name: parsed.data.name,
+      type: parsed.data.type,
       description: parsed.data.description,
       video_url: parsed.data.videoUrl,
       updated_at: new Date().toISOString(),

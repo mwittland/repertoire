@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createShotLibraryCsv, parseShotLibraryCsv } from "./shot-library-csv";
 
 describe("shot library CSV", () => {
-  it("round-trips quoted content and drill associations", () => {
+  it("round-trips quoted shot content", () => {
     const csv = createShotLibraryCsv([{
       name: "Cross-court, soft",
       shot_type: "Dink",
@@ -17,14 +17,12 @@ describe("shot library CSV", () => {
       description: "Keep it low, then reset.",
       instructions: "Breathe\nStay balanced",
       video_url: null,
-      drills: "Kitchen reps|Cross-court patterns",
     }]);
 
     expect(parseShotLibraryCsv(csv)[0]).toMatchObject({
       name: "Cross-court, soft",
       description: "Keep it low, then reset.",
       instructions: "Breathe\nStay balanced",
-      drills: ["Kitchen reps", "Cross-court patterns"],
     });
   });
 

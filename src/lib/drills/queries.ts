@@ -1,29 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import type { DiscoveryInput } from "@/lib/discovery/types";
+import { drillTypes, type Drill, type DrillType } from "@/lib/drills/types";
 
-export type Drill = {
-  id: string;
-  name: string;
-  description: string;
-  videoUrl: string | null;
-  courtXMin: number;
-  courtXMax: number;
-  courtXLeftMin: number;
-  courtXLeftMax: number;
-  courtYMin: number;
-  courtYMax: number;
-  ballHeightMin: number;
-  ballHeightMax: number;
-  mastery?: number | null;
-  shots: { id: string; name: string }[];
-};
+export { drillTypes };
+export type { Drill, DrillType };
 
-const drillFields = "id,name,description,video_url,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max";
+const drillFields = "id,name,type,description,video_url,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max";
 
 function toDrill(row: Record<string, unknown>, shots: { id: string; name: string }[] = []): Drill {
   return {
     id: String(row.id),
     name: String(row.name),
+    type: drillTypes.includes(row.type as DrillType) ? row.type as DrillType : "Solo",
     description: String(row.description ?? ""),
     videoUrl: typeof row.video_url === "string" ? row.video_url : null,
     courtXMin: Number(row.court_x_min),

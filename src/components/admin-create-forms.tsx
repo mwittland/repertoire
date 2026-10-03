@@ -58,6 +58,15 @@ export function CreateShotForm({
   return (
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
+      <label className="block text-sm text-[var(--muted)]">
+        Drill type
+        <select name="type" defaultValue="Solo" className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]">
+          <option>Solo</option>
+          <option>Wall</option>
+          <option>Ball Machine</option>
+          <option>Partner+</option>
+        </select>
+      </label>
       <AdminShotRangeEditor />
       <AssociationPicker
         name="drillIds"

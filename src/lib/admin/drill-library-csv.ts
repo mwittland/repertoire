@@ -3,6 +3,7 @@ import { escapeCsv } from "./shot-library-csv";
 
 export const drillLibraryColumns = [
   "name",
+  "type",
   "court_x_min",
   "court_x_max",
   "court_y_min",
@@ -16,6 +17,7 @@ export const drillLibraryColumns = [
 
 const rowSchema = z.object({
   name: z.string().trim().min(2),
+  type: z.enum(["Solo", "Wall", "Ball Machine", "Partner+"]),
   court_x_min: z.coerce.number().min(-15).max(15),
   court_x_max: z.coerce.number().min(-15).max(15),
   court_y_min: z.coerce.number().min(0).max(30),

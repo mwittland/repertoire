@@ -32,6 +32,7 @@ export async function importDrillLibrary(_: DrillLibraryImportState, formData: F
       if (existing) throw new Error(`A drill named "${row.name}" already exists.`);
       const { data: drill, error } = await supabase.from("drills").insert({
         name: row.name,
+        type: row.type,
         description: row.description,
         video_url: row.video_url,
         court_x_min: row.court_x_min,

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
 import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
-import type { Drill } from "@/lib/drills/queries";
+import type { Drill } from "@/lib/drills/types";
 import { DrillCard } from "@/components/drill-card";
 import { AnonymousHandedness } from "@/components/anonymous-handedness";
 
@@ -32,6 +32,7 @@ export default function DiscoverPage() {
     shots && shotType !== "All"
       ? shots.filter((shot) => shot.shotType === shotType)
       : shots;
+  const resultNoun = kind === "shots" ? "shot" : "drill";
 
   useEffect(() => {
     if (shots !== null || drills !== null) {
@@ -78,20 +79,55 @@ export default function DiscoverPage() {
     setCourtPosition(courtX + offset[0], courtY + offset[1]);
   }
 
+  async function findResults(targetKind: "shots" | "drills") {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/discover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courtX,
+          courtY,
+          ballHeight,
+          handedness,
+          kind: targetKind,
+        }),
+      });
+      const result = (await response.json()) as {
+        shots?: DiscoverableShot[];
+        drills?: Drill[];
+        error?: string;
+      };
+      if (!response.ok) throw new Error(result.error);
+      setShots(targetKind === "shots" ? result.shots ?? [] : null);
+      setDrills(targetKind === "drills" ? result.drills ?? [] : null);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : `We could not load ${targetKind} right now.`,
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="min-h-screen overflow-hidden">
       <div className="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-12">
         <section className="grid gap-12 pb-20 pt-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pt-24">
           <div>
             <p className="mb-5 text-sm font-bold uppercase tracking-[0.25em] text-[var(--coral)]">
-              Your next shot is here
+              Find your next option
             </p>
             <h1 className="max-w-xl text-6xl leading-[0.95] sm:text-7xl">
-              Find the right shot.
+              Find the right shot or drill for this moment.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-[var(--muted)]">
-              Choose your court position and ball height. Repertoire will
-              surface the shots that fit the situation.
+              Choose your court position and ball height, then search either
+              the shot catalog or your available practice drills. Repertoire
+              will surface the options that fit the situation.
             </p>
           </div>
           <section className="rounded-[2rem] border border-[var(--line)] bg-[var(--card)] p-6 shadow-[0_20px_80px_rgba(24,50,45,0.08)] sm:p-9">
@@ -127,46 +163,14 @@ export default function DiscoverPage() {
             <div className="mt-8"></div>
             <AnonymousHandedness value={handedness} onChange={setHandedness} />
             <button
-              onClick={async () => {
-                setLoading(true);
-                setError(null);
-                try {
-                  const response = await fetch("/api/discover", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      courtX,
-                      courtY,
-                      ballHeight,
-                      handedness,
-                      kind,
-                    }),
-                  });
-                  const result = (await response.json()) as {
-                    shots?: DiscoverableShot[];
-                    drills?: Drill[];
-                    error?: string;
-                  };
-                  if (!response.ok) throw new Error(result.error);
-                  setShots(result.shots ?? []);
-                  setDrills(result.drills ?? []);
-                } catch (requestError) {
-                  setError(
-                    requestError instanceof Error
-                      ? requestError.message
-                      : "We could not load shots right now.",
-                  );
-                } finally {
-                  setLoading(false);
-                }
-              }}
+              onClick={() => void findResults(kind)}
               disabled={loading}
               className="mt-9 flex w-full items-center justify-between rounded-xl bg-[var(--ink)] px-5 py-4 text-left text-base font-bold text-white transition hover:bg-[var(--teal)]"
             >
               <span>
                 {loading
                   ? `Finding ${kind}...`
-                  : `Find ${kind} for this moment`}
+                  : `Find matching ${kind}`}
               </span>
               <span aria-hidden="true">→</span>
             </button>
@@ -186,7 +190,9 @@ export default function DiscoverPage() {
                   Your matches
                 </p>
                 <h2 className="mt-2 text-4xl">
-                  {kind === "shots" ? "Shots" : "Drills"} for this moment
+                  {kind === "shots"
+                    ? "Shots that fit this moment"
+                    : "Drills that fit this moment"}
                 </h2>
               </div>
               <span className="text-sm text-[var(--muted)]">
@@ -198,7 +204,10 @@ export default function DiscoverPage() {
                 <button
                   key={option}
                   type="button"
-                  onClick={() => setKind(option)}
+                  onClick={() => {
+                    setKind(option);
+                    void findResults(option);
+                  }}
                   className={`rounded-full px-4 py-2 font-bold capitalize ${kind === option ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--muted)] hover:bg-[var(--card)] hover:text-[var(--ink)]"}`}
                 >
                   {option}
@@ -242,15 +251,17 @@ export default function DiscoverPage() {
               </div>
             ) : (
               <div className="mt-7 rounded-2xl border border-dashed border-[var(--line)] p-8">
-                <h3 className="text-2xl">Can&apos;t find your shot?</h3>
+                <h3 className="text-2xl">
+                  Can&apos;t find your {resultNoun}?
+                </h3>
                 <p className="mt-2 text-[var(--muted)]">
-                  Try a nearby situation or request a new {kind === "shots" ? "shot" : "drill"} for the catalog.
+                  Try a nearby situation or request a new {resultNoun} for the catalog.
                 </p>
                 <Link
                   href={kind === "shots" ? "/request-shot" : "/request-drill"}
                   className="mt-5 inline-block font-bold text-[var(--teal)]"
                 >
-                  Submit a new shot →
+                  Submit a new {resultNoun} →
                 </Link>
               </div>
             )}

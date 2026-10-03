@@ -68,13 +68,26 @@ export default async function HowItWorksPage() {
 
         <section className="border-t border-[var(--line)] py-12">
           <div className="max-w-3xl">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">04 / Ratings</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">05 / Ratings</p>
             <h2 className="mt-3 text-4xl">Read the three signals.</h2>
           </div>
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             <RatingExplanation title="Aggression" description="How much pressure and pace the shot is intended to create. A higher score means a more offensive choice." color="var(--coral)" />
-            <RatingExplanation title="Difficulty" description="How demanding the shot is to execute consistently. A higher score means more timing, control, or precision is required." color="var(--coral)" />
+            <RatingExplanation title="Difficulty" description="How demanding the shot is to execute consistently. A higher score means more timing, control, or precision is required." color="#648ac0" />
             <RatingExplanation title="Confidence & mastery" description="Confidence records readiness for saved shots; mastery records progress for routine drills. Both run from 0 to 100." color="var(--teal)" />
+          </div>
+        </section>
+
+        <section className="border-t border-[var(--line)] py-12">
+          <div className="max-w-3xl">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">04 / Drill types</p>
+            <h2 className="mt-3 text-4xl">Choose the practice setup that fits you.</h2>
+          </div>
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <RatingExplanation title="Solo" description="Drills you can do completely by yourself with just a paddle and balls." color="var(--teal)" />
+            <RatingExplanation title="Wall" description="Drills that require a wall or rebound surface." color="var(--teal)" />
+            <RatingExplanation title="Ball Machine" description="Drills designed around feeds from a ball machine." color="var(--teal)" />
+            <RatingExplanation title="Partner+" description="Drills requiring at least one other player." color="var(--teal)" />
           </div>
         </section>
 
