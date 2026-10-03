@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { AdminShotLibraryTools } from "@/components/admin-shot-library-tools";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -38,6 +39,7 @@ export default async function AdminPage() {
             description="Moderate shot and drill ideas submitted by players."
           />
         </div>
+        <AdminShotLibraryTools />
       </div>
     </main>
   );
