@@ -3,7 +3,10 @@ import type { DiscoverableShot } from "@/lib/discovery/types";
 
 export function ShotCard({ shot }: { shot: DiscoverableShot }) {
   return (
-    <article className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5">
+    <Link
+      href={`/shots/${shot.id}`}
+      className="group block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--teal)] hover:shadow-[var(--shadow)]"
+    >
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
@@ -11,12 +14,6 @@ export function ShotCard({ shot }: { shot: DiscoverableShot }) {
           </p>
           <h3 className="mt-2 text-2xl">{shot.name}</h3>
         </div>
-        <Link
-          href={`/shots/${shot.id}`}
-          className="text-sm font-bold text-[var(--teal)]"
-        >
-          Learn →
-        </Link>
       </div>
       <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
         {shot.description}
@@ -25,7 +22,7 @@ export function ShotCard({ shot }: { shot: DiscoverableShot }) {
         <Score label="Aggression" value={shot.aggressionScore ?? 0} />
         <Score label="Difficulty" value={shot.difficulty ?? 0} />
       </div>
-    </article>
+    </Link>
   );
 }
 

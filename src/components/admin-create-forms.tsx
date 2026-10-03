@@ -11,6 +11,7 @@ import {
   AssociationPicker,
   type AssociationOption,
 } from "@/components/association-picker";
+import { ScoreInput } from "@/components/score-input";
 
 function Field({
   name,
@@ -79,22 +80,14 @@ export function CreateShotForm({
           )}
         </select>
       </label>
-      <Field
-        name="aggressionScore"
-        label="Aggression (0 to 100)"
-        type="number"
-        min={0}
-        max={100}
-        step="1"
-      />
-      <Field
-        name="difficulty"
-        label="Difficulty (0 to 100)"
-        type="number"
-        min={0}
-        max={100}
-        step="1"
-      />
+      <div className="grid gap-5 sm:grid-cols-2">
+        <ScoreInput
+          name="aggressionScore"
+          label="Aggression"
+          initialValue={50}
+        />
+        <ScoreInput name="difficulty" label="Difficulty" initialValue={50} />
+      </div>
       <Field
         name="videoUrl"
         label="Video URL (optional)"
