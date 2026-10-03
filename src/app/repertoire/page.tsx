@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { listRepertoireShots } from "@/lib/repertoire/queries";
+import { listRoutineDrills } from "@/lib/drills/queries";
 import { HowItWorksMap } from "@/components/how-it-works-map";
 
 export default async function RepertoirePage() {
@@ -10,7 +11,14 @@ export default async function RepertoirePage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/repertoire");
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("handedness")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profileError) throw new Error(`Unable to load profile: ${profileError.message}`);
   const shots = await listRepertoireShots();
+  const routineDrills = await listRoutineDrills();
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -21,26 +29,46 @@ export default async function RepertoirePage() {
           </p>
           <h1 className="mt-4 text-6xl leading-none">Your repertoire.</h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
-            Build confidence one repeatable shot at a time.
+            Build confidence in your repertoire and mastery in your routine, one repeatable session at a time.
           </p>
           {shots.length > 0 ? (
             <>
               <HowItWorksMap
                 shots={shots}
+                drills={routineDrills}
+                handedness={profile?.handedness ?? "Right"}
+                showSubjectToggle
+                subjectLabels={{ shots: "Repertoire", drills: "Routine" }}
+                showConfidenceToggle
                 heading="See your repertoire at a glance."
-                description="This map shows only the court coverage of shots you have saved. Adjust the controls to see how your repertoire fits different moments."
+                description="This map shows the court coverage of your saved shots and routine drills. Switch between Repertoire and Routine, then compare coverage with confidence or mastery."
               />
-              <Link
-                href="/repertoire/shots"
-                className="mt-8 block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
-              >
-                <h2 className="text-2xl">
-                  Browse your shots <span className="float-right text-[var(--teal)]">→</span>
-                </h2>
-                <p className="mt-3 leading-6 text-[var(--muted)]">
-                  Sort, review, and open the shots you are practicing.
-                </p>
-              </Link>
+              <div className="mt-8 grid gap-4 md:grid-cols-2">
+                <Link
+                  href="/repertoire/shots"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    Browse your shots <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    Sort, review, and open the shots you are practicing.
+                  </p>
+                </Link>
+                {routineDrills.length > 0 && (
+                  <Link
+                    href="/repertoire/drills"
+                    className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                  >
+                    <h2 className="text-2xl">
+                      Browse your drills <span className="float-right text-[var(--teal)]">→</span>
+                    </h2>
+                    <p className="mt-3 leading-6 text-[var(--muted)]">
+                      Review the drills in your routine and update mastery.
+                    </p>
+                  </Link>
+                )}
+              </div>
             </>
           ) : (
             <div className="mt-10 rounded-2xl border border-dashed border-[var(--line)] p-8">

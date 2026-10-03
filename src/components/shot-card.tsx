@@ -108,7 +108,7 @@ function Score({ label, value }: { label: string; value: number }) {
       </div>
       <div className="h-1.5 rounded-full bg-[#d4e0d6]">
         <div
-          className="h-1.5 rounded-full bg-[var(--coral)]"
+          className={`h-1.5 rounded-full ${label === "Difficulty" ? "bg-[#648ac0]" : "bg-[var(--coral)]"}`}
           style={{ width: `${value}%` }}
         />
       </div>

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRef, useState, type PointerEvent, type KeyboardEvent } from "react";
 import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
+import type { Drill } from "@/lib/drills/queries";
 
 const shotTypes: ShotType[] = [
   "Dink",
@@ -34,19 +35,61 @@ function percentY(value: number) {
   return 100 - ((value - canvas.yMin) / (canvas.yMax - canvas.yMin)) * 100;
 }
 
+function confidenceColor(value: number) {
+  const stops = [
+    { value: 0, color: [185, 215, 242] },
+    { value: 50, color: [100, 138, 192] },
+    { value: 100, color: [47, 95, 159] },
+  ];
+  const boundedValue = Math.max(0, Math.min(100, value));
+  const upperStop = stops.find((stop) => stop.value >= boundedValue) ?? stops[stops.length - 1];
+  const lowerStop = stops[stops.indexOf(upperStop) - 1] ?? upperStop;
+  const ratio =
+    upperStop.value === lowerStop.value
+      ? 0
+      : (boundedValue - lowerStop.value) / (upperStop.value - lowerStop.value);
+  const color = lowerStop.color.map((channel, index) =>
+    Math.round(channel + (upperStop.color[index] - channel) * ratio),
+  );
+  return `rgb(${color.join(", ")})`;
+}
+
+function masteryColor(value: number) {
+  const boundedValue = Math.max(0, Math.min(100, value));
+  const light = [245, 215, 125];
+  const dark = [177, 123, 22];
+  const color = light.map((channel, index) =>
+    Math.round(channel + (dark[index] - channel) * (boundedValue / 100)),
+  );
+  return `rgb(${color.join(", ")})`;
+}
+
 export function HowItWorksMap({
   shots,
-  heading = "See the shot system at a glance.",
-  description = "Every colored region is the combined coverage of the shots in that type. Adjust the ball-height range to see which regions stay available for the moment you are in.",
+  drills = [],
+  handedness: accountHandedness,
+  showSubjectToggle = false,
+  subjectLabels = { shots: "Shots", drills: "Drills" },
+  showConfidenceToggle = false,
+  heading = "See your game at a glance.",
+  description = "Every colored region shows where your shots or drills apply. Adjust the ball-height range to see which options stay available for the moment you are in.",
 }: {
   shots: DiscoverableShot[];
+  drills?: Drill[];
+  handedness?: "Right" | "Left";
+  showSubjectToggle?: boolean;
+  subjectLabels?: { shots: string; drills: string };
+  showConfidenceToggle?: boolean;
   heading?: string;
   description?: string;
 }) {
   const [enabledTypes, setEnabledTypes] = useState<ShotType[]>(shotTypes);
   const [minHeight, setMinHeight] = useState(0);
   const [maxHeight, setMaxHeight] = useState(10);
-  const [handedness, setHandedness] = useState<"Right" | "Left">("Right");
+  const [selectedHandedness, setSelectedHandedness] = useState<"Right" | "Left">("Right");
+  const [mapMode, setMapMode] = useState<"coverage" | "confidence">("coverage");
+  const [mapSubject, setMapSubject] = useState<"shots" | "drills">("shots");
+  const handedness = accountHandedness ?? selectedHandedness;
 
   const visibleShots = shots.filter(
     (shot) =>
@@ -55,7 +98,103 @@ export function HowItWorksMap({
       shot.ballHeightMax >= minHeight &&
       shot.ballHeightMin <= maxHeight,
   );
+  const visibleDrills = drills.filter(
+    (drill) => drill.ballHeightMax >= minHeight && drill.ballHeightMin <= maxHeight,
+  );
+  const confidenceRegions = (() => {
+    const xBoundaries = Array.from(
+      new Set([
+        canvas.xMin,
+        canvas.xMax,
+        ...visibleShots.flatMap((shot) => [
+          handedness === "Left" ? shot.courtXLeftMin : shot.courtXMin,
+          handedness === "Left" ? shot.courtXLeftMax : shot.courtXMax,
+        ]),
+      ]),
+    ).sort((a, b) => a - b);
+    const yBoundaries = Array.from(
+      new Set([
+        canvas.yMin,
+        canvas.yMax,
+        ...visibleShots.flatMap((shot) => [shot.courtYMin, shot.courtYMax]),
+      ]),
+    ).sort((a, b) => a - b);
 
+    return xBoundaries.slice(0, -1).flatMap((xMin, column) =>
+      yBoundaries.slice(0, -1).map((yMin, row) => {
+        const xMax = xBoundaries[column + 1];
+        const yMax = yBoundaries[row + 1];
+        const centerX = (xMin + xMax) / 2;
+        const centerY = (yMin + yMax) / 2;
+        const confidenceValues = visibleShots.flatMap((shot) => {
+          const shotXMin =
+            handedness === "Left" ? shot.courtXLeftMin : shot.courtXMin;
+          const shotXMax =
+            handedness === "Left" ? shot.courtXLeftMax : shot.courtXMax;
+          return centerX >= shotXMin &&
+            centerX <= shotXMax &&
+            centerY >= shot.courtYMin &&
+            centerY <= shot.courtYMax &&
+            shot.confidence !== null &&
+            shot.confidence !== undefined
+            ? [shot.confidence]
+            : [];
+        });
+        return {
+          xMin,
+          xMax,
+          yMin,
+          yMax,
+          confidence:
+            confidenceValues.length > 0
+              ? confidenceValues.reduce((sum, value) => sum + value, 0) /
+                confidenceValues.length
+              : null,
+        };
+      }),
+    );
+  })();
+  const masteryRegions = (() => {
+    const xBoundaries = Array.from(new Set([
+      canvas.xMin,
+      canvas.xMax,
+      ...visibleDrills.flatMap((drill) => [
+        handedness === "Left" ? drill.courtXLeftMin : drill.courtXMin,
+        handedness === "Left" ? drill.courtXLeftMax : drill.courtXMax,
+      ]),
+    ])).sort((a, b) => a - b);
+    const yBoundaries = Array.from(new Set([
+      canvas.yMin,
+      canvas.yMax,
+      ...visibleDrills.flatMap((drill) => [drill.courtYMin, drill.courtYMax]),
+    ])).sort((a, b) => a - b);
+    return xBoundaries.slice(0, -1).flatMap((xMin, column) =>
+      yBoundaries.slice(0, -1).map((yMin, row) => {
+        const xMax = xBoundaries[column + 1];
+        const yMax = yBoundaries[row + 1];
+        const centerX = (xMin + xMax) / 2;
+        const centerY = (yMin + yMax) / 2;
+        const values = visibleDrills.flatMap((drill) => {
+          const drillXMin = handedness === "Left" ? drill.courtXLeftMin : drill.courtXMin;
+          const drillXMax = handedness === "Left" ? drill.courtXLeftMax : drill.courtXMax;
+          return centerX >= drillXMin && centerX <= drillXMax &&
+            centerY >= drill.courtYMin && centerY <= drill.courtYMax &&
+            drill.mastery !== null && drill.mastery !== undefined
+            ? [drill.mastery]
+            : [];
+        });
+        return {
+          xMin,
+          xMax,
+          yMin,
+          yMax,
+          mastery: values.length
+            ? values.reduce((sum, value) => sum + value, 0) / values.length
+            : null,
+        };
+      }),
+    );
+  })();
   function toggleType(type: ShotType) {
     setEnabledTypes((current) =>
       current.includes(type)
@@ -73,13 +212,81 @@ export function HowItWorksMap({
         <h2 className="mt-3 text-4xl">{heading}</h2>
         <p className="mt-5 text-lg leading-8 text-[var(--muted)]">{description}</p>
       </div>
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 sm:p-7">
+      <div className="mt-8 grid gap-8 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        {showSubjectToggle && (
+          <div className="mx-auto grid w-full max-w-3xl grid-cols-2 rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-2 shadow-[var(--shadow)] lg:col-span-2">
+            {(["shots", "drills"] as const).map((subject) => (
+              <button
+                key={subject}
+                type="button"
+                onClick={() => setMapSubject(subject)}
+                className={`rounded-xl px-5 py-4 text-lg font-bold transition ${mapSubject === subject ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
+              >
+                {subjectLabels[subject]}
+              </button>
+            ))}
+          </div>
+        )}
+        <div>
           <div className="relative mx-auto aspect-square w-full max-w-2xl overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd]">
             <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
               <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
             </div>
-            {visibleShots.map((shot) => {
+            {mapSubject === "drills" && mapMode === "confidence"
+              ? masteryRegions.map((region, index) =>
+                  region.mastery === null ? null : (
+                    <div
+                      key={`mastery-${index}`}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute"
+                      style={{
+                        left: `${percentX(region.xMin)}%`,
+                        top: `${percentY(region.yMax)}%`,
+                        width: `${percentX(region.xMax) - percentX(region.xMin)}%`,
+                        height: `${percentY(region.yMin) - percentY(region.yMax)}%`,
+                        backgroundColor: masteryColor(region.mastery),
+                      }}
+                    />
+                  ),
+                )
+              : mapSubject === "shots" && mapMode === "confidence"
+              ? confidenceRegions.map((region, index) => {
+                  if (region.confidence === null) return null;
+                  return (
+                    <div
+                      key={`confidence-${index}`}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute"
+                      style={{
+                        left: `${percentX(region.xMin)}%`,
+                        top: `${percentY(region.yMax)}%`,
+                        width: `${percentX(region.xMax) - percentX(region.xMin)}%`,
+                        height: `${percentY(region.yMin) - percentY(region.yMax)}%`,
+                        backgroundColor: confidenceColor(region.confidence),
+                      }}
+                    />
+                  );
+                })
+              : mapSubject === "drills"
+                ? drills.map((drill) => {
+                    const xMin = handedness === "Left" ? drill.courtXLeftMin : drill.courtXMin;
+                    const xMax = handedness === "Left" ? drill.courtXLeftMax : drill.courtXMax;
+                    return (
+                      <div
+                        key={drill.id}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute border-2 border-[#b17b16]"
+                        style={{
+                          left: `${percentX(xMin)}%`,
+                          top: `${percentY(drill.courtYMax)}%`,
+                          width: `${percentX(xMax) - percentX(xMin)}%`,
+                          height: `${percentY(drill.courtYMin) - percentY(drill.courtYMax)}%`,
+                          backgroundColor: "#d8a43f38",
+                        }}
+                      />
+                    );
+                  })
+                : visibleShots.map((shot) => {
               const courtXMin =
                 handedness === "Left" ? shot.courtXLeftMin : shot.courtXMin;
               const courtXMax =
@@ -101,6 +308,7 @@ export function HowItWorksMap({
                     height: `${Math.max(0, bottom - top)}%`,
                     borderColor: color,
                     backgroundColor: `${color}38`,
+                    opacity: 1,
                   }}
                 />
               );
@@ -113,11 +321,45 @@ export function HowItWorksMap({
             </div>
           </div>
           <p className="mt-4 text-sm text-[var(--muted)]">
-            {visibleShots.length} matching shot regions across {enabledTypes.length} enabled {enabledTypes.length === 1 ? "type" : "types"}.
+            {mapSubject === "drills"
+              ? mapMode === "confidence"
+                ? "Each region shows the average mastery of routine drills covering that area."
+                : `${visibleDrills.length} routine drill ${visibleDrills.length === 1 ? "region" : "regions"}.`
+              : mapMode === "confidence"
+                ? "Each region shows the average confidence of rated shots covering that area."
+                : `${visibleShots.length} matching shot regions across ${enabledTypes.length} enabled ${enabledTypes.length === 1 ? "type" : "types"}.`}
           </p>
+          {mapMode === "confidence" && (
+            <div className="mt-3 flex items-center gap-3 text-xs text-[var(--muted)]">
+              <span>Low</span>
+              <span className={`h-2 flex-1 rounded-full ${mapSubject === "drills" ? "bg-gradient-to-r from-[#f5d77d] to-[#b17b16]" : "bg-gradient-to-r from-[#b9d7f2] via-[#648ac0] to-[#2f5f9f]"}`} />
+              <span>High</span>
+            </div>
+          )}
         </div>
-        <aside className="space-y-7 rounded-2xl border border-[var(--line)] bg-[var(--card)] p-5 sm:p-6">
-          <fieldset>
+        <aside className="space-y-7">
+          {showConfidenceToggle && (
+            <fieldset>
+              <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
+                Map view
+              </legend>
+              <div className="mt-4 grid grid-cols-2 rounded-xl border border-[var(--line)] p-1 text-sm font-bold">
+                {(["coverage", "confidence"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setMapMode(option)}
+                    className={`rounded-lg px-3 py-2 capitalize transition ${mapMode === option ? "bg-[var(--button)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
+                  >
+                    {option === "confidence" && mapSubject === "drills"
+                      ? "Mastery"
+                      : option}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
+          {mapSubject === "shots" && <fieldset>
             <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
               Shot types
             </legend>
@@ -135,30 +377,34 @@ export function HowItWorksMap({
                 </label>
               ))}
             </div>
-          </fieldset>
-          <fieldset className="border-t border-[var(--line)] pt-6">
-            <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-              Handedness
-            </legend>
-            <div className="mt-4 grid grid-cols-2 rounded-xl border border-[var(--line)] p-1 text-sm font-bold">
-              {(["Right", "Left"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setHandedness(option)}
-                  className={`rounded-lg px-3 py-2 transition ${handedness === option ? "bg-[var(--button)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-          <BallHeightRange
-            minHeight={minHeight}
-            maxHeight={maxHeight}
-            onMinChange={setMinHeight}
-            onMaxChange={setMaxHeight}
-          />
+          </fieldset>}
+          {mapSubject === "shots" && !accountHandedness && (
+            <fieldset className="border-t border-[var(--line)] pt-6">
+              <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
+                Handedness
+              </legend>
+              <div className="mt-4 grid grid-cols-2 rounded-xl border border-[var(--line)] p-1 text-sm font-bold">
+                {(["Right", "Left"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setSelectedHandedness(option)}
+                    className={`rounded-lg px-3 py-2 transition ${handedness === option ? "bg-[var(--button)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          )}
+          {(
+            <BallHeightRange
+              minHeight={minHeight}
+              maxHeight={maxHeight}
+              onMinChange={setMinHeight}
+              onMaxChange={setMaxHeight}
+            />
+          )}
         </aside>
       </div>
     </section>

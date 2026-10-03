@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
 import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
+import type { Drill } from "@/lib/drills/queries";
+import { DrillCard } from "@/components/drill-card";
 import { AnonymousHandedness } from "@/components/anonymous-handedness";
 
 const canvasRange = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
@@ -15,7 +17,9 @@ export default function DiscoverPage() {
   const [ballHeight, setBallHeight] = useState(5);
   const [shotType, setShotType] = useState<ShotType | "All">("All");
   const [handedness, setHandedness] = useState<"Right" | "Left">("Right");
+  const [kind, setKind] = useState<"shots" | "drills">("shots");
   const [shots, setShots] = useState<DiscoverableShot[] | null>(null);
+  const [drills, setDrills] = useState<Drill[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const resultsRef = useRef<HTMLElement>(null);
@@ -30,13 +34,13 @@ export default function DiscoverPage() {
       : shots;
 
   useEffect(() => {
-    if (shots !== null) {
+    if (shots !== null || drills !== null) {
       resultsRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-  }, [shots]);
+  }, [shots, drills]);
 
   function setCourtPosition(x: number, y: number) {
     setCourtX(
@@ -135,14 +139,17 @@ export default function DiscoverPage() {
                       courtY,
                       ballHeight,
                       handedness,
+                      kind,
                     }),
                   });
                   const result = (await response.json()) as {
                     shots?: DiscoverableShot[];
+                    drills?: Drill[];
                     error?: string;
                   };
                   if (!response.ok) throw new Error(result.error);
                   setShots(result.shots ?? []);
+                  setDrills(result.drills ?? []);
                 } catch (requestError) {
                   setError(
                     requestError instanceof Error
@@ -158,8 +165,8 @@ export default function DiscoverPage() {
             >
               <span>
                 {loading
-                  ? "Finding your shots..."
-                  : "Find shots for this moment"}
+                  ? `Finding ${kind}...`
+                  : `Find ${kind} for this moment`}
               </span>
               <span aria-hidden="true">→</span>
             </button>
@@ -168,7 +175,7 @@ export default function DiscoverPage() {
             )}
           </section>
         </section>
-        {shots && (
+        {(shots || drills) && (
           <section
             ref={resultsRef}
             className="scroll-mt-24 border-t border-[var(--line)] pb-20 pt-12"
@@ -178,13 +185,27 @@ export default function DiscoverPage() {
                 <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
                   Your matches
                 </p>
-                <h2 className="mt-2 text-4xl">Shots for this moment</h2>
+                <h2 className="mt-2 text-4xl">
+                  {kind === "shots" ? "Shots" : "Drills"} for this moment
+                </h2>
               </div>
               <span className="text-sm text-[var(--muted)]">
-                {filteredShots?.length ?? 0} found
+                {kind === "shots" ? filteredShots?.length ?? 0 : drills?.length ?? 0} found
               </span>
             </div>
-            <label className="mt-6 block max-w-xs text-sm text-[var(--muted)]">
+            <div className="mt-6 flex gap-2 text-sm">
+              {(["shots", "drills"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setKind(option)}
+                  className={`rounded-full px-4 py-2 font-bold capitalize ${kind === option ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--muted)] hover:bg-[var(--card)] hover:text-[var(--ink)]"}`}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+            {kind === "shots" && <label className="mt-6 block max-w-xs text-sm text-[var(--muted)]">
               Filter by shot type
               <select
                 value={shotType}
@@ -208,21 +229,25 @@ export default function DiscoverPage() {
                   </option>
                 ))}
               </select>
-            </label>
-            {filteredShots && filteredShots.length > 0 ? (
+            </label>}
+            {kind === "shots" && filteredShots && filteredShots.length > 0 ? (
               <div className="mt-7 grid gap-4 md:grid-cols-2">
                 {filteredShots.map((shot) => (
                   <ShotCard key={shot.id} shot={shot} />
                 ))}
               </div>
+            ) : kind === "drills" && drills && drills.length > 0 ? (
+              <div className="mt-7 grid gap-4 md:grid-cols-2">
+                {drills.map((drill) => <DrillCard key={drill.id} drill={drill} />)}
+              </div>
             ) : (
               <div className="mt-7 rounded-2xl border border-dashed border-[var(--line)] p-8">
                 <h3 className="text-2xl">Can&apos;t find your shot?</h3>
                 <p className="mt-2 text-[var(--muted)]">
-                  Try a nearby situation or request a new shot for the catalog.
+                  Try a nearby situation or request a new {kind === "shots" ? "shot" : "drill"} for the catalog.
                 </p>
                 <Link
-                  href="/request-shot"
+                  href={kind === "shots" ? "/request-shot" : "/request-drill"}
                   className="mt-5 inline-block font-bold text-[var(--teal)]"
                 >
                   Submit a new shot →

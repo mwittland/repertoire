@@ -14,7 +14,6 @@ export const shotLibraryColumns = [
   "description",
   "instructions",
   "video_url",
-  "drills",
 ] as const;
 
 const rowSchema = z.object({
@@ -31,7 +30,6 @@ const rowSchema = z.object({
   description: z.string().trim().min(1),
   instructions: z.string().trim().min(1),
   video_url: z.union([z.string().url(), z.literal("")]).transform((value) => value || null),
-  drills: z.string().transform((value) => value.split("|").map((drill) => drill.trim()).filter(Boolean)),
 }).refine((row) => row.court_x_min <= row.court_x_max, "court_x_min must be <= court_x_max")
   .refine((row) => row.court_y_min <= row.court_y_max, "court_y_min must be <= court_y_max")
   .refine((row) => row.ball_height_min <= row.ball_height_max, "ball_height_min must be <= ball_height_max");

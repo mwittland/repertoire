@@ -156,6 +156,14 @@ export function EditDrillForm({
     <form action={action} className="mt-8 space-y-6">
       <input type="hidden" name="id" value={drill.id} />
       <Input name="name" label="Name" defaultValue={drill.name} />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input name="courtXMin" label="Court X minimum" type="number" defaultValue={drill.courtXMin} />
+        <Input name="courtXMax" label="Court X maximum" type="number" defaultValue={drill.courtXMax} />
+        <Input name="courtYMin" label="Court Y minimum" type="number" defaultValue={drill.courtYMin} />
+        <Input name="courtYMax" label="Court Y maximum" type="number" defaultValue={drill.courtYMax} />
+        <Input name="ballHeightMin" label="Ball height minimum" type="number" defaultValue={drill.ballHeightMin} />
+        <Input name="ballHeightMax" label="Ball height maximum" type="number" defaultValue={drill.ballHeightMax} />
+      </div>
       <AssociationPicker
         name="shotIds"
         label="Shots in this drill"

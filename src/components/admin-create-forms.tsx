@@ -137,6 +137,14 @@ export function CreateDrillForm({
   return (
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field name="courtXMin" label="Court X minimum" min={-15} max={15} />
+        <Field name="courtXMax" label="Court X maximum" min={-15} max={15} />
+        <Field name="courtYMin" label="Court Y minimum" min={0} max={30} />
+        <Field name="courtYMax" label="Court Y maximum" min={0} max={30} />
+        <Field name="ballHeightMin" label="Ball height minimum" min={0} max={10} />
+        <Field name="ballHeightMax" label="Ball height maximum" min={0} max={10} />
+      </div>
       <AssociationPicker
         name="shotIds"
         label="Shots in this drill"
