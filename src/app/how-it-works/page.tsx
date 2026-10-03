@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HowItWorksMap } from "@/components/how-it-works-map";
 import { listShots } from "@/lib/shots/queries";
+import { listDrills } from "@/lib/drills/queries";
 import type { ShotType } from "@/lib/discovery/types";
 
 const shotTypeDescriptions: Array<{ type: ShotType; description: string }> = [
@@ -14,7 +15,7 @@ const shotTypeDescriptions: Array<{ type: ShotType; description: string }> = [
 ];
 
 export default async function HowItWorksPage() {
-  const shots = await listShots();
+  const [shots, drills] = await Promise.all([listShots(), listDrills()]);
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
@@ -24,7 +25,7 @@ export default async function HowItWorksPage() {
           </p>
           <h1 className="mt-4 text-6xl leading-none">How it works.</h1>
           <p className="mt-7 text-lg leading-8 text-[var(--muted)]">
-            Repertoire turns a changing pickleball point into a clear choice, then gives you a simple way to practice that choice until it becomes part of your game.
+            Repertoire turns a changing pickleball point into a clear shot or practice choice, then gives you a simple way to repeat it until it becomes part of your game.
           </p>
         </header>
 
@@ -34,8 +35,8 @@ export default async function HowItWorksPage() {
             <h2 className="mt-3 text-4xl">Start with the moment you are in.</h2>
           </div>
           <div className="max-w-2xl text-lg leading-8 text-[var(--muted)]">
-            <p>Choose your position on the court and the height of the ball. Repertoire compares that point with every shot region in the catalog and returns the shots whose ranges include it.</p>
-            <p className="mt-5">The result is not a single prescribed answer. It is a focused set of options that fit the geometry of the rally, so you can choose the shot that matches your intention and skill.</p>
+            <p>Choose your position on the court and the height of the ball. Repertoire compares that point with shot and drill regions in the catalog and returns the options whose ranges include it.</p>
+            <p className="mt-5">The result is not a single prescribed answer. It is a focused set of shots and drills that fit the geometry of the moment, so you can choose what matches your intention and skill.</p>
           </div>
         </section>
 
@@ -45,15 +46,15 @@ export default async function HowItWorksPage() {
             <h2 className="mt-3 text-4xl">Keep the shots you want to own.</h2>
           </div>
           <div className="max-w-2xl text-lg leading-8 text-[var(--muted)]">
-            <p>Add a shot to your repertoire when it is worth practicing. Your repertoire becomes a personal working set, separate from the full catalog.</p>
-            <p className="mt-5">As you practice, drag the confidence bar to record how ready the shot feels today. A low score is useful information, not a verdict: it tells you what deserves another repetition.</p>
+            <p>Add shots to your repertoire and drills to your routine when they are worth practicing. Your personal sets stay separate from the full catalog.</p>
+            <p className="mt-5">As you practice, use confidence for saved shots and mastery for routine drills. A low score is useful information, not a verdict: it tells you what deserves another repetition.</p>
           </div>
         </section>
 
         <section className="border-t border-[var(--line)] py-12">
           <div className="max-w-3xl">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">03 / Shot language</p>
-            <h2 className="mt-3 text-4xl">Every shot has a job.</h2>
+            <h2 className="mt-3 text-4xl">Every shot has a job. Every drill has a purpose.</h2>
           </div>
           <div className="mt-8 grid gap-x-8 gap-y-7 md:grid-cols-2 lg:grid-cols-3">
             {shotTypeDescriptions.map(({ type, description }) => (
@@ -73,16 +74,16 @@ export default async function HowItWorksPage() {
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             <RatingExplanation title="Aggression" description="How much pressure and pace the shot is intended to create. A higher score means a more offensive choice." color="var(--coral)" />
             <RatingExplanation title="Difficulty" description="How demanding the shot is to execute consistently. A higher score means more timing, control, or precision is required." color="var(--coral)" />
-            <RatingExplanation title="Confidence" description="Your personal readiness for the shot, from 0 to 100. It is editable in your repertoire and only appears on catalog shots you have saved." color="var(--teal)" />
+            <RatingExplanation title="Confidence & mastery" description="Confidence records readiness for saved shots; mastery records progress for routine drills. Both run from 0 to 100." color="var(--teal)" />
           </div>
         </section>
 
-        <HowItWorksMap shots={shots} />
+        <HowItWorksMap shots={shots} drills={drills} showSubjectToggle />
 
         <section className="flex flex-col gap-5 border-t border-[var(--line)] py-16 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-3xl">Ready to find a shot?</h2>
-            <p className="mt-2 text-[var(--muted)]">Put the method into a real point.</p>
+            <h2 className="text-3xl">Ready to find your next option?</h2>
+            <p className="mt-2 text-[var(--muted)]">Put the method into a real point or practice session.</p>
           </div>
           <Link href="/discover" className="rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white transition hover:bg-[var(--teal)]">
             Open discovery

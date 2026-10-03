@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import type { Drill } from "@/lib/drills/queries";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 import { ShotCard } from "@/components/shot-card";
+import { DrillCard } from "@/components/drill-card";
 
 export function LibraryTabs({
   shots,
@@ -107,19 +107,7 @@ export function LibraryTabs({
           {drills.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {drills.map((drill) => (
-                <Link
-                  href={`/drills/${drill.id}`}
-                  key={drill.id}
-                  className="group block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:border-[var(--teal)] hover:shadow-[var(--shadow)]"
-                >
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-                    Practice drill
-                  </p>
-                  <h3 className="mt-3 text-2xl">{drill.name}</h3>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    {drill.description}
-                  </p>
-                </Link>
+                <DrillCard key={drill.id} drill={drill} />
               ))}
             </div>
           ) : (

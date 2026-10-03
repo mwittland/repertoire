@@ -97,7 +97,7 @@ function MetricBar({ label, value }: { label: string; value: number }) {
       </div>
       <div className="h-2 rounded-full bg-[#d4e0d6]">
         <div
-          className="h-2 rounded-full bg-[var(--coral)]"
+          className={`h-2 rounded-full ${label === "Difficulty" ? "bg-[#648ac0]" : "bg-[var(--coral)]"}`}
           style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
         />
       </div>

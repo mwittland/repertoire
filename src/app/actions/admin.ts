@@ -51,8 +51,16 @@ const shotSchema = z
 
 const drillSchema = z.object({
   name: z.string().trim().min(2),
+  courtXMin: z.coerce.number().min(-15).max(15),
+  courtXMax: z.coerce.number().min(-15).max(15),
+  courtYMin: z.coerce.number().min(0).max(30),
+  courtYMax: z.coerce.number().min(0).max(30),
+  ballHeightMin: z.coerce.number().min(0).max(10),
+  ballHeightMax: z.coerce.number().min(0).max(10),
   description: z.string().trim().min(1),
   videoUrl: optionalUrl,
+}).refine((data) => data.courtXMin <= data.courtXMax && data.courtYMin <= data.courtYMax && data.ballHeightMin <= data.ballHeightMax, {
+  message: "Court coverage minimums must not exceed maximums.",
 });
 
 async function requireAdmin(nextPath = "/admin") {
@@ -154,6 +162,14 @@ export async function createDrill(
     .from("drills")
     .insert({
       name: parsed.data.name,
+      court_x_min: parsed.data.courtXMin,
+      court_x_max: parsed.data.courtXMax,
+      court_x_left_min: -parsed.data.courtXMax,
+      court_x_left_max: -parsed.data.courtXMin,
+      court_y_min: parsed.data.courtYMin,
+      court_y_max: parsed.data.courtYMax,
+      ball_height_min: parsed.data.ballHeightMin,
+      ball_height_max: parsed.data.ballHeightMax,
       description: parsed.data.description,
       video_url: parsed.data.videoUrl,
     })

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShotLibraryTools } from "@/components/admin-shot-library-tools";
+import { AdminDrillLibraryTools } from "@/components/admin-drill-library-tools";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -40,6 +41,7 @@ export default async function AdminPage() {
           />
         </div>
         <AdminShotLibraryTools />
+        <AdminDrillLibraryTools />
       </div>
     </main>
   );
