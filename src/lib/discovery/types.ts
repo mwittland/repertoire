@@ -27,6 +27,7 @@ export type ShotRange = {
   shotType?: ShotType;
   aggressionScore?: number;
   difficulty?: number;
+  confidence?: number | null;
 };
 
 export type DiscoverableShot = ShotRange & {

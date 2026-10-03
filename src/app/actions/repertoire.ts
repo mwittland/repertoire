@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const entrySchema = z.object({
   shotId: z.string().uuid(),
-  confidence: z.coerce.number().int().min(0).max(5),
+  confidence: z.coerce.number().int().min(0).max(100),
 });
 
 async function requireUser() {
@@ -26,7 +26,7 @@ export async function addToRepertoire(formData: FormData) {
   const { error } = await supabase
     .from("repertoire_entries")
     .upsert(
-      { user_id: user.id, shot_id: shotId.data, confidence: 0 },
+      { user_id: user.id, shot_id: shotId.data, confidence: null },
       { onConflict: "user_id,shot_id", ignoreDuplicates: true },
     );
   if (error) throw new Error(`Unable to add shot: ${error.message}`);

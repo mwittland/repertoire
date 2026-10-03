@@ -4,13 +4,53 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 import { updateConfidence } from "@/app/actions/repertoire";
 
+export function ConfidenceBar({
+  confidence,
+  interactive = false,
+  onChange,
+  large = false,
+}: {
+  confidence: number | null;
+  interactive?: boolean;
+  onChange?: (value: number) => void;
+  large?: boolean;
+}) {
+  const value = confidence ?? 0;
+  return (
+    <div className={large ? "text-sm text-[var(--muted)]" : "text-xs text-[var(--muted)]"}>
+      <div className={large ? "mb-2 flex justify-between" : "mb-1 flex justify-between"}>
+        <span>Confidence</span>
+        <span>{confidence === null ? "?" : confidence}</span>
+      </div>
+      <div className={`relative rounded-full bg-[#d4e0d6] ${large ? "h-2" : "h-1.5"}`}>
+        <div
+          className="absolute inset-y-0 left-0 rounded-full bg-[var(--teal)] transition-[width]"
+          style={{ width: `${value}%` }}
+        />
+        {interactive && (
+          <input
+            aria-label="Confidence from 0 to 100"
+            type="range"
+            name="confidence"
+            min="0"
+            max="100"
+            value={value}
+            onChange={(event) => onChange?.(Number(event.target.value))}
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function ConfidenceForm({
   shotId,
   initialConfidence,
   compact = false,
 }: {
   shotId: string;
-  initialConfidence: number;
+  initialConfidence: number | null;
   compact?: boolean;
 }) {
   const router = useRouter();
@@ -38,37 +78,25 @@ export function ConfidenceForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={
-        compact
-          ? "flex items-center justify-between border-t border-[var(--line)] pt-5"
-          : "mt-9"
-      }
+      className={compact ? "border-t border-[var(--line)] pt-5" : "mt-4"}
     >
       <input type="hidden" name="shotId" value={shotId} />
-      <label className="text-sm text-[var(--muted)]">
-        {compact ? "Confidence" : "Your confidence"}
-        <select
-          name="confidence"
-          value={confidence}
-          onChange={(event) => setConfidence(Number(event.target.value))}
-          className={
-            compact
-              ? "ml-3 rounded-lg border border-[var(--line)] bg-transparent px-2 py-1 font-bold text-[var(--ink)]"
-              : "mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-3 font-bold text-[var(--ink)]"
-          }
-        >
-          {[0, 1, 2, 3, 4, 5].map((value) => (
-            <option key={value} value={value}>
-              {value} / 5
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className={compact ? "mt-4" : ""}>
+        <ConfidenceBar
+          confidence={confidence}
+          interactive
+          large={!compact}
+          onChange={(value) => {
+            setConfidence(value);
+            setSaved(false);
+          }}
+        />
+      </div>
       <button
         disabled={pending}
         className={
           compact
-            ? "text-sm font-bold text-[var(--teal)] disabled:opacity-50"
+            ? "mt-3 text-sm font-bold text-[var(--teal)] disabled:opacity-50"
             : "mt-4 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
         }
       >

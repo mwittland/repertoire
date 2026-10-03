@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "db:migrate:local": "supabase migration up --local",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
