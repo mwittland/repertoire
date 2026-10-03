@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getShotById } from "@/lib/shots/queries";
 import { getRepertoireEntry } from "@/lib/repertoire/queries";
 import { addToRepertoire } from "@/app/actions/repertoire";
-import { ConfidenceForm } from "@/components/confidence-form";
+import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
 import { listDrillsForShot } from "@/lib/drills/queries";
 import { ShotRangePreview } from "@/components/shot-range-preview";
 import { createClient } from "@/lib/supabase/server";
@@ -61,6 +61,11 @@ export default async function ShotPage({
           </div>
           <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
             <ShotRangePreview range={viewerShot} embedded />
+            {!repertoireEntry && (
+              <div className="mt-4">
+                <ConfidenceBar confidence={null} large />
+              </div>
+            )}
             {repertoireEntry ? (
               <ConfidenceForm
                 shotId={shotId}

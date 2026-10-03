@@ -26,6 +26,37 @@ function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
   };
 }
 
+async function addRepertoireConfidence(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  shots: DiscoverableShot[],
+) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || shots.length === 0) return shots;
+  const { data, error } = await supabase
+    .from("repertoire_entries")
+    .select("shot_id,confidence")
+    .eq("user_id", user.id)
+    .in(
+      "shot_id",
+      shots.map((shot) => shot.id),
+    );
+  if (error)
+    throw new Error(`Unable to load repertoire confidence: ${error.message}`);
+  const confidenceByShotId = new Map(
+    (data ?? []).map((entry) => [
+      entry.shot_id,
+      entry.confidence === null ? null : Number(entry.confidence),
+    ]),
+  );
+  return shots.map((shot) =>
+    confidenceByShotId.has(shot.id)
+      ? { ...shot, confidence: confidenceByShotId.get(shot.id) ?? null }
+      : shot,
+  );
+}
+
 export async function findRelevantShotsFromDatabase(situation: DiscoveryInput) {
   const supabase = await createClient();
   const xMinColumn =
@@ -46,10 +77,11 @@ export async function findRelevantShotsFromDatabase(situation: DiscoveryInput) {
 
   if (error) throw new Error(`Unable to find shots: ${error.message}`);
 
-  return findRelevantShots(
+  const relevantShots = findRelevantShots(
     (data ?? []).map((shot) => toDiscoverableShot(shot)),
     situation,
   );
+  return addRepertoireConfidence(supabase, relevantShots);
 }
 
 export async function getShotById(id: string) {
@@ -87,7 +119,10 @@ export async function listShots(filters?: Partial<ShotCatalogFilters>) {
 
   const { data, error } = await query;
   if (error) throw new Error(`Unable to list shots: ${error.message}`);
-  return (data ?? []).map((shot) => toDiscoverableShot(shot));
+  return addRepertoireConfidence(
+    supabase,
+    (data ?? []).map((shot) => toDiscoverableShot(shot)),
+  );
 }
 
 export async function searchShots(searchTerm = "") {
@@ -97,5 +132,8 @@ export async function searchShots(searchTerm = "") {
   if (term) query = query.ilike("name", `%${term}%`);
   const { data, error } = await query;
   if (error) throw new Error(`Unable to search shots: ${error.message}`);
-  return (data ?? []).map((shot) => toDiscoverableShot(shot));
+  return addRepertoireConfidence(
+    supabase,
+    (data ?? []).map((shot) => toDiscoverableShot(shot)),
+  );
 }

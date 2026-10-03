@@ -4,7 +4,7 @@ export type RepertoireEntry = {
   shotId: string;
   shotName: string;
   difficulty: number;
-  confidence: number;
+  confidence: number | null;
 };
 
 export async function listRepertoireEntries() {
@@ -33,7 +33,8 @@ export async function listRepertoireEntries() {
             shotId: String(shot.id),
             shotName: String(shot.name),
             difficulty: Number(shot.difficulty),
-            confidence: Number(entry.confidence),
+            confidence:
+              entry.confidence === null ? null : Number(entry.confidence),
           },
         ]
       : [];
@@ -55,5 +56,9 @@ export async function getRepertoireEntry(shotId: string) {
     .maybeSingle();
   if (error)
     throw new Error(`Unable to load repertoire entry: ${error.message}`);
-  return data ? { confidence: Number(data.confidence) } : null;
+  return data
+    ? {
+        confidence: data.confidence === null ? null : Number(data.confidence),
+      }
+    : null;
 }

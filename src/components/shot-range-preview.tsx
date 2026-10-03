@@ -80,13 +80,7 @@ export function ShotRangePreview({
         </div>
       </div>
       <div className="mt-8 sm:col-span-2">
-        <div className="flex items-baseline justify-between">
-          <h3 className="text-2xl">Ratings</h3>
-          <span className="font-bold text-[var(--coral)]">
-            Aggression {range.aggressionScore ?? 0} · Difficulty{" "}
-            {range.difficulty ?? 0}
-          </span>
-        </div>
+        <h3 className="text-2xl">Ratings</h3>
         <MetricBar label="Aggression" value={range.aggressionScore ?? 0} />
         <MetricBar label="Difficulty" value={range.difficulty ?? 0} />
       </div>

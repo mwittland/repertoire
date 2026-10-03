@@ -24,7 +24,7 @@ Repertoire is a pickleball shot-learning app. Its central workflow is point-base
 2. Install dependencies with `npm install`.
 3. Copy `.env.example` to `.env.local`.
 4. Start local Supabase with `supabase start`.
-5. Apply migrations and seed data with `supabase db reset`.
+5. Apply pending migrations without removing local users or profiles with `npm run db:migrate:local`.
 6. Start Next.js with `npm run dev` and open `http://localhost:3000`.
 
 Local Supabase Studio is available at [http://127.0.0.1:54323/](http://127.0.0.1:54323/). Use it to inspect the local database, view tables, manage local Auth users, and run SQL queries. This URL only accesses the local Supabase project.
@@ -40,7 +40,9 @@ npm run build
 
 Local variables must point to local Supabase. Production variables belong in Vercel and must point to the separate production project. Never expose a service-role key in browser code or commit secrets.
 
-Create migrations locally, validate with `supabase db reset`, and review them in pull requests. Apply approved production migrations deliberately with the Supabase CLI after CI passes.
+Create migrations locally, validate with `npm run db:migrate:local`, and review them in pull requests. This migration workflow preserves local `auth.users` and `profiles` rows. Apply approved production migrations deliberately with the Supabase CLI after CI passes.
+
+`supabase db reset` is destructive: it rebuilds the local database and removes local Auth users, profiles, and other local data. Use it only when a fresh disposable database is intended. Future migrations should not delete or recreate `auth.users` or `profiles`; migrations that change profile structure should use `alter table` and data-preserving updates.
 
 ## Production setup
 
@@ -71,15 +73,17 @@ supabase migration new describe_the_change
 
 Edit the new file under `supabase/migrations/`. Include tables, columns, constraints, indexes, RLS policies, or functions required by the change. Do not edit a migration that has already been applied to production; create a new migration instead.
 
-Reset the local database and run the application checks:
+Apply the pending local migrations and run the application checks:
 
 ```powershell
-supabase db reset
+npm run db:migrate:local
 npm run lint
 npm run typecheck
 npm test
 npm run build
 ```
+
+Use `supabase db reset` only when intentionally rebuilding a disposable local database. It wipes local Auth users and profiles by design.
 
 Commit the migration and open a pull request. GitHub Actions must pass before merging to `main`. After the change is approved, apply it to production from a trusted machine:
 

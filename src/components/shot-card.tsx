@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConfidenceBar } from "@/components/confidence-form";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 
 export function ShotCard({ shot }: { shot: DiscoverableShot }) {
@@ -21,6 +22,9 @@ export function ShotCard({ shot }: { shot: DiscoverableShot }) {
       <div className="mt-5 space-y-2">
         <Score label="Aggression" value={shot.aggressionScore ?? 0} />
         <Score label="Difficulty" value={shot.difficulty ?? 0} />
+        {shot.confidence !== undefined && (
+          <ConfidenceBar confidence={shot.confidence} />
+        )}
       </div>
     </Link>
   );
