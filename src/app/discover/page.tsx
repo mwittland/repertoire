@@ -83,17 +83,12 @@ export default function DiscoverPage() {
               Your next shot is here
             </p>
             <h1 className="max-w-xl text-6xl leading-[0.95] sm:text-7xl">
-              Play the moment, not the guess.
+              Find the right shot.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-[var(--muted)]">
-              Tell us where you are, what the ball is doing, and how much
-              pressure you want to apply. We will surface the shots that belong
-              in that moment.
+              Choose your court position and ball height. Repertoire will
+              surface the shots that fit the situation.
             </p>
-            <div className="mt-9 flex items-center gap-4 text-sm text-[var(--muted)]">
-              <span className="h-px w-10 bg-[var(--coral)]" />
-              Built for the in-between balls
-            </div>
           </div>
           <section className="rounded-[2rem] border border-[var(--line)] bg-[var(--card)] p-6 shadow-[0_20px_80px_rgba(24,50,45,0.08)] sm:p-9">
             <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(210px,0.65fr)]">

@@ -13,6 +13,7 @@ import {
   AssociationPicker,
   type AssociationOption,
 } from "@/components/association-picker";
+import { ScoreInput } from "@/components/score-input";
 
 function Input({
   name,
@@ -96,22 +97,18 @@ export function EditShotForm({
           )}
         </select>
       </label>
-      <Input
-        name="aggressionScore"
-        label="Aggression (0 to 100)"
-        type="number"
-        min={0}
-        max={100}
-        defaultValue={shot.aggressionScore}
-      />
-      <Input
-        name="difficulty"
-        label="Difficulty (0 to 100)"
-        type="number"
-        min={0}
-        max={100}
-        defaultValue={shot.difficulty}
-      />
+      <div className="grid gap-5 sm:grid-cols-2">
+        <ScoreInput
+          name="aggressionScore"
+          label="Aggression"
+          initialValue={shot.aggressionScore}
+        />
+        <ScoreInput
+          name="difficulty"
+          label="Difficulty"
+          initialValue={shot.difficulty}
+        />
+      </div>
       <Input
         name="videoUrl"
         label="Video URL (optional)"

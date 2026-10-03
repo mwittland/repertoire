@@ -16,6 +16,17 @@ export function LibraryTabs({
   initialKind?: "shots" | "drills";
 }) {
   const [kind, setKind] = useState<"shots" | "drills">(initialKind);
+  const [shotType, setShotType] = useState("All");
+  const [sort, setSort] = useState("name");
+  const visibleShots = shots
+    .filter((shot) => shotType === "All" || shot.shotType === shotType)
+    .sort((left, right) =>
+      sort === "aggression"
+        ? (right.aggressionScore ?? 0) - (left.aggressionScore ?? 0)
+        : sort === "difficulty"
+          ? (right.difficulty ?? 0) - (left.difficulty ?? 0)
+          : left.name.localeCompare(right.name),
+    );
   return (
     <>
       <div className="mt-6 flex gap-2 text-sm">
@@ -36,17 +47,46 @@ export function LibraryTabs({
       </div>
       {kind === "shots" ? (
         <section className="mt-12">
-          <div className="flex items-end justify-between">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-3xl">
               Shots{" "}
               <span className="text-base font-normal text-[var(--muted)]">
-                {shots.length}
+                {visibleShots.length}
               </span>
             </h2>
+            <div className="flex gap-2">
+              <select
+                value={shotType}
+                onChange={(event) => setShotType(event.target.value)}
+                className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
+              >
+                <option>All types</option>
+                {[
+                  "Dink",
+                  "Drop",
+                  "Drive",
+                  "Reset",
+                  "Attack",
+                  "Putaway",
+                  "Lob",
+                ].map((type) => (
+                  <option key={type}>{type}</option>
+                ))}
+              </select>
+              <select
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+                className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
+              >
+                <option value="name">Name</option>
+                <option value="aggression">Aggression</option>
+                <option value="difficulty">Difficulty</option>
+              </select>
+            </div>
           </div>
-          {shots.length ? (
+          {visibleShots.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {shots.map((shot) => (
+              {visibleShots.map((shot) => (
                 <ShotCard key={shot.id} shot={shot} />
               ))}
             </div>
@@ -67,9 +107,10 @@ export function LibraryTabs({
           {drills.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {drills.map((drill) => (
-                <article
+                <Link
+                  href={`/drills/${drill.id}`}
                   key={drill.id}
-                  className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 shadow-[var(--shadow)]"
+                  className="group block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:border-[var(--teal)] hover:shadow-[var(--shadow)]"
                 >
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
                     Practice drill
@@ -78,13 +119,7 @@ export function LibraryTabs({
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     {drill.description}
                   </p>
-                  <Link
-                    href={`/drills/${drill.id}`}
-                    className="mt-6 inline-block font-bold text-[var(--teal)]"
-                  >
-                    Open drill →
-                  </Link>
-                </article>
+                </Link>
               ))}
             </div>
           ) : (
