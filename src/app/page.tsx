@@ -1,5 +1,1 @@
-import { redirect } from "next/navigation";
-
-export default function Home() {
-  redirect("/discover");
-}
+export { default } from "@/app/how-it-works/page";

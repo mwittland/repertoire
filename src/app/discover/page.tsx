@@ -108,25 +108,7 @@ export default function DiscoverPage() {
                     <div className="absolute inset-x-0 top-[31.82%] border-t-2 border-white/90" />
                     <div className="absolute inset-x-0 bottom-0 border-b-4 border-white/90" />
                     <div className="absolute bottom-0 left-1/2 top-[31.82%] border-l-2 border-white/90" />
-                    <span className="absolute left-2 top-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                      Net
-                    </span>
-                    <span className="absolute left-2 top-[34%] text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                      Kitchen
-                    </span>
-                    <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#47766b]">
-                      Baseline
-                    </span>
                   </div>
-                  <span className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
-                    Out of bounds
-                  </span>
-                  <span className="pointer-events-none absolute left-1 top-1/2 -rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
-                    Out
-                  </span>
-                  <span className="pointer-events-none absolute right-1 top-1/2 rotate-90 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47766b]">
-                    Out
-                  </span>
                   <div
                     className="absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white bg-[var(--coral)] shadow-lg transition-all"
                     style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
