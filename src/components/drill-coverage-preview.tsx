@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Drill } from "@/lib/drills/queries";
+import type { Drill } from "@/lib/drills/types";
 
 const canvas = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
 

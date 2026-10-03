@@ -9,7 +9,7 @@ export async function GET() {
   const { data: profile } = await supabase.from("profiles").select("is_admin").eq("id", user.id).maybeSingle();
   if (!profile?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const [{ data: drills, error }, { data: links, error: linksError }, { data: shots, error: shotsError }] = await Promise.all([
-    supabase.from("drills").select("id,name,court_x_min,court_x_max,court_y_min,court_y_max,ball_height_min,ball_height_max,description,video_url").order("name"),
+    supabase.from("drills").select("id,name,type,court_x_min,court_x_max,court_y_min,court_y_max,ball_height_min,ball_height_max,description,video_url").order("name"),
     supabase.from("shot_drills").select("shot_id,drill_id"),
     supabase.from("shots").select("id,name"),
   ]);

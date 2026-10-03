@@ -7,7 +7,7 @@ import {
   type AdminFormState,
 } from "@/app/actions/admin";
 import type { DiscoverableShot } from "@/lib/discovery/types";
-import type { Drill } from "@/lib/drills/queries";
+import type { Drill } from "@/lib/drills/types";
 import { AdminShotRangeEditor } from "@/components/admin-shot-range-editor";
 import {
   AssociationPicker,
@@ -156,6 +156,15 @@ export function EditDrillForm({
     <form action={action} className="mt-8 space-y-6">
       <input type="hidden" name="id" value={drill.id} />
       <Input name="name" label="Name" defaultValue={drill.name} />
+      <label className="block text-sm text-[var(--muted)]">
+        Drill type
+        <select name="type" defaultValue={drill.type} className="mt-2 w-full rounded-xl border border-[var(--line)] bg-transparent px-3 py-2 text-[var(--ink)]">
+          <option>Solo</option>
+          <option>Wall</option>
+          <option>Ball Machine</option>
+          <option>Partner+</option>
+        </select>
+      </label>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input name="courtXMin" label="Court X minimum" type="number" defaultValue={drill.courtXMin} />
         <Input name="courtXMax" label="Court X maximum" type="number" defaultValue={drill.courtXMax} />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Drill } from "@/lib/drills/queries";
+import type { Drill } from "@/lib/drills/types";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 import { ShotCard } from "@/components/shot-card";
 import { DrillCard } from "@/components/drill-card";

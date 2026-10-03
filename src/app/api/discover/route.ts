@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ shots });
   } catch {
     return NextResponse.json(
-      { error: "We could not load shots right now." },
+      { error: "We could not load discovery results right now." },
       { status: 500 },
     );
   }

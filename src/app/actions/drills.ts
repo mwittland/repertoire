@@ -42,6 +42,7 @@ export async function updateDrillMastery(formData: FormData) {
   if (error) return { success: false, error: "Unable to save mastery right now." };
   revalidatePath("/repertoire");
   revalidatePath(`/drills/${parsed.data.drillId}`);
+  revalidatePath("/library");
   return { success: true };
 }
 

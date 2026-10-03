@@ -31,7 +31,7 @@ export function AdminDrillLibraryTools() {
       </form>
       {state.error && <p role="alert" className="mt-4 text-sm font-bold text-[var(--coral)]">{state.error}</p>}
       {state.success && <p role="status" className="mt-4 text-sm font-bold text-[var(--teal)]">{state.success}</p>}
-      <p className="mt-4 text-xs text-[var(--muted)]">Required columns: name, court and ball-height ranges, description, video URL, and related shot names separated by |.</p>
+      <p className="mt-4 text-xs text-[var(--muted)]">Required columns: name, type, court and ball-height ranges, description, video URL, and related shot names separated by |.</p>
     </section>
   );
 }
