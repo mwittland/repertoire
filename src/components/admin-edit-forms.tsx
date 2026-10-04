@@ -166,6 +166,9 @@ export function EditDrillForm({
         </select>
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
+        <p className="text-sm text-[var(--muted)] sm:col-span-2">
+          Enter court coverage for a right-handed player.
+        </p>
         <Input name="courtXMin" label="Court X minimum" type="number" defaultValue={drill.courtXMin} />
         <Input name="courtXMax" label="Court X maximum" type="number" defaultValue={drill.courtXMax} />
         <Input name="courtYMin" label="Court Y minimum" type="number" defaultValue={drill.courtYMin} />

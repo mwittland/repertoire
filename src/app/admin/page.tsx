@@ -15,7 +15,7 @@ export default async function AdminPage() {
     .select("is_admin")
     .eq("id", user.id)
     .maybeSingle();
-  if (!profile?.is_admin) redirect("/discover");
+  if (!profile?.is_admin) redirect("/");
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-5xl">

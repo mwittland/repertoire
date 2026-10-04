@@ -147,6 +147,9 @@ export function CreateDrillForm({
     <form action={action} className="mt-8 space-y-6">
       <Field name="name" label="Name" />
       <div className="grid gap-4 sm:grid-cols-2">
+        <p className="text-sm text-[var(--muted)] sm:col-span-2">
+          Enter court coverage for a right-handed player.
+        </p>
         <Field name="courtXMin" label="Court X minimum" min={-15} max={15} />
         <Field name="courtXMax" label="Court X maximum" min={-15} max={15} />
         <Field name="courtYMin" label="Court Y minimum" min={0} max={30} />

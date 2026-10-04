@@ -20,7 +20,7 @@ export function ShotRequestForm() {
           We&apos;ll review the video and add the shot when it is ready.
         </p>
         <Link
-          href="/discover"
+          href="/"
           className="mt-5 inline-block font-bold text-[var(--teal)]"
         >
           Back to discovery →

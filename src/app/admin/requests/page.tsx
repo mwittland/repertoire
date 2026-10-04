@@ -21,7 +21,7 @@ export default async function AdminRequestsPage() {
     .select("is_admin")
     .eq("id", user.id)
     .maybeSingle();
-  if (!profile?.is_admin) redirect("/discover");
+  if (!profile?.is_admin) redirect("/");
   const { data: requests, error } = await supabase
     .from("shot_requests")
     .select("id,requested_name,video_url,status,created_at")
@@ -39,7 +39,7 @@ export default async function AdminRequestsPage() {
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-5xl">
-        <Link href="/discover" className="text-sm font-bold text-[var(--teal)]">
+        <Link href="/" className="text-sm font-bold text-[var(--teal)]">
           ← Back to app
         </Link>
         <header className="mt-12">

@@ -27,19 +27,19 @@ export function ConfidenceBar({
           large ? "mb-2 flex justify-between" : "mb-1 flex justify-between"
         }
       >
-        <span>Confidence</span>
+        <span>Mastery</span>
         <span>{confidence === null ? "?" : confidence}</span>
       </div>
       <div
         className={`relative rounded-full bg-[#d4e0d6] ${large ? "h-2" : "h-1.5"}`}
       >
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-[var(--teal)] transition-[width]"
+          className="absolute inset-y-0 left-0 rounded-full bg-[#d8a43f] transition-[width]"
           style={{ width: `${value}%` }}
         />
         {interactive && (
           <input
-            aria-label="Confidence from 0 to 100"
+            aria-label="Shot mastery from 0 to 100"
             type="range"
             name="confidence"
             min="0"
@@ -82,7 +82,7 @@ export function ConfidenceForm({
         setSaved(true);
         router.refresh();
       } else {
-        setError(result.error ?? "Unable to save confidence.");
+        setError(result.error ?? "Unable to save mastery.");
       }
     });
   }
@@ -118,7 +118,7 @@ export function ConfidenceForm({
             ? "Saved"
             : compact
               ? "Save"
-              : "Save confidence"}
+              : "Save mastery"}
       </button>
       {error && (
         <p role="alert" className="mt-2 text-sm text-[var(--coral)]">

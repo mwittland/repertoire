@@ -48,7 +48,7 @@ export default async function DrillPage({
                     type="submit"
                     className="w-full rounded-xl border border-[var(--coral)] px-5 py-3 font-bold text-[var(--coral)] transition hover:bg-[var(--coral)] hover:text-white"
                   >
-                    Remove from routine
+                    Remove from repertoire
                   </button>
                 </form>
               </>
