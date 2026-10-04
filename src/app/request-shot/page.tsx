@@ -5,8 +5,8 @@ export default function RequestShotPage() {
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8">
       <div className="mx-auto max-w-xl">
-        <Link href="/discover" className="text-sm font-bold text-[var(--teal)]">
-          ← Back to discovery
+        <Link href="/" className="text-sm font-bold text-[var(--teal)]">
+          ← Back to home
         </Link>
         <section className="mt-16 rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7 sm:p-9">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">

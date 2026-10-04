@@ -43,8 +43,8 @@ export default async function ShotPage({
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-6xl">
-        <Link href="/discover" className="text-sm font-bold text-[var(--teal)]">
-          ← Back to discovery
+        <Link href="/" className="text-sm font-bold text-[var(--teal)]">
+          ← Back to home
         </Link>
         <div className="mt-12 grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div>

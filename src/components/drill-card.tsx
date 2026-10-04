@@ -33,7 +33,7 @@ export function DrillCard({ drill }: { drill: Drill }) {
       </Link>
       {inRoutine && <MasteryForm drillId={drill.id} initialMastery={drill.mastery ?? 0} compact />}
       <button type="button" onClick={changeRoutine} disabled={pending} className="mt-5 text-sm font-bold text-[var(--teal)] disabled:opacity-50">
-        {pending ? "Updating..." : inRoutine ? "Remove from routine" : "+ Add to routine"}
+        {pending ? "Updating..." : inRoutine ? "Remove from repertoire" : "+ Add to repertoire"}
       </button>
     </article>
   );

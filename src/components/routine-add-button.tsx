@@ -24,7 +24,7 @@ export function RoutineAddButton({ drillId }: { drillId: string }) {
       disabled={pending}
       className="mt-9 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
     >
-      {pending ? "Adding..." : "Add to routine"}
+      {pending ? "Adding..." : "Add to repertoire"}
     </button>
   );
 }

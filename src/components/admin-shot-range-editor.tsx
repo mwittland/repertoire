@@ -135,6 +135,9 @@ export function AdminShotRangeEditor({
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(220px,0.65fr)]">
         <section>
           <h2 className="text-2xl">Court location</h2>
+          <p className="mt-2 text-sm text-[var(--muted)]">
+            Enter this location for a right-handed player.
+          </p>
           <div
             ref={courtRef}
             onPointerDown={startBox}

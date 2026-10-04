@@ -22,6 +22,9 @@ export function SiteNav() {
           <Link href="/repertoire" className="nav-link">
             Repertoire
           </Link>
+          <Link href="/help" className="nav-link">
+            Help
+          </Link>
           <AdminLink />
           <AuthNav />
         </div>

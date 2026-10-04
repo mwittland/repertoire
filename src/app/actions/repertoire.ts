@@ -21,7 +21,7 @@ async function requireUser() {
 
 export async function addToRepertoire(formData: FormData) {
   const shotId = z.string().uuid().safeParse(formData.get("shotId"));
-  if (!shotId.success) redirect("/discover");
+  if (!shotId.success) redirect("/");
   const { supabase, user } = await requireUser();
   const { error } = await supabase
     .from("repertoire_entries")
@@ -46,7 +46,7 @@ export async function quickAddToRepertoire(formData: FormData) {
     );
   if (error) return { success: false, error: "Unable to add shot right now." };
   revalidatePath("/library");
-  revalidatePath("/discover");
+  revalidatePath("/");
   revalidatePath("/repertoire");
   revalidatePath("/repertoire/shots");
   return { success: true };
@@ -89,5 +89,5 @@ export async function removeFromRepertoire(formData: FormData) {
   revalidatePath("/repertoire/shots");
   revalidatePath(`/shots/${shotId.data}`);
   revalidatePath("/library");
-  revalidatePath("/discover");
+  revalidatePath("/");
 }

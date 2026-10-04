@@ -75,7 +75,7 @@ async function requireAdmin(nextPath = "/admin") {
     .select("is_admin")
     .eq("id", user.id)
     .maybeSingle();
-  if (!profile?.is_admin) redirect("/discover");
+  if (!profile?.is_admin) redirect("/");
   return supabase;
 }
 
