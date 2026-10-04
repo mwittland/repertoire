@@ -51,10 +51,31 @@ export function MasteryForm({
       </div>
       <button
         disabled={pending}
-        className="mt-3 text-sm font-bold text-[#b17b16] disabled:opacity-50"
+        className={
+          compact
+            ? "mt-3 text-sm font-bold text-[#b17b16] disabled:opacity-50"
+            : "mt-4 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
+        }
       >
         {pending ? "Saving..." : "Save mastery"}
       </button>
     </form>
+  );
+}
+
+export function MasteryBar({ mastery }: { mastery: number }) {
+  return (
+    <div className="mt-4">
+      <div className="mb-1 flex justify-between text-xs text-[var(--muted)]">
+        <span>Mastery</span>
+        <span>{mastery}</span>
+      </div>
+      <div className="relative h-2 rounded-full bg-[#d4e0d6]">
+        <div
+          className="absolute inset-y-0 left-0 rounded-full bg-[#d8a43f]"
+          style={{ width: `${mastery}%` }}
+        />
+      </div>
+    </div>
   );
 }

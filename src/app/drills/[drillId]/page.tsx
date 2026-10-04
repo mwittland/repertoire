@@ -19,7 +19,7 @@ export default async function DrillPage({
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-5xl">
         <Link href="/drills" className="text-sm font-bold text-[var(--teal)]">
-          ← Back to drills
+          ← View all drills
         </Link>
         <div className="mt-12 grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div>

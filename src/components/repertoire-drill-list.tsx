@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DrillCard } from "@/components/drill-card";
+import { RepertoireDrillCard } from "@/components/repertoire-drill-card";
 import { drillTypes, type DrillType, type Drill } from "@/lib/drills/types";
 
 export function RepertoireDrillList({ drills }: { drills: Drill[] }) {
@@ -26,7 +26,7 @@ export function RepertoireDrillList({ drills }: { drills: Drill[] }) {
       </div>
       {visibleDrills.length > 0 ? (
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {visibleDrills.map((drill) => <DrillCard key={drill.id} drill={drill} />)}
+          {visibleDrills.map((drill) => <RepertoireDrillCard key={drill.id} drill={drill} />)}
         </div>
       ) : (
         <p className="mt-4 rounded-2xl border border-dashed border-[var(--line)] p-8 text-[var(--muted)]">
