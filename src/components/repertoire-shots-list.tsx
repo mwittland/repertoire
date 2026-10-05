@@ -17,16 +17,8 @@ const shotTypes: Array<ShotType | "All"> = [
 
 export function RepertoireShotsList({ shots }: { shots: DiscoverableShot[] }) {
   const [shotType, setShotType] = useState<ShotType | "All">("All");
-  const [sort, setSort] = useState("name");
   const visibleShots = shots
     .filter((shot) => shotType === "All" || shot.shotType === shotType)
-    .sort((left, right) =>
-      sort === "aggression"
-        ? (right.aggressionScore ?? 0) - (left.aggressionScore ?? 0)
-        : sort === "difficulty"
-          ? (right.difficulty ?? 0) - (left.difficulty ?? 0)
-          : left.name.localeCompare(right.name),
-    );
 
   return (
     <section className="mt-12">
@@ -34,26 +26,14 @@ export function RepertoireShotsList({ shots }: { shots: DiscoverableShot[] }) {
         <h2 className="text-3xl">
           Your shots <span className="text-base font-normal text-[var(--muted)]">{visibleShots.length}</span>
         </h2>
-        <div className="flex gap-2">
-          <select
+        <select
             value={shotType}
             onChange={(event) => setShotType(event.target.value as ShotType | "All")}
             className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
             aria-label="Filter repertoire shots by type"
           >
             {shotTypes.map((type) => <option key={type} value={type}>{type === "All" ? "All types" : type}</option>)}
-          </select>
-          <select
-            value={sort}
-            onChange={(event) => setSort(event.target.value)}
-            className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
-            aria-label="Sort repertoire shots"
-          >
-            <option value="name">Name</option>
-            <option value="aggression">Aggression</option>
-            <option value="difficulty">Difficulty</option>
-          </select>
-        </div>
+        </select>
       </div>
       {visibleShots.length ? (
         <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">

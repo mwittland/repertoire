@@ -416,7 +416,9 @@ export function HowItWorksMap({
                     : "Each region is colored relative to your lowest and highest shot mastery areas."
                 : `${visibleShots.length} matching shot regions across ${enabledTypes.length} enabled ${enabledTypes.length === 1 ? "type" : "types"}.`}
           </p>
-          {mapSubject === "shots" && mapMode === "confidence" && showShotTypeLegend && (
+          {mapSubject === "shots" &&
+            (mapMode === "confidence" || mapMode === "coverage") &&
+            showShotTypeLegend && (
             <div className="mt-4 border-t border-[var(--line)] pt-4 text-center">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
                 Shot types

@@ -55,7 +55,6 @@ export async function applyPreset(formData: FormData) {
 
   revalidatePath("/repertoire");
   revalidatePath("/repertoire/shots");
-  revalidatePath("/repertoire/drills");
   revalidatePath("/library");
   return { success: true };
 }

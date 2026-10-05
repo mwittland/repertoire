@@ -30,20 +30,14 @@ async function addRepertoireConfidence(
   supabase: Awaited<ReturnType<typeof createClient>>,
   shots: DiscoverableShot[],
 ) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user || shots.length === 0) return shots;
   const { data, error } = await supabase
     .from("repertoire_entries")
     .select("shot_id,confidence")
     .eq("user_id", user.id)
-    .in(
-      "shot_id",
-      shots.map((shot) => shot.id),
-    );
-  if (error)
-    throw new Error(`Unable to load repertoire confidence: ${error.message}`);
+    .in("shot_id", shots.map((shot) => shot.id));
+  if (error) throw new Error(`Unable to load repertoire confidence: ${error.message}`);
   const confidenceByShotId = new Map(
     (data ?? []).map((entry) => [
       entry.shot_id,

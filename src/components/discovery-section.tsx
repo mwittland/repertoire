@@ -5,8 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShotCard } from "@/components/shot-card";
 import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
-import type { Drill } from "@/lib/drills/types";
-import { DrillCard } from "@/components/drill-card";
 import { AnonymousHandedness } from "@/components/anonymous-handedness";
 
 const canvasRange = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
@@ -17,9 +15,7 @@ export function DiscoverySection() {
   const [ballHeight, setBallHeight] = useState(5);
   const [shotType, setShotType] = useState<ShotType | "All">("All");
   const [handedness, setHandedness] = useState<"Right" | "Left">("Right");
-  const [kind, setKind] = useState<"shots" | "drills">("shots");
   const [shots, setShots] = useState<DiscoverableShot[] | null>(null);
-  const [drills, setDrills] = useState<Drill[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const resultsRef = useRef<HTMLElement>(null);
@@ -32,16 +28,15 @@ export function DiscoverySection() {
     shots && shotType !== "All"
       ? shots.filter((shot) => shot.shotType === shotType)
       : shots;
-  const resultNoun = kind === "shots" ? "shot" : "drill";
 
   useEffect(() => {
-    if (shots !== null || drills !== null) {
+    if (shots !== null) {
       resultsRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-  }, [shots, drills]);
+  }, [shots]);
 
   function setCourtPosition(x: number, y: number) {
     setCourtX(
@@ -79,7 +74,7 @@ export function DiscoverySection() {
     setCourtPosition(courtX + offset[0], courtY + offset[1]);
   }
 
-  async function findResults(targetKind: "shots" | "drills") {
+  async function findResults() {
     setLoading(true);
     setError(null);
     try {
@@ -91,22 +86,19 @@ export function DiscoverySection() {
           courtY,
           ballHeight,
           handedness,
-          kind: targetKind,
         }),
       });
       const result = (await response.json()) as {
         shots?: DiscoverableShot[];
-        drills?: Drill[];
         error?: string;
       };
       if (!response.ok) throw new Error(result.error);
-      setShots(targetKind === "shots" ? result.shots ?? [] : null);
-      setDrills(targetKind === "drills" ? result.drills ?? [] : null);
+      setShots(result.shots ?? []);
     } catch (requestError) {
       setError(
         requestError instanceof Error
           ? requestError.message
-          : `We could not load ${targetKind} right now.`,
+          : "We could not load shots right now.",
       );
     } finally {
       setLoading(false);
@@ -122,12 +114,11 @@ export function DiscoverySection() {
               Find your next option
             </p>
             <h1 className="max-w-xl text-6xl leading-[0.95] sm:text-7xl">
-              Find a shot or drill.
+              Find a shot.
             </h1>
             <p className="mt-7 max-w-md text-lg leading-8 text-[var(--muted)]">
-              Choose your court position and ball height, then search either
-              the shot catalog or your available practice drills. Repertoire
-              will surface the options that fit the situation.
+              Choose your court position and ball height, then search the shot
+              catalog. Repertoire will surface the options that fit the situation.
             </p>
           </div>
           <section className="rounded-[2rem] border border-[var(--line)] bg-[var(--card)] p-6 shadow-[0_20px_80px_rgba(24,50,45,0.08)] sm:p-9">
@@ -163,14 +154,14 @@ export function DiscoverySection() {
             <div className="mt-8"></div>
             <AnonymousHandedness value={handedness} onChange={setHandedness} />
             <button
-              onClick={() => void findResults(kind)}
+              onClick={() => void findResults()}
               disabled={loading}
               className="mt-9 flex w-full items-center justify-between rounded-xl bg-[var(--ink)] px-5 py-4 text-left text-base font-bold text-white transition hover:bg-[var(--teal)]"
             >
               <span>
                 {loading
-                  ? `Finding ${kind}...`
-                  : `Find matching ${kind}`}
+                          ? "Finding shots..."
+                          : "Find matching shots"}
               </span>
               <span aria-hidden="true">→</span>
             </button>
@@ -179,7 +170,7 @@ export function DiscoverySection() {
             )}
           </section>
         </section>
-        {(shots || drills) && (
+        {shots && (
           <section
             ref={resultsRef}
             className="scroll-mt-24 border-t border-[var(--line)] pb-20 pt-12"
@@ -190,31 +181,14 @@ export function DiscoverySection() {
                   Your matches
                 </p>
                 <h2 className="mt-2 text-4xl">
-                  {kind === "shots"
-                    ? "Shots that fit this moment"
-                    : "Drills that fit this moment"}
+                  Shots that fit this moment
                 </h2>
               </div>
               <span className="text-sm text-[var(--muted)]">
-                {kind === "shots" ? filteredShots?.length ?? 0 : drills?.length ?? 0} found
+                {filteredShots?.length ?? 0} found
               </span>
             </div>
-            <div className="mt-6 flex gap-2 text-sm">
-              {(["shots", "drills"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => {
-                    setKind(option);
-                    void findResults(option);
-                  }}
-                  className={`rounded-full px-4 py-2 font-bold capitalize ${kind === option ? "bg-[var(--ink)] text-[var(--paper)]" : "text-[var(--muted)] hover:bg-[var(--card)] hover:text-[var(--ink)]"}`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-            {kind === "shots" && <label className="mt-6 block max-w-xs text-sm text-[var(--muted)]">
+            <label className="mt-6 block max-w-xs text-sm text-[var(--muted)]">
               Filter by shot type
               <select
                 value={shotType}
@@ -238,30 +212,26 @@ export function DiscoverySection() {
                   </option>
                 ))}
               </select>
-            </label>}
-            {kind === "shots" && filteredShots && filteredShots.length > 0 ? (
+            </label>
+            {filteredShots && filteredShots.length > 0 ? (
               <div className="mt-7 grid gap-4 md:grid-cols-2">
                 {filteredShots.map((shot) => (
                   <ShotCard key={shot.id} shot={shot} />
                 ))}
               </div>
-            ) : kind === "drills" && drills && drills.length > 0 ? (
-              <div className="mt-7 grid gap-4 md:grid-cols-2">
-                {drills.map((drill) => <DrillCard key={drill.id} drill={drill} />)}
-              </div>
             ) : (
               <div className="mt-7 rounded-2xl border border-dashed border-[var(--line)] p-8">
                 <h3 className="text-2xl">
-                  Can&apos;t find your {resultNoun}?
+                  Can&apos;t find your shot?
                 </h3>
                 <p className="mt-2 text-[var(--muted)]">
-                  Try a nearby situation or request a new {resultNoun} for the catalog.
+                  Try a nearby situation or request a new shot for the catalog.
                 </p>
                 <Link
-                  href={kind === "shots" ? "/request-shot" : "/request-drill"}
+                  href="/request-shot"
                   className="mt-5 inline-block font-bold text-[var(--teal)]"
                 >
-                  Submit a new {resultNoun} →
+                  Submit a new shot →
                 </Link>
               </div>
             )}

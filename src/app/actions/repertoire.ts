@@ -57,8 +57,7 @@ export async function updateConfidence(formData: FormData) {
     shotId: formData.get("shotId"),
     confidence: formData.get("confidence"),
   });
-  if (!parsed.success)
-    return { success: false, error: "Invalid confidence value." };
+  if (!parsed.success) return { success: false, error: "Invalid confidence value." };
   const { supabase, user } = await requireUser();
   const { error } = await supabase
     .from("repertoire_entries")
@@ -68,8 +67,7 @@ export async function updateConfidence(formData: FormData) {
     })
     .eq("user_id", user.id)
     .eq("shot_id", parsed.data.shotId);
-  if (error)
-    return { success: false, error: "Unable to save confidence right now." };
+  if (error) return { success: false, error: "Unable to save confidence right now." };
   revalidatePath("/repertoire");
   revalidatePath(`/shots/${parsed.data.shotId}`);
   return { success: true };

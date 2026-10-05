@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Drill } from "@/lib/drills/types";
+import { drillTypes, type Drill } from "@/lib/drills/types";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 import { ShotCard } from "@/components/shot-card";
 import { DrillCard } from "@/components/drill-card";
@@ -17,16 +17,12 @@ export function LibraryTabs({
 }) {
   const [kind, setKind] = useState<"shots" | "drills">(initialKind);
   const [shotType, setShotType] = useState("All");
-  const [sort, setSort] = useState("name");
+  const [drillType, setDrillType] = useState("All");
   const visibleShots = shots
     .filter((shot) => shotType === "All" || shot.shotType === shotType)
-    .sort((left, right) =>
-      sort === "aggression"
-        ? (right.aggressionScore ?? 0) - (left.aggressionScore ?? 0)
-        : sort === "difficulty"
-          ? (right.difficulty ?? 0) - (left.difficulty ?? 0)
-          : left.name.localeCompare(right.name),
-    );
+  const visibleDrills = drills.filter(
+    (drill) => drillType === "All" || drill.type === drillType,
+  );
   return (
     <>
       <div className="mt-6 flex gap-2 text-sm">
@@ -54,35 +50,24 @@ export function LibraryTabs({
                 {visibleShots.length}
               </span>
             </h2>
-            <div className="flex gap-2">
-              <select
-                value={shotType}
-                onChange={(event) => setShotType(event.target.value)}
-                className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
-              >
-                <option>All types</option>
-                {[
-                  "Dink",
-                  "Drop",
-                  "Drive",
-                  "Reset",
-                  "Attack",
-                  "Putaway",
-                  "Lob",
-                ].map((type) => (
-                  <option key={type}>{type}</option>
-                ))}
-              </select>
-              <select
-                value={sort}
-                onChange={(event) => setSort(event.target.value)}
-                className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
-              >
-                <option value="name">Name</option>
-                <option value="aggression">Aggression</option>
-                <option value="difficulty">Difficulty</option>
-              </select>
-            </div>
+            <select
+              value={shotType}
+              onChange={(event) => setShotType(event.target.value)}
+              className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
+            >
+              <option value="All">All types</option>
+              {[
+                "Dink",
+                "Drop",
+                "Drive",
+                "Reset",
+                "Attack",
+                "Putaway",
+                "Lob",
+              ].map((type) => (
+                <option key={type}>{type}</option>
+              ))}
+            </select>
           </div>
           {visibleShots.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -96,17 +81,30 @@ export function LibraryTabs({
         </section>
       ) : (
         <section className="mt-12">
-          <div className="flex items-end justify-between">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-3xl">
               Drills{" "}
               <span className="text-base font-normal text-[var(--muted)]">
-                {drills.length}
+                {visibleDrills.length}
               </span>
             </h2>
+            <select
+              value={drillType}
+              onChange={(event) => setDrillType(event.target.value)}
+              aria-label="Filter drills by type"
+              className="rounded-lg border border-[var(--line)] bg-transparent px-2 py-2 text-sm text-[var(--ink)]"
+            >
+              <option value="All">All types</option>
+              {drillTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
-          {drills.length ? (
+          {visibleDrills.length ? (
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {drills.map((drill) => (
+              {visibleDrills.map((drill) => (
                 <DrillCard key={drill.id} drill={drill} />
               ))}
             </div>

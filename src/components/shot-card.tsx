@@ -23,10 +23,8 @@ export function ShotCard({
       <div className="mt-5 space-y-2">
         <Score label="Aggression" value={shot.aggressionScore ?? 0} />
         <Score label="Difficulty" value={shot.difficulty ?? 0} />
-        {shot.confidence !== undefined && (
-          <ConfidenceBar confidence={shot.confidence} />
-        )}
       </div>
+      {shot.confidence !== undefined && <ConfidenceBar confidence={shot.confidence} />}
     </Link>
   );
 }

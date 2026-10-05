@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ConfidenceBar } from "@/components/confidence-form";
 import type { RecommendedDrill } from "@/lib/repertoire/queries";
 
 export function RecommendedDrills({
@@ -22,7 +21,7 @@ export function RecommendedDrills({
       <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">Recommended next</p>
       <h2 className="mt-3 text-4xl">Drills to work on.</h2>
       <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">
-        These drills target areas with the lowest current coverage in your routine.
+        These drills target court areas with the lowest coverage in your shot repertoire.
       </p>
       {drills.length > 0 ? (
         <>
@@ -50,19 +49,6 @@ export function RecommendedDrills({
                 <h3 className="mt-3 text-2xl">{drill.name}</h3>
                 <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{drill.description}</p>
                 <p className="mt-5 text-sm text-[var(--muted)]">Current area coverage: <span className="font-bold text-[var(--ink)]">{drill.coverage}%</span></p>
-                {drill.inRoutine && (
-                  <div className="mt-4">
-                    <p className="mb-2 text-sm text-[var(--muted)]">
-                      Current mastery:{" "}
-                      <span className="font-bold text-[var(--ink)]">
-                        {drill.mastery === null || drill.mastery === undefined
-                          ? "Unknown"
-                          : `${drill.mastery}%`}
-                      </span>
-                    </p>
-                    <ConfidenceBar confidence={drill.mastery ?? null} />
-                  </div>
-                )}
               </Link>
             );
           })}

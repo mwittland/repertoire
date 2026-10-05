@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { HowItWorksMap } from "@/components/how-it-works-map";
 import type { ShotType } from "@/lib/discovery/types";
-import { drillTypes } from "@/lib/drills/types";
-import { listDrills } from "@/lib/drills/queries";
 import { listShots } from "@/lib/shots/queries";
 
 const shotTypes: Array<{ name: ShotType; description: string }> = [
@@ -15,15 +13,8 @@ const shotTypes: Array<{ name: ShotType; description: string }> = [
   { name: "Lob", description: "A high shot over the opponent that changes depth and spacing." },
 ];
 
-const drillTypeDescriptions: Record<(typeof drillTypes)[number], string> = {
-  Solo: "Drills you can do completely by yourself with just a paddle and balls.",
-  Wall: "Drills that require a wall or rebound surface.",
-  "Ball Machine": "Drills designed around feeds from a ball machine.",
-  "Partner+": "Drills requiring at least one other player.",
-};
-
 export default async function HelpPage() {
-  const [shots, drills] = await Promise.all([listShots(), listDrills()]);
+  const shots = await listShots();
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -32,19 +23,19 @@ export default async function HelpPage() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">Help and guidance</p>
           <h1 className="mt-4 text-6xl leading-none">Understand the system.</h1>
           <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
-            Repertoire connects the moment you are in with a useful shot or drill,
+            Repertoire connects the moment you are in with useful shots,
             then helps you practice the options you want to own.
           </p>
         </header>
 
         <HelpSection eyebrow="01 / Discover" title="Search by the moment">
-          <p>Choose a court position, ball height, and handedness. Discovery returns shots or drills whose coverage includes that point.</p>
-          <p>Use the Shots and Drills switch to search either catalog. If nothing fits, try a nearby position or request a new entry.</p>
+          <p>Choose a court position, ball height, and handedness. Discovery returns shots whose coverage includes that point.</p>
+          <p>If nothing fits, try a nearby position or request a new shot.</p>
         </HelpSection>
 
         <HelpSection eyebrow="02 / Your collection" title="Build your repertoire">
-          <p>Add shots and drills to your repertoire. The Repertoire page shows both on one map, with separate views for coverage and mastery.</p>
-          <p>Shot and drill locations are stored as court ranges. Left-handed views mirror those ranges automatically from the right-handed source location.</p>
+          <p>Add shots to your repertoire. The Repertoire page shows your shot coverage across the court.</p>
+          <p>Shot locations are stored as court ranges. Left-handed views mirror those ranges automatically from the right-handed source location.</p>
         </HelpSection>
 
         <HelpSection eyebrow="03 / Shot types" title="Every shot has a job">
@@ -53,35 +44,30 @@ export default async function HelpPage() {
           </div>
         </HelpSection>
 
-        <HelpSection eyebrow="04 / Drill types" title="Choose the setup that fits">
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {drillTypes.map((type) => <Explanation key={type} title={type} text={drillTypeDescriptions[type]} color="var(--teal)" />)}
-          </div>
-        </HelpSection>
-
-        <HelpSection eyebrow="05 / Ratings" title="Read the signals">
+        <HelpSection eyebrow="04 / Ratings" title="Read the signals">
           <div className="grid gap-5 md:grid-cols-3">
             <Explanation title="Aggression" text="How much pressure and pace a shot is intended to create." color="var(--coral)" />
             <Explanation title="Difficulty" text="How demanding a shot is to execute consistently. Higher means more timing, control, or precision." color="#648ac0" />
-            <Explanation title="Mastery" text="Your current readiness for saved shots and progress on repertoire drills, from 0 to 100." color="#d8a43f" />
+            <Explanation title="Mastery" text="Your current readiness for saved shots, from 0 to 100." color="#d8a43f" />
           </div>
         </HelpSection>
 
-        <HelpSection eyebrow="06 / Catalog map" title="See the catalog at a glance">
-          <p>Switch between shots and drills, then filter the regions by type and ball height. The map shows the full catalog, not just the items in your repertoire.</p>
+        <HelpSection eyebrow="05 / Catalog map" title="See the catalog at a glance">
+          <p>Filter the shot regions by type and ball height. The map shows the full shot catalog.</p>
           <div className="mx-auto w-full max-w-5xl">
             <HowItWorksMap
               shots={shots}
-              drills={drills}
-              showSubjectToggle
+              mapModes={["coverage"]}
+              initialMapMode="coverage"
+              showShotTypeFilter
               shotTypeFilterAtBottom
+              showShotTypeColors
+              showMasteryLegend={false}
               showHandednessFilter={false}
               showBallHeightFilter={false}
-              showDrillTypeFilter
-              drillTypeFilterAtBottom
               hideSidePanel
-              heading="Explore the catalog."
-              description="Switch between shots and drills, then filter the regions by type."
+              heading="Explore the shot catalog."
+              description="Filter the shot regions by type."
             />
           </div>
         </HelpSection>

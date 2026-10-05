@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { MasteryBar } from "@/components/mastery-form";
 import type { Drill } from "@/lib/drills/types";
 
 export function DrillCard({ drill }: { drill: Drill }) {
@@ -8,7 +7,6 @@ export function DrillCard({ drill }: { drill: Drill }) {
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">{drill.type}</p>
       <h3 className="mt-3 text-2xl">{drill.name}</h3>
       <p className="mt-3 leading-6 text-[var(--muted)]">{drill.description}</p>
-      {drill.mastery != null && <MasteryBar mastery={drill.mastery} />}
     </Link>
   );
 }
