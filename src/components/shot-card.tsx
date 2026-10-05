@@ -20,11 +20,11 @@ export function ShotCard({
       <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
         {shot.description}
       </p>
-      <div className="mt-5 space-y-2">
+      <div className="mt-5 space-y-4">
+        {shot.confidence !== undefined && <ConfidenceBar confidence={shot.confidence} />}
         <Score label="Aggression" value={shot.aggressionScore ?? 0} />
         <Score label="Difficulty" value={shot.difficulty ?? 0} />
       </div>
-      {shot.confidence !== undefined && <ConfidenceBar confidence={shot.confidence} />}
     </Link>
   );
 }
