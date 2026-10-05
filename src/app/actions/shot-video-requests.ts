@@ -22,6 +22,11 @@ function isYoutubeUrl(value: string) {
       url.hostname === "youtube.com" ||
       url.hostname === "www.youtube.com" ||
       url.hostname === "m.youtube.com"
+    ) && (
+      url.hostname === "youtu.be" ||
+      url.pathname === "/watch" ||
+      url.pathname.startsWith("/embed/") ||
+      url.pathname.startsWith("/shorts/")
     );
   } catch {
     return false;

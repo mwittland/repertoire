@@ -37,6 +37,7 @@ function getYoutubeVideoId(url: string) {
     if (parsed.hostname.endsWith("youtube.com")) {
       if (parsed.pathname === "/watch") return parsed.searchParams.get("v");
       if (parsed.pathname.startsWith("/embed/")) return parsed.pathname.split("/")[2];
+      if (parsed.pathname.startsWith("/shorts/")) return parsed.pathname.split("/")[2];
     }
   } catch {
     return null;
