@@ -2,9 +2,14 @@ import Link from "next/link";
 import { ExampleProfilesMap } from "@/components/example-profiles-map";
 import { listShots } from "@/lib/shots/queries";
 import { createClient } from "@/lib/supabase/server";
+import { getSiteMetrics } from "@/lib/metrics";
 
 export default async function HowItWorksPage() {
-  const [shots, supabase] = await Promise.all([listShots(), createClient()]);
+  const [shots, supabase, metrics] = await Promise.all([
+    listShots(),
+    createClient(),
+    getSiteMetrics(),
+  ]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -58,24 +63,64 @@ export default async function HowItWorksPage() {
           <ExampleProfilesMap shots={shots} />
         </div>
 
-        <section className="mt-8 flex flex-wrap items-center justify-between gap-5 border-t border-[var(--line)] py-10">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
-              Ready to build your starting repertoire?
-            </p>
-            <p className="mt-2 text-lg text-[var(--muted)]">
-              Answer a few questions and get a shot profile built around your
-              current game.
-            </p>
-          </div>
-          <Link
+        <section className="grid gap-4 border-t border-[var(--line)] py-10 sm:grid-cols-2">
+          <FeatureMetric
+            value={metrics.quizCompletions}
+            label="Player profiles generated"
+            description="Answer the profile quiz to get a shot starting point tailored to your game."
+            actionLabel="Take the profile quiz"
             href="/repertoire/quiz"
-            className="rounded-xl border border-[var(--line)] px-5 py-4 font-bold text-[var(--ink)]"
-          >
-            Take the profile quiz
-          </Link>
+            accountRequired
+          />
+          <FeatureMetric
+            value={metrics.discoverySearches}
+            label="Shot discovery searches"
+            description="Search by court position and ball height to find shots that fit the moment."
+            actionLabel="Discover a shot"
+            href="/discover"
+          />
         </section>
+
       </div>
     </main>
+  );
+}
+
+function FeatureMetric({
+  value,
+  label,
+  description,
+  actionLabel,
+  href,
+  accountRequired = false,
+}: {
+  value: number;
+  label: string;
+  description: string;
+  actionLabel: string;
+  href: string;
+  accountRequired?: boolean;
+}) {
+  return (
+    <article className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6">
+      <p className="text-4xl font-bold text-[var(--ink)]">
+        {value.toLocaleString()}
+      </p>
+      <p className="mt-2 text-sm font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
+        {label}
+      </p>
+      <p className="mt-4 leading-7 text-[var(--muted)]">{description}</p>
+      {accountRequired && (
+        <p className="mt-3 text-sm font-bold text-[var(--coral)]">
+          Account required
+        </p>
+      )}
+      <Link
+        href={href}
+        className="mt-5 inline-block rounded-xl border border-[var(--line)] px-4 py-3 font-bold text-[var(--ink)]"
+      >
+        {actionLabel} →
+      </Link>
+    </article>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { recordQuizCompletion } from "@/app/actions/metrics";
 import { applyPreset } from "@/app/actions/repertoire-quiz";
 import {
   getPreset,
@@ -443,6 +444,11 @@ export function RepertoireQuiz({
   const router = useRouter();
   const recommendation = useMemo(() => recommendPreset(answers), [answers]);
 
+  function completeQuiz() {
+    void recordQuizCompletion();
+    setPhase("complete");
+  }
+
   function applySelectedPreset(
     preset: RepertoirePreset | null = selectedPreset,
   ) {
@@ -540,7 +546,7 @@ export function RepertoireQuiz({
           <button
             type="button"
             onClick={() => {
-              setPhase("complete");
+              completeQuiz();
               setStep(-1);
             }}
             className="rounded-xl border border-[var(--line)] p-4 text-left font-bold transition hover:border-[var(--teal)]"
@@ -625,7 +631,7 @@ export function RepertoireQuiz({
       if (step === basicQuestions.length - 1) setPhase("personalized-prompt");
       else setStep((current) => current + 1);
     } else if (step === personalizedQuestions.length - 1) {
-      setPhase("complete");
+      completeQuiz();
     } else {
       setStep((current) => current + 1);
     }

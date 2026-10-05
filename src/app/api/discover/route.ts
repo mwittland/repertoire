@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { findRelevantShotsFromDatabase } from "@/lib/shots/queries";
 import { createClient } from "@/lib/supabase/server";
+import { incrementSiteMetric } from "@/lib/metrics";
 
 const discoverySchema = z.object({
   courtX: z.number().min(-15).max(15),
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
       handedness,
     };
     const shots = await findRelevantShotsFromDatabase(input);
+    await incrementSiteMetric("discovery_searches");
     return NextResponse.json({ shots });
   } catch {
     return NextResponse.json(
