@@ -96,10 +96,12 @@ export function ExampleProfilesMap({
         showConfidenceToggle
         confidenceToggleAtTop
         mapModes={["confidence", "relative"]}
-        mapModeLabels={{ confidence: "Coverage", relative: "Mastery" }}
+        mapModeLabels={{ confidence: "Total", relative: "Relative" }}
         initialMapMode="confidence"
         relativeMasteryNote
         showShotTypeFilter={false}
+        showShotTypeColors={false}
+        showShotTypeLegend={false}
         showHandednessFilter={false}
         showBallHeightFilter={false}
         extraControls={profileControls}

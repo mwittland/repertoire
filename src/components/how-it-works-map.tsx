@@ -25,6 +25,13 @@ const typeColors: Record<ShotType, string> = {
   Lob: "#4c9a72",
 };
 
+const drillTypeColors: Record<DrillType, string> = {
+  Solo: "#3f8f83",
+  Wall: "#df8064",
+  "Ball Machine": "#d8a43f",
+  "Partner+": "#648ac0",
+};
+
 const canvas = { xMin: -15, xMax: 15, yMin: 0, yMax: 30 };
 
 function percentX(value: number) {
@@ -64,12 +71,18 @@ export function HowItWorksMap({
   subjectLabels = { shots: "Shots", drills: "Drills" },
   showConfidenceToggle = false,
   confidenceToggleAtTop = false,
-  mapModes = ["coverage", "confidence", "relative"],
+  mapModes = ["confidence", "relative"],
   mapModeLabels,
   initialMapMode = mapModes[0],
   relativeMasteryNote = false,
+  mapSize = "default",
   showShotTypeFilter = true,
   shotTypeFilterAtBottom = false,
+  showShotTypeColors = true,
+  showShotTypeLegend = true,
+  showMasteryLegend = true,
+  showDrillTypeFilter = true,
+  drillTypeFilterAtBottom = false,
   showHandednessFilter = true,
   showBallHeightFilter = true,
   extraControls,
@@ -89,8 +102,14 @@ export function HowItWorksMap({
   mapModeLabels?: Partial<Record<"coverage" | "confidence" | "relative", string>>;
   initialMapMode?: "coverage" | "confidence" | "relative";
   relativeMasteryNote?: boolean;
+  mapSize?: "default" | "small";
   showShotTypeFilter?: boolean;
   shotTypeFilterAtBottom?: boolean;
+  showShotTypeColors?: boolean;
+  showShotTypeLegend?: boolean;
+  showMasteryLegend?: boolean;
+  showDrillTypeFilter?: boolean;
+  drillTypeFilterAtBottom?: boolean;
   showHandednessFilter?: boolean;
   showBallHeightFilter?: boolean;
   extraControls?: ReactNode;
@@ -278,8 +297,8 @@ export function HowItWorksMap({
             ))}
           </div>
         )}
-        <div className={`mx-auto w-full ${hideSidePanel ? "max-w-3xl" : "max-w-2xl"}`}>
-          <div className="relative aspect-square w-full max-w-2xl overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd]">
+        <div className={`mx-auto w-full ${mapSize === "small" ? "max-w-xl" : hideSidePanel ? "max-w-3xl" : "max-w-2xl"}`}>
+          <div className={`relative aspect-square w-full overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] ${mapSize === "small" ? "max-w-xl" : "max-w-2xl"}`}>
             <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
               <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
             </div>
@@ -334,13 +353,14 @@ export function HowItWorksMap({
                       <div
                         key={drill.id}
                         aria-hidden="true"
-                        className="pointer-events-none absolute border-2 border-[#b17b16]"
+                        className="pointer-events-none absolute border-2"
                         style={{
                           left: `${percentX(xMin)}%`,
                           top: `${percentY(drill.courtYMax)}%`,
                           width: `${percentX(xMax) - percentX(xMin)}%`,
                           height: `${percentY(drill.courtYMin) - percentY(drill.courtYMax)}%`,
-                          backgroundColor: "#d8a43f38",
+                          borderColor: drillTypeColors[drill.type],
+                          backgroundColor: `${drillTypeColors[drill.type]}38`,
                         }}
                       />
                     );
@@ -382,22 +402,22 @@ export function HowItWorksMap({
           <p className="mt-4 text-sm text-[var(--muted)]">
             {mapSubject === "drills"
               ? mapMode === "confidence"
-                ? "Each region shows the average mastery of drills covering that area."
+                ? "Total shows the absolute average mastery for each area."
                 : mapMode === "relative"
                   ? relativeMasteryNote
-                    ? "Mastery is relative to your current skill level across the map."
+                    ? "Relative compares each area with the player’s skill level."
                     : "Each region is colored relative to your lowest and highest drill mastery areas."
                 : `${visibleDrills.length} drill ${visibleDrills.length === 1 ? "region" : "regions"}.`
               : mapMode === "confidence"
-                ? "Each region shows the average mastery of saved shots covering that area."
+                ? "Total shows the absolute average mastery for each area."
                 : mapMode === "relative"
                   ? relativeMasteryNote
-                    ? "Mastery is relative to your current skill level across the map."
+                    ? "Relative compares each area with the player’s skill level."
                     : "Each region is colored relative to your lowest and highest shot mastery areas."
                 : `${visibleShots.length} matching shot regions across ${enabledTypes.length} enabled ${enabledTypes.length === 1 ? "type" : "types"}.`}
           </p>
-          {mapSubject === "shots" && mapMode === "coverage" && (
-            <div className="mt-4 border-t border-[var(--line)] pt-4">
+          {mapSubject === "shots" && mapMode === "confidence" && showShotTypeLegend && (
+            <div className="mt-4 border-t border-[var(--line)] pt-4 text-center">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
                 Shot types
               </p>
@@ -411,14 +431,14 @@ export function HowItWorksMap({
                         onChange={() => toggleType(type)}
                         className="h-4 w-4 accent-[var(--teal)]"
                       />
-                      <span className="h-3 w-3 rounded-full" style={{ backgroundColor: typeColors[type] }} />
+                      {showShotTypeColors && <span className="h-3 w-3 rounded-full" style={{ backgroundColor: typeColors[type] }} />}
                       <span>{type}</span>
                     </label>
                   ))}
                 </div>
               )}
               {!shotTypeFilterAtBottom && <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[var(--muted)]">
-                {shotTypes.map((type) => (
+                {showShotTypeColors && shotTypes.map((type) => (
                   <span key={type} className="flex items-center gap-2">
                     <span
                       className="h-3 w-3 rounded-full"
@@ -430,11 +450,32 @@ export function HowItWorksMap({
               </div>}
             </div>
           )}
-          {(mapMode === "confidence" || mapMode === "relative") && (
+          {mapSubject === "drills" && mapMode === "confidence" && showDrillTypeFilter && drillTypeFilterAtBottom && (
+            <div className="mt-4 border-t border-[var(--line)] pt-4 text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
+                Drill types
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-[var(--muted)] sm:grid-cols-4">
+                {drillTypes.map((type) => (
+                  <label key={type} className="flex cursor-pointer items-center justify-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={enabledDrillTypes.includes(type)}
+                      onChange={() => toggleDrillType(type)}
+                      className="h-4 w-4 accent-[var(--teal)]"
+                    />
+                    <span className="h-3 w-3 rounded-full" style={{ backgroundColor: drillTypeColors[type] }} />
+                    <span>{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+          {showMasteryLegend && (
             <div className="mt-3 flex items-center gap-3 text-xs text-[var(--muted)]">
-              <span>{mapMode === "relative" ? "Lowest area" : "Low"}</span>
+              <span>{mapMode === "relative" ? "Lower" : "Low"}</span>
               <span className="h-2 flex-1 rounded-full bg-gradient-to-r from-[#d64143] via-[#f4c943] to-[#278459]" />
-              <span>{mapMode === "relative" ? "Highest area" : "High"}</span>
+              <span>{mapMode === "relative" ? "Higher" : "High"}</span>
             </div>
           )}
         </div>
@@ -461,13 +502,13 @@ export function HowItWorksMap({
                     onChange={() => toggleType(type)}
                     className="h-4 w-4 accent-[var(--teal)]"
                   />
-                  <span className="h-3 w-3 rounded-full" style={{ backgroundColor: typeColors[type] }} />
+                  {showShotTypeColors && <span className="h-3 w-3 rounded-full" style={{ backgroundColor: typeColors[type] }} />}
                   <span>{type}</span>
                 </label>
               ))}
             </div>
           </fieldset>}
-          {showShotTypeFilter && mapSubject === "drills" && <fieldset>
+          {showShotTypeFilter && mapSubject === "drills" && showDrillTypeFilter && !drillTypeFilterAtBottom && <fieldset>
             <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
               Drill types
             </legend>
@@ -534,7 +575,7 @@ function MapViewToggle({
   return (
     <fieldset className={className}>
       <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-        Map view
+        Coverage view
       </legend>
       <div
         className="mt-4 grid rounded-xl border border-[var(--line)] p-1 text-sm font-bold"
@@ -547,7 +588,7 @@ function MapViewToggle({
             onClick={() => onChange(option)}
             className={`rounded-lg px-4 py-3 capitalize transition ${mapMode === option ? "bg-[var(--button)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
           >
-            {labels?.[option] ?? (option === "confidence" ? "Mastery" : option === "relative" ? "Relative" : option)}
+            {labels?.[option] ?? (option === "confidence" ? "Total" : option === "relative" ? "Relative" : option)}
           </button>
         ))}
       </div>

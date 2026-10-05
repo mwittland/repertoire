@@ -69,15 +69,21 @@ export default async function HelpPage() {
 
         <HelpSection eyebrow="06 / Catalog map" title="See the catalog at a glance">
           <p>Switch between shots and drills, then filter the regions by type and ball height. The map shows the full catalog, not just the items in your repertoire.</p>
-          <HowItWorksMap
-            shots={shots}
-            drills={drills}
-            showSubjectToggle
-            shotTypeFilterAtBottom
-            showHandednessFilter={false}
-            heading="Explore the catalog."
-            description="Switch between shots and drills, then filter the regions by type and ball height."
-          />
+          <div className="mx-auto w-full max-w-5xl">
+            <HowItWorksMap
+              shots={shots}
+              drills={drills}
+              showSubjectToggle
+              shotTypeFilterAtBottom
+              showHandednessFilter={false}
+              showBallHeightFilter={false}
+              showDrillTypeFilter
+              drillTypeFilterAtBottom
+              hideSidePanel
+              heading="Explore the catalog."
+              description="Switch between shots and drills, then filter the regions by type."
+            />
+          </div>
         </HelpSection>
 
         <section className="flex flex-wrap items-center justify-between gap-5 border-t border-[var(--line)] py-12">

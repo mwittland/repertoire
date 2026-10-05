@@ -45,10 +45,16 @@ export default async function RepertoirePage() {
                 handedness={profile?.handedness ?? "Right"}
                 showSubjectToggle
                 showConfidenceToggle
+                showShotTypeFilter
+                showBallHeightFilter={false}
+                showShotTypeColors={false}
+                showShotTypeLegend={false}
+                showDrillTypeFilter
                 mapModes={["confidence", "relative"]}
-                mapModeLabels={{ confidence: "Coverage", relative: "Mastery" }}
+                mapModeLabels={{ confidence: "Total", relative: "Relative" }}
                 initialMapMode="confidence"
                 relativeMasteryNote
+                mapSize="small"
                 heading="See your repertoire at a glance."
                 description="This map shows the mastery of the shots and drills in your repertoire. Switch between Shots and Drills, then compare your absolute and relative mastery."
               />
