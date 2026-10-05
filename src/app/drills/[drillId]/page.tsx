@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDrillById } from "@/lib/drills/queries";
-import { MasteryForm } from "@/components/mastery-form";
 import { DrillCoveragePreview } from "@/components/drill-coverage-preview";
-import { removeFromRoutine } from "@/app/actions/drills";
-import { RoutineAddButton } from "@/components/routine-add-button";
 
 export default async function DrillPage({
   params,
@@ -33,28 +30,12 @@ export default async function DrillPage({
             <section className="mt-12 border-t border-[var(--line)] pt-7">
               <h2 className="text-2xl">How to practice it</h2>
               <p className="mt-4 leading-7 text-[var(--muted)]">
-                Work through the court area shown on the map, repeat the drill consistently, and raise your mastery as the movement becomes reliable.
+                Work through the court area shown on the map and repeat the drill consistently as you build reliable movement.
               </p>
             </section>
           </div>
           <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
             <DrillCoveragePreview drill={drill} embedded />
-            {drill.mastery !== undefined ? (
-              <>
-                <MasteryForm drillId={drill.id} initialMastery={drill.mastery ?? 0} />
-                <form action={removeFromRoutine} className="mt-3">
-                  <input type="hidden" name="drillId" value={drill.id} />
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl border border-[var(--coral)] px-5 py-3 font-bold text-[var(--coral)] transition hover:bg-[var(--coral)] hover:text-white"
-                  >
-                    Remove from repertoire
-                  </button>
-                </form>
-              </>
-            ) : (
-              <RoutineAddButton drillId={drill.id} />
-            )}
           </aside>
         </div>
         <section className="mt-16 border-t border-[var(--line)] pt-8">

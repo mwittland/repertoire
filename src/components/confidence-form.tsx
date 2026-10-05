@@ -17,26 +17,13 @@ export function ConfidenceBar({
 }) {
   const value = confidence ?? 0;
   return (
-    <div
-      className={
-        large ? "text-sm text-[var(--muted)]" : "text-xs text-[var(--muted)]"
-      }
-    >
-      <div
-        className={
-          large ? "mb-2 flex justify-between" : "mb-1 flex justify-between"
-        }
-      >
+    <div className={large ? "text-sm text-[var(--muted)]" : "text-xs text-[var(--muted)]"}>
+      <div className={large ? "mb-2 flex justify-between" : "mb-1 flex justify-between"}>
         <span>Mastery</span>
         <span>{confidence === null ? "?" : confidence}</span>
       </div>
-      <div
-        className={`relative rounded-full bg-[#d4e0d6] ${large ? "h-2" : "h-1.5"}`}
-      >
-        <div
-          className="absolute inset-y-0 left-0 rounded-full bg-[#d8a43f] transition-[width]"
-          style={{ width: `${value}%` }}
-        />
+      <div className={`relative rounded-full bg-[#d4e0d6] ${large ? "h-2" : "h-1.5"}`}>
+        <div className="absolute inset-y-0 left-0 rounded-full bg-[#d8a43f] transition-[width]" style={{ width: `${value}%` }} />
         {interactive && (
           <input
             aria-label="Shot mastery from 0 to 100"
@@ -88,10 +75,7 @@ export function ConfidenceForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={compact ? (flush ? "" : "pt-5") : "mt-4"}
-    >
+    <form onSubmit={handleSubmit} className={compact ? (flush ? "" : "pt-5") : "mt-4"}>
       <input type="hidden" name="shotId" value={shotId} />
       <div className={compact && !flush ? "mt-4" : ""}>
         <ConfidenceBar
@@ -106,25 +90,13 @@ export function ConfidenceForm({
       </div>
       <button
         disabled={pending}
-        className={
-          compact
-            ? "mt-3 text-sm font-bold text-[var(--teal)] disabled:opacity-50"
-            : "mt-4 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
-        }
+        className={compact
+          ? "mt-3 text-sm font-bold text-[var(--teal)] disabled:opacity-50"
+          : "mt-4 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"}
       >
-        {pending
-          ? "Saving..."
-          : saved
-            ? "Saved"
-            : compact
-              ? "Save"
-              : "Save mastery"}
+        {pending ? "Saving..." : saved ? "Saved" : compact ? "Save" : "Save mastery"}
       </button>
-      {error && (
-        <p role="alert" className="mt-2 text-sm text-[var(--coral)]">
-          {error}
-        </p>
-      )}
+      {error && <p role="alert" className="mt-2 text-sm text-[var(--coral)]">{error}</p>}
     </form>
   );
 }

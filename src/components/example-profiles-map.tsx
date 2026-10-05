@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { HowItWorksMap } from "@/components/how-it-works-map";
 import type { DiscoverableShot } from "@/lib/discovery/types";
-import type { Drill } from "@/lib/drills/types";
 
 type ExampleProfile = {
   id: string;
@@ -12,15 +11,14 @@ type ExampleProfile = {
   coverage: number;
   mastery: number;
   shotTypes: DiscoverableShot["shotType"][];
-  drillTypes: Drill["type"][];
 };
 
 const profiles: ExampleProfile[] = [
-  { id: "new-player", name: "New to pickleball", description: "Building the basics.", coverage: 0.45, mastery: 38, shotTypes: ["Dink", "Drop", "Drive"], drillTypes: ["Solo", "Wall"] },
-  { id: "rec-player", name: "Recreational regular", description: "Growing consistency.", coverage: 0.62, mastery: 55, shotTypes: ["Dink", "Drop", "Drive", "Lob"], drillTypes: ["Solo", "Wall", "Partner+"] },
-  { id: "club-competitor", name: "3.5 club competitor", description: "Balanced and developing.", coverage: 0.76, mastery: 68, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Lob"], drillTypes: ["Solo", "Wall", "Partner+", "Ball Machine"] },
-  { id: "tournament-player", name: "4.0 tournament player", description: "Pressure-ready options.", coverage: 0.9, mastery: 82, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"], drillTypes: ["Wall", "Partner+", "Ball Machine"] },
-  { id: "elite-player", name: "5.0 all-court player", description: "Complete and reliable.", coverage: 1, mastery: 94, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"], drillTypes: ["Solo", "Wall", "Partner+", "Ball Machine"] },
+  { id: "new-player", name: "New to pickleball", description: "Building the basics.", coverage: 0.45, mastery: 38, shotTypes: ["Dink", "Drop", "Drive"] },
+  { id: "rec-player", name: "Recreational regular", description: "Growing consistency.", coverage: 0.62, mastery: 55, shotTypes: ["Dink", "Drop", "Drive", "Lob"] },
+  { id: "club-competitor", name: "3.5 club competitor", description: "Balanced and developing.", coverage: 0.76, mastery: 68, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Lob"] },
+  { id: "tournament-player", name: "4.0 tournament player", description: "Pressure-ready options.", coverage: 0.9, mastery: 82, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] },
+  { id: "elite-player", name: "5.0 all-court player", description: "Complete and reliable.", coverage: 1, mastery: 94, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] },
 ];
 
 function profileShots(shots: DiscoverableShot[], profile: ExampleProfile) {
@@ -33,32 +31,16 @@ function profileShots(shots: DiscoverableShot[], profile: ExampleProfile) {
   }));
 }
 
-function profileDrills(drills: Drill[], profile: ExampleProfile) {
-  const matchingDrills = drills.filter((drill) => profile.drillTypes.includes(drill.type));
-  const count = Math.max(1, Math.round(matchingDrills.length * profile.coverage));
-  return matchingDrills.slice(0, count).map((drill, index) => ({
-    ...drill,
-    id: `${profile.id}-${drill.id}`,
-    mastery: Math.max(0, Math.min(100, profile.mastery - (index % 4) * 5)),
-  }));
-}
-
 export function ExampleProfilesMap({
   shots,
-  drills,
 }: {
   shots: DiscoverableShot[];
-  drills: Drill[];
 }) {
   const [selectedProfiles, setSelectedProfiles] = useState(["club-competitor"]);
   const selected = profiles.filter((profile) => selectedProfiles.includes(profile.id));
   const combinedShots = useMemo(
     () => selected.flatMap((profile) => profileShots(shots, profile)),
     [selected, shots],
-  );
-  const combinedDrills = useMemo(
-    () => selected.flatMap((profile) => profileDrills(drills, profile)),
-    [selected, drills],
   );
 
   function toggleProfile(id: string) {
@@ -92,7 +74,6 @@ export function ExampleProfilesMap({
   return (
       <HowItWorksMap
         shots={combinedShots}
-        drills={combinedDrills}
         showConfidenceToggle
         confidenceToggleAtTop
         mapModes={["confidence", "relative"]}
@@ -107,7 +88,7 @@ export function ExampleProfilesMap({
         extraControls={profileControls}
         hideSidePanel
         heading="Compare example players."
-        description="Coverage shows where each player has options, while mastery is relative to the player's skill level and helps reveal strengths and gaps across the court."
+        description="Coverage shows where each player has options across the court."
       />
   );
 }

@@ -22,7 +22,7 @@ export default async function LibraryPage({
           </p>
           <h1 className="mt-4 text-6xl leading-none">The practice system.</h1>
           <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
-            Browse shots and drills by type, ratings, and court coverage. Add drills to your repertoire to edit and save mastery.
+            Browse shots and drills by type and court coverage. Save shots to your repertoire, then use drill recommendations to address weak spots.
           </p>
         </header>
         <LibraryTabs shots={shots} drills={drills} initialKind={kind} />

@@ -51,12 +51,7 @@ export function RepertoireShotCard({ shot }: { shot: DiscoverableShot }) {
         <Score label="Difficulty" value={shot.difficulty ?? 0} />
       </div>
       <div onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}>
-        <ConfidenceForm
-          shotId={shot.id}
-          initialConfidence={shot.confidence ?? null}
-          compact
-          flush
-        />
+        <ConfidenceForm shotId={shot.id} initialConfidence={shot.confidence ?? null} compact flush />
       </div>
       <button
         type="button"

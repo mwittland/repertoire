@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import type { DiscoveryInput } from "@/lib/discovery/types";
 import { drillTypes, type Drill, type DrillType } from "@/lib/drills/types";
 
 export { drillTypes };
@@ -22,23 +21,16 @@ function toDrill(row: Record<string, unknown>, shots: { id: string; name: string
     courtYMax: Number(row.court_y_max),
     ballHeightMin: Number(row.ball_height_min),
     ballHeightMax: Number(row.ball_height_max),
-    mastery: row.mastery === undefined ? undefined : Number(row.mastery),
     shots,
   };
 }
 
 export async function listDrills() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const query = supabase.from("drills").select(user ? `${drillFields},drill_routine_entries!left(mastery,user_id)` : drillFields).order("name");
+  const query = supabase.from("drills").select(drillFields).order("name");
   const { data, error } = await query;
   if (error) throw new Error(`Unable to list drills: ${error.message}`);
-  return (data ?? []).map((drill) => {
-    const row = drill as unknown as Record<string, unknown>;
-    const entries = row.drill_routine_entries as { mastery?: number; user_id?: string }[] | undefined;
-    const entry = entries?.find((item) => item.user_id === user?.id);
-    return toDrill({ ...row, mastery: entry?.mastery }, []);
-  });
+  return (data ?? []).map((drill) => toDrill(drill as unknown as Record<string, unknown>));
 }
 
 export async function searchDrills(searchTerm = "") {
@@ -62,11 +54,7 @@ export async function getDrillById(id: string) {
     const shot = link.shots as { id?: unknown; name?: unknown } | null;
     return shot?.id && shot.name ? [{ id: String(shot.id), name: String(shot.name) }] : [];
   });
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: entry } = user
-    ? await supabase.from("drill_routine_entries").select("mastery").eq("user_id", user.id).eq("drill_id", id).maybeSingle()
-    : { data: null };
-  return toDrill({ ...(drill as unknown as Record<string, unknown>), mastery: entry?.mastery }, shots);
+  return toDrill(drill as unknown as Record<string, unknown>, shots);
 }
 
 export async function listDrillsForShot(shotId: string) {
@@ -79,39 +67,9 @@ export async function listDrillsForShot(shotId: string) {
   });
 }
 
-export async function listRoutineDrills() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
-  const { data, error } = await supabase.from("drill_routine_entries").select(`mastery,drills(${drillFields})`).eq("user_id", user.id).order("updated_at", { ascending: false });
-  if (error) throw new Error(`Unable to load drill routine: ${error.message}`);
-  return (data ?? []).flatMap((entry) => {
-    const drill = Array.isArray(entry.drills) ? entry.drills[0] : entry.drills;
-    return drill ? [toDrill({ ...(drill as unknown as Record<string, unknown>), mastery: entry.mastery })] : [];
-  });
-}
-
 export async function listDrillIdsForShot(shotId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.from("shot_drills").select("drill_id").eq("shot_id", shotId);
   if (error) throw new Error(`Unable to load shot drills: ${error.message}`);
   return (data ?? []).map((link) => String(link.drill_id));
-}
-
-export async function findRelevantDrills(input: DiscoveryInput) {
-  const supabase = await createClient();
-  const xMinColumn = input.handedness === "Left" ? "court_x_left_min" : "court_x_min";
-  const xMaxColumn = input.handedness === "Left" ? "court_x_left_max" : "court_x_max";
-  const { data, error } = await supabase
-    .from("drills")
-    .select(drillFields)
-    .gte(xMaxColumn, input.courtX)
-    .lte(xMinColumn, input.courtX)
-    .gte("court_y_max", input.courtY)
-    .lte("court_y_min", input.courtY)
-    .gte("ball_height_max", input.ballHeight)
-    .lte("ball_height_min", input.ballHeight)
-    .order("name");
-  if (error) throw new Error(`Unable to find drills: ${error.message}`);
-  return (data ?? []).map((drill) => toDrill(drill));
 }

@@ -15,7 +15,9 @@ export default async function RepertoireQuizPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/repertoire/quiz");
   const [{ data: profile, error: profileError }, shots] = await Promise.all([
-    supabase.from("profiles").select("handedness").eq("id", user.id).maybeSingle(),
+    user
+      ? supabase.from("profiles").select("handedness").eq("id", user.id).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
     listShots(),
   ]);
   if (profileError) throw new Error(`Unable to load profile: ${profileError.message}`);

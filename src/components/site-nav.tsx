@@ -13,14 +13,14 @@ export function SiteNav() {
           repertoire<span className="text-[var(--coral)]">pb</span>
         </Link>
         <div className="flex items-center gap-4 text-sm text-[var(--muted)] sm:gap-6">
+          <Link href="/repertoire" className="nav-link">
+            Repertoire
+          </Link>
           <Link href="/discover" className="nav-link">
             Discover
           </Link>
           <Link href="/library" className="nav-link">
             Library
-          </Link>
-          <Link href="/repertoire" className="nav-link">
-            Repertoire
           </Link>
           <Link href="/help" className="nav-link">
             Help

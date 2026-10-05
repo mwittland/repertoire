@@ -13,7 +13,7 @@ Repertoire is a pickleball shot-learning app. Its central workflow is point-base
 - Independently tested discovery service with inclusive range boundaries
 - Point-based `/discover` experience backed by Supabase
 - Shot and drill catalogs with detail pages and related drills
-- Personal repertoire with confidence tracking
+- Personal shot repertoire with court coverage tracking
 - Shot and drill requests with reversible admin moderation
 - Admin creation, editing, and deletion for shots and drills
 - GitHub Actions CI for pull requests and pushes to `main`
@@ -94,13 +94,13 @@ supabase db push
 
 The CLI link is local configuration; it does not move local data into production. Review the migration output carefully before confirming. Keep the production Supabase project separate from the local project.
 
-### Adding shots and drills
+### Adding shots and managing drills
 
 For normal editorial content, sign in as an admin in the production app and use:
 
 - `/admin/shots/new` to add a shot
 - `/admin/drills/new` to add a drill
-- `/admin/shots` and `/admin/drills` to edit or delete existing content
+- `/admin/shots` and `/admin/drills` to edit or delete existing catalog content
 - `/admin/requests` to review submitted shot and drill requests
 
 These actions use the database RLS policies and admin checks. Rejected requests can be moved back to `pending` if they need another review.
@@ -121,6 +121,6 @@ Never commit passwords, service-role keys, or production environment files. Take
 
 - End-to-end browser tests and RLS integration tests are not yet included.
 - Supabase TypeScript types are currently partial and should eventually be generated from the production schema.
-- Admin shot-to-drill association editing is still a follow-up.
+- Drill recommendations use weak court coverage in a player’s shot repertoire.
 - Video playback and invalid-video handling need a dedicated reusable component.
 - Pagination, search, archiving, and production backup/rollback procedures should be added before broad launch.

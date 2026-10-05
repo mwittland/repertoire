@@ -15,6 +15,7 @@ export type Drill = {
   courtYMax: number;
   ballHeightMin: number;
   ballHeightMax: number;
-  mastery?: number | null;
+  /** @deprecated Drill mastery is no longer user-owned; retained for map compatibility. */
+  mastery?: never;
   shots: { id: string; name: string }[];
 };

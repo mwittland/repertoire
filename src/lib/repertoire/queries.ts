@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 import { listShots } from "@/lib/shots/queries";
-import { listDrills, listRoutineDrills } from "@/lib/drills/queries";
+import { listDrills } from "@/lib/drills/queries";
 import type { Drill } from "@/lib/drills/types";
 
 export type RepertoireEntry = {
@@ -37,8 +37,7 @@ export async function listRepertoireEntries() {
             shotId: String(shot.id),
             shotName: String(shot.name),
             difficulty: Number(shot.difficulty),
-            confidence:
-              entry.confidence === null ? null : Number(entry.confidence),
+            confidence: entry.confidence === null ? null : Number(entry.confidence),
           },
         ]
       : [];
@@ -97,8 +96,45 @@ export type RecommendedShot = DiscoverableShot & {
 
 export type RecommendedDrill = Drill & {
   coverage: number;
-  inRoutine: boolean;
 };
+
+function areaCoverage(
+  drill: Drill,
+  repertoireShots: DiscoverableShot[],
+  handedness: "Right" | "Left",
+) {
+  const drillXMin =
+    handedness === "Left" ? drill.courtXLeftMin : drill.courtXMin;
+  const drillXMax =
+    handedness === "Left" ? drill.courtXLeftMax : drill.courtXMax;
+  const xSamples = [0, 0.25, 0.5, 0.75, 1];
+  const ySamples = [0, 0.25, 0.5, 0.75, 1];
+  const pointCoverages = xSamples.flatMap((xRatio) =>
+    ySamples.map((yRatio) => {
+      const x = drillXMin + (drillXMax - drillXMin) * xRatio;
+      const y =
+        drill.courtYMin +
+        (drill.courtYMax - drill.courtYMin) * yRatio;
+      return repertoireShots.reduce((bestCoverage, shot) => {
+        const shotXMin =
+          handedness === "Left" ? shot.courtXLeftMin : shot.courtXMin;
+        const shotXMax =
+          handedness === "Left" ? shot.courtXLeftMax : shot.courtXMax;
+        const coversPoint =
+          x >= shotXMin &&
+          x <= shotXMax &&
+          y >= shot.courtYMin &&
+          y <= shot.courtYMax;
+        return coversPoint
+          ? Math.max(bestCoverage, shot.confidence ?? 0)
+          : bestCoverage;
+      }, 0);
+    }),
+  );
+
+  return pointCoverages.reduce((sum, coverage) => sum + coverage, 0) /
+    pointCoverages.length;
+}
 
 export async function listRecommendedShots(
   handedness: "Right" | "Left",
@@ -136,10 +172,8 @@ export async function listRecommendedShots(
         );
       });
       const coverage = coveringShots.length
-        ? coveringShots.reduce(
-            (sum, ownedShot) => sum + (ownedShot.confidence ?? 0),
-            0,
-          ) / coveringShots.length
+        ? coveringShots.reduce((sum, shot) => sum + (shot.confidence ?? 0), 0) /
+          coveringShots.length
         : 0;
       return {
         ...shot,
@@ -149,10 +183,8 @@ export async function listRecommendedShots(
     })
     .sort(
       (a, b) => {
-        const aUnknown =
-          !a.inRepertoire || a.confidence === null || a.confidence === undefined;
-        const bUnknown =
-          !b.inRepertoire || b.confidence === null || b.confidence === undefined;
+        const aUnknown = !a.inRepertoire || a.confidence === null || a.confidence === undefined;
+        const bUnknown = !b.inRepertoire || b.confidence === null || b.confidence === undefined;
         return (
           Number(bUnknown) - Number(aUnknown) ||
           a.coverage - b.coverage ||
@@ -168,57 +200,20 @@ export async function listRecommendedDrills(
   handedness: "Right" | "Left",
   limit = 3,
 ): Promise<RecommendedDrill[]> {
-  const [catalogDrills, routineDrills] = await Promise.all([
+  const [catalogDrills, repertoireShots] = await Promise.all([
     listDrills(),
-    listRoutineDrills(),
+    listRepertoireShots(),
   ]);
-  const routineIds = new Set(routineDrills.map((drill) => drill.id));
-  const ownedDrills = routineDrills.filter(
-    (drill) => drill.mastery !== null && drill.mastery !== undefined,
-  );
   const recommended = catalogDrills
     .map((drill) => {
-      const xMin =
-        handedness === "Left" ? drill.courtXLeftMin : drill.courtXMin;
-      const xMax =
-        handedness === "Left" ? drill.courtXLeftMax : drill.courtXMax;
-      const centerX = (xMin + xMax) / 2;
-      const centerY = (drill.courtYMin + drill.courtYMax) / 2;
-      const coveringDrills = ownedDrills.filter((ownedDrill) => {
-        const ownedXMin =
-          handedness === "Left"
-            ? ownedDrill.courtXLeftMin
-            : ownedDrill.courtXMin;
-        const ownedXMax =
-          handedness === "Left"
-            ? ownedDrill.courtXLeftMax
-            : ownedDrill.courtXMax;
-        return (
-          centerX >= ownedXMin &&
-          centerX <= ownedXMax &&
-          centerY >= ownedDrill.courtYMin &&
-          centerY <= ownedDrill.courtYMax
-        );
-      });
-      const coverage = coveringDrills.length
-        ? coveringDrills.reduce(
-            (sum, ownedDrill) => sum + (ownedDrill.mastery ?? 0),
-            0,
-          ) / coveringDrills.length
-        : 0;
+      const coverage = areaCoverage(drill, repertoireShots, handedness);
       return {
         ...drill,
         coverage: Math.round(coverage),
-        inRoutine: routineIds.has(drill.id),
       };
     })
     .sort((a, b) => {
-      const aUnknown =
-        !a.inRoutine || a.mastery === null || a.mastery === undefined;
-      const bUnknown =
-        !b.inRoutine || b.mastery === null || b.mastery === undefined;
       return (
-        Number(bUnknown) - Number(aUnknown) ||
         a.coverage - b.coverage ||
         a.name.localeCompare(b.name)
       );

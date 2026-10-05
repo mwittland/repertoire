@@ -6,8 +6,8 @@ import {
   addToRepertoire,
   removeFromRepertoire,
 } from "@/app/actions/repertoire";
-import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
 import { listDrillsForShot } from "@/lib/drills/queries";
+import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
 import { ShotRangePreview } from "@/components/shot-range-preview";
 import { createClient } from "@/lib/supabase/server";
 
@@ -64,17 +64,10 @@ export default async function ShotPage({
           </div>
           <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
             <ShotRangePreview range={viewerShot} embedded />
-            {!repertoireEntry && (
-              <div className="mt-4">
-                <ConfidenceBar confidence={null} large />
-              </div>
-            )}
+            {!repertoireEntry && <div className="mt-4"><ConfidenceBar confidence={null} large /></div>}
             {repertoireEntry ? (
               <>
-                <ConfidenceForm
-                  shotId={shotId}
-                  initialConfidence={repertoireEntry.confidence}
-                />
+                <ConfidenceForm shotId={shotId} initialConfidence={repertoireEntry.confidence} />
                 <form action={removeFromRepertoire} className="mt-3">
                   <input type="hidden" name="shotId" value={shotId} />
                   <button
