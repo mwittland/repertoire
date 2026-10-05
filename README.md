@@ -117,10 +117,29 @@ Put validated `insert` or idempotent `upsert` statements in that migration, test
 
 Never commit passwords, service-role keys, or production environment files. Take a production backup before destructive changes, and prefer archiving over deletion when content may need to be restored.
 
+## What I learned
+
+This project taught me how to:
+
+- Model shot discovery as a range-matching problem across court position, ball height, and intent.
+- Build authenticated, user-owned workflows with Supabase Auth, row-level security, and server actions.
+- Use migrations as the source of truth for evolving a production database safely.
+- Design recommendations around a player’s repertoire and coverage gaps instead of generic content lists.
+- Balance admin moderation tools with simple user-submission flows for community-generated content.
+- Validate and ship a full-stack feature across Next.js pages, reusable components, database policies, tests, and deployment workflows.
+
+## Stretch feature ideas
+
+- Recommend paddles based on a player’s repertoire, playing style, shot preferences, and coverage goals.
+- Add personalized practice plans based on weak mastery areas and recent activity.
+- Track progress over time with mastery history and skill-development trends.
+- Add video chapters and curated instructional clips for individual shot phases.
+- Let players compare their repertoire coverage and discovery patterns with anonymized community benchmarks.
+
 ## Current gaps
 
 - End-to-end browser tests and RLS integration tests are not yet included.
 - Supabase TypeScript types are currently partial and should eventually be generated from the production schema.
 - Drill recommendations use weak court coverage in a player’s shot repertoire.
-- Video playback and invalid-video handling need a dedicated reusable component.
+- Video moderation could use stronger preview and invalid-video handling workflows.
 - Pagination, search, archiving, and production backup/rollback procedures should be added before broad launch.

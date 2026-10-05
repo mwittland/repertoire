@@ -18,7 +18,7 @@ export function YoutubePlayer({
   }
   const query = params.toString();
   return (
-    <div className="aspect-video overflow-hidden rounded-2xl bg-black">
+    <div className="mx-auto aspect-video w-full max-w-5xl overflow-hidden rounded-2xl bg-black">
       <iframe
         className="h-full w-full"
         src={`https://www.youtube.com/embed/${videoId}${query ? `?${query}` : ""}`}
