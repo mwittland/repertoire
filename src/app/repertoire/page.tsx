@@ -31,6 +31,12 @@ export default async function RepertoirePage() {
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
             Build mastery across the shots and drills in your repertoire.
           </p>
+          <Link
+            href="/repertoire/build"
+            className="mt-6 inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
+          >
+            Just getting started? Quick-fill your repertoire
+          </Link>
           {shots.length > 0 || routineDrills.length > 0 ? (
             <>
               <HowItWorksMap
@@ -39,8 +45,12 @@ export default async function RepertoirePage() {
                 handedness={profile?.handedness ?? "Right"}
                 showSubjectToggle
                 showConfidenceToggle
+                mapModes={["confidence", "relative"]}
+                mapModeLabels={{ confidence: "Coverage", relative: "Mastery" }}
+                initialMapMode="confidence"
+                relativeMasteryNote
                 heading="See your repertoire at a glance."
-                description="This map shows the court coverage of the shots and drills in your repertoire. Switch between Shots and Drills, then compare coverage with mastery."
+                description="This map shows the mastery of the shots and drills in your repertoire. Switch between Shots and Drills, then compare your absolute and relative mastery."
               />
               <div className="mt-8 grid gap-4 md:grid-cols-2">
                 <Link

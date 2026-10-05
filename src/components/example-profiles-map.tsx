@@ -95,13 +95,17 @@ export function ExampleProfilesMap({
         drills={combinedDrills}
         showConfidenceToggle
         confidenceToggleAtTop
+        mapModes={["confidence", "relative"]}
+        mapModeLabels={{ confidence: "Coverage", relative: "Mastery" }}
+        initialMapMode="confidence"
+        relativeMasteryNote
         showShotTypeFilter={false}
         showHandednessFilter={false}
         showBallHeightFilter={false}
         extraControls={profileControls}
         hideSidePanel
         heading="Compare example players."
-        description="Coverage shows where each player has options, while mastery shows how reliable those options are and helps you spot strengths and gaps across the court."
+        description="Coverage shows where each player has options, while mastery is relative to the player's skill level and helps reveal strengths and gaps across the court."
       />
   );
 }
