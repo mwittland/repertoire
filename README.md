@@ -14,8 +14,12 @@ Repertoire is a pickleball shot-learning app. Its central workflow is point-base
 - Point-based `/discover` experience backed by Supabase
 - Shot and drill catalogs with detail pages and related drills
 - Personal shot repertoire with court coverage tracking
+- Personalized shot mastery tracking and coverage-based drill recommendations
+- YouTube instructional videos with configurable start and end timestamps
+- Community video suggestions with admin review and moderation
 - Shot and drill requests with reversible admin moderation
 - Admin creation, editing, and deletion for shots and drills
+- Public site metrics for quiz completions and discovery searches
 - GitHub Actions CI for pull requests and pushes to `main`
 
 ## Local setup
