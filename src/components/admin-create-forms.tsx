@@ -103,6 +103,10 @@ export function CreateShotForm({
         type="url"
         required={false}
       />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field name="videoStartSeconds" label="Video start (seconds)" type="number" />
+        <Field name="videoEndSeconds" label="Video end (seconds)" type="number" />
+      </div>
       <label className="block text-sm text-[var(--muted)]">
         Description
         <textarea
@@ -176,6 +180,10 @@ export function CreateDrillForm({
         type="url"
         required={false}
       />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field name="videoStartSeconds" label="Video start (seconds)" type="number" />
+        <Field name="videoEndSeconds" label="Video end (seconds)" type="number" />
+      </div>
       {state.error && (
         <p role="alert" className="text-sm text-[var(--coral)]">
           {state.error}

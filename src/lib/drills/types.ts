@@ -7,6 +7,8 @@ export type Drill = {
   type: DrillType;
   description: string;
   videoUrl: string | null;
+  videoStartSeconds: number | null;
+  videoEndSeconds: number | null;
   courtXMin: number;
   courtXMax: number;
   courtXLeftMin: number;

@@ -10,6 +10,7 @@ import { listDrillsForShot } from "@/lib/drills/queries";
 import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
 import { ShotRangePreview } from "@/components/shot-range-preview";
 import { createClient } from "@/lib/supabase/server";
+import { YoutubePlayer } from "@/components/youtube-player";
 
 export default async function ShotPage({
   params,
@@ -88,6 +89,26 @@ export default async function ShotPage({
             )}
           </aside>
         </div>
+        {shot.videoUrl ? (
+          <section className="mt-12 border-t border-[var(--line)] pt-8">
+            <h2 className="mb-4 text-3xl">Watch the shot</h2>
+            <YoutubePlayer url={shot.videoUrl} startSeconds={shot.videoStartSeconds} endSeconds={shot.videoEndSeconds} />
+          </section>
+        ) : (
+          <section className="mt-12 border-t border-[var(--line)] pt-8">
+            <h2 className="text-3xl">Know a great video for this shot?</h2>
+            <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">
+              Suggest a YouTube video and the exact section that demonstrates
+              this shot. We&apos;ll review it before adding it to the library.
+            </p>
+            <Link
+              href={`/shots/${shot.id}/request-video`}
+              className="mt-5 inline-block rounded-xl bg-[var(--ink)] px-5 py-3 font-bold text-white"
+            >
+              Suggest a video →
+            </Link>
+          </section>
+        )}
         <section className="mt-16 border-t border-[var(--line)] pt-8">
           <div className="flex items-end justify-between gap-4">
             <div>
