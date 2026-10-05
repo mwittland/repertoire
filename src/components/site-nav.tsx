@@ -16,9 +16,6 @@ export function SiteNav() {
           <Link href="/repertoire" className="nav-link">
             Repertoire
           </Link>
-          <Link href="/discover" className="nav-link">
-            Discover
-          </Link>
           <Link href="/library" className="nav-link">
             Library
           </Link>

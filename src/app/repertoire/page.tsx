@@ -22,9 +22,12 @@ export default async function RepertoirePage() {
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
               Your collection
             </p>
-            <h1 className="mt-4 text-6xl leading-none">Build your repertoire.</h1>
+            <h1 className="mt-4 text-6xl leading-none">
+              Build your repertoire.
+            </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-              Create an account to take the player profile quiz, save your shots, and view your repertoire.
+              Create an account to take the player profile quiz, save your
+              shots, and view your repertoire.
             </p>
             <Link
               href="/signup"
@@ -42,7 +45,8 @@ export default async function RepertoirePage() {
     .select("handedness")
     .eq("id", user.id)
     .maybeSingle();
-  if (profileError) throw new Error(`Unable to load profile: ${profileError.message}`);
+  if (profileError)
+    throw new Error(`Unable to load profile: ${profileError.message}`);
   const shots = await listRepertoireShots();
   const recommendedShots = await listRecommendedShots(
     profile?.handedness ?? "Right",
@@ -60,7 +64,8 @@ export default async function RepertoirePage() {
           </p>
           <h1 className="mt-4 text-6xl leading-none">Your repertoire.</h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
-            Build a collection of shots that covers the moments you encounter on court.
+            Build a collection of shots that covers the moments you encounter on
+            court.
           </p>
           <Link
             href="/repertoire/build"
@@ -89,13 +94,15 @@ export default async function RepertoirePage() {
               />
               <RecommendedShots shots={recommendedShots} />
               <RecommendedDrills drills={recommendedDrills} />
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
+              <h2 className="mt-10 text-3xl">Additional repertoire features</h2>
+              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <Link
                   href="/repertoire/shots"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    Browse your shots <span className="float-right text-[var(--teal)]">→</span>
+                    Browse your shots{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     Sort, review, and open the shots you are practicing.
@@ -106,7 +113,8 @@ export default async function RepertoirePage() {
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended shots <span className="float-right text-[var(--teal)]">→</span>
+                    View recommended shots{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     See the full ranked list of shots to add or improve.
@@ -117,10 +125,23 @@ export default async function RepertoirePage() {
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended drills <span className="float-right text-[var(--teal)]">→</span>
+                    View recommended drills{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     See the full ranked list of drills to work on.
+                  </p>
+                </Link>
+                <Link
+                  href="/discover"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    Discover a shot{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    Find a catalog shot to add to your repertoire.
                   </p>
                 </Link>
               </div>
@@ -134,20 +155,16 @@ export default async function RepertoirePage() {
                 <p className="mt-2 text-[var(--muted)]">
                   Find a shot that fits the moment and add it here.
                 </p>
-                <Link
-                  href="/"
-                  className="mt-6 inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
-                >
-                  Open discovery
-                </Link>
               </div>
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
+              <h2 className="mt-10 text-3xl">Additional repertoire features</h2>
+              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <Link
                   href="/repertoire/shots"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    Browse your shots <span className="float-right text-[var(--teal)]">→</span>
+                    Browse your shots{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     Find shots to add to your repertoire.
@@ -158,7 +175,8 @@ export default async function RepertoirePage() {
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended shots <span className="float-right text-[var(--teal)]">→</span>
+                    View recommended shots{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     See the full ranked list of shots to add or improve.
@@ -169,10 +187,23 @@ export default async function RepertoirePage() {
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended drills <span className="float-right text-[var(--teal)]">→</span>
+                    View recommended drills{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     See the full ranked list of drills to work on.
+                  </p>
+                </Link>
+                <Link
+                  href="/discover"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    Discover a shot{" "}
+                    <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    Find a catalog shot to start building your repertoire.
                   </p>
                 </Link>
               </div>
