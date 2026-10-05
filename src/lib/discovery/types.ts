@@ -36,4 +36,6 @@ export type DiscoverableShot = ShotRange & {
   description?: string;
   instructions?: string;
   videoUrl?: string | null;
+  videoStartSeconds?: number | null;
+  videoEndSeconds?: number | null;
 };

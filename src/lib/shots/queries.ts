@@ -3,7 +3,7 @@ import type { DiscoverableShot, DiscoveryInput } from "@/lib/discovery/types";
 import { createClient } from "@/lib/supabase/server";
 
 const shotFields =
-  "id,name,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max,shot_type,aggression_score,video_url,description,difficulty,instructions";
+  "id,name,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max,shot_type,aggression_score,video_url,video_start_seconds,video_end_seconds,description,difficulty,instructions";
 
 function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
   return {
@@ -20,6 +20,8 @@ function toDiscoverableShot(shot: Record<string, unknown>): DiscoverableShot {
     shotType: String(shot.shot_type) as DiscoverableShot["shotType"],
     aggressionScore: Number(shot.aggression_score),
     videoUrl: typeof shot.video_url === "string" ? shot.video_url : null,
+    videoStartSeconds: shot.video_start_seconds == null ? null : Number(shot.video_start_seconds),
+    videoEndSeconds: shot.video_end_seconds == null ? null : Number(shot.video_end_seconds),
     description: String(shot.description ?? ""),
     difficulty: Number(shot.difficulty),
     instructions: String(shot.instructions ?? ""),

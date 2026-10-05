@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import {
   updateDrillRequestStatus,
   updateShotRequestStatus,
+  updateShotVideoRequestStatus,
 } from "@/app/actions/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -33,6 +34,12 @@ export default async function AdminRequestsPage() {
     .order("created_at", { ascending: false });
   if (drillError)
     throw new Error(`Unable to load drill requests: ${drillError.message}`);
+  const { data: videoRequests, error: videoError } = await supabase
+    .from("shot_video_requests")
+    .select("id,shot_id,video_url,start_seconds,end_seconds,status,created_at,shots(name)")
+    .order("created_at", { ascending: false });
+  if (videoError)
+    throw new Error(`Unable to load shot video requests: ${videoError.message}`);
   const normalizeStatus = (status: string): RequestStatus =>
     status.toLowerCase() as RequestStatus;
 
@@ -81,6 +88,42 @@ export default async function AdminRequestsPage() {
           ) : (
             <p className="rounded-2xl border border-dashed border-[var(--line)] p-8 text-[var(--muted)]">
               No shot requests yet.
+            </p>
+          )}
+          <header className="border-t border-[var(--line)] pt-12">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
+              Shot video requests
+            </p>
+            <h2 className="mt-2 text-3xl">Videos to review.</h2>
+          </header>
+          {videoRequests?.length ? (
+            videoRequests.map((request) => {
+              const shot = Array.isArray(request.shots) ? request.shots[0] : request.shots;
+              return (
+                <article key={request.id} className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-2xl">{shot?.name ?? "Unknown shot"}</h3>
+                      <a href={request.video_url} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm font-bold text-[var(--teal)]">
+                        Open video →
+                      </a>
+                      <p className="mt-2 text-sm text-[var(--muted)]">
+                        Use seconds {request.start_seconds}–{request.end_seconds}.
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-[#e5f0e9] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em]">{request.status}</span>
+                  </div>
+                  <RequestStatusForm
+                    requestId={request.id}
+                    status={normalizeStatus(request.status)}
+                    action={updateShotVideoRequestStatus}
+                  />
+                </article>
+              );
+            })
+          ) : (
+            <p className="rounded-2xl border border-dashed border-[var(--line)] p-8 text-[var(--muted)]">
+              No shot video requests yet.
             </p>
           )}
           <header className="border-t border-[var(--line)] pt-12">

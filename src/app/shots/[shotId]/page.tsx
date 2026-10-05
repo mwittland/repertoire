@@ -10,6 +10,8 @@ import { listDrillsForShot } from "@/lib/drills/queries";
 import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
 import { ShotRangePreview } from "@/components/shot-range-preview";
 import { createClient } from "@/lib/supabase/server";
+import { YoutubePlayer } from "@/components/youtube-player";
+import { ShotVideoRequestForm } from "@/components/shot-video-request-form";
 
 export default async function ShotPage({
   params,
@@ -88,6 +90,14 @@ export default async function ShotPage({
             )}
           </aside>
         </div>
+        {shot.videoUrl ? (
+          <section className="mt-12 border-t border-[var(--line)] pt-8">
+            <h2 className="mb-4 text-3xl">Watch the shot</h2>
+            <YoutubePlayer url={shot.videoUrl} startSeconds={shot.videoStartSeconds} endSeconds={shot.videoEndSeconds} />
+          </section>
+        ) : (
+          <ShotVideoRequestForm shotId={shot.id} />
+        )}
         <section className="mt-16 border-t border-[var(--line)] pt-8">
           <div className="flex items-end justify-between gap-4">
             <div>

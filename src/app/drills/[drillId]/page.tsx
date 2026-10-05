@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDrillById } from "@/lib/drills/queries";
 import { DrillCoveragePreview } from "@/components/drill-coverage-preview";
+import { YoutubePlayer } from "@/components/youtube-player";
 
 export default async function DrillPage({
   params,
@@ -38,6 +39,12 @@ export default async function DrillPage({
             <DrillCoveragePreview drill={drill} embedded />
           </aside>
         </div>
+        {drill.videoUrl && (
+          <section className="mt-12 border-t border-[var(--line)] pt-8">
+            <h2 className="mb-4 text-3xl">Watch the drill</h2>
+            <YoutubePlayer url={drill.videoUrl} startSeconds={drill.videoStartSeconds} endSeconds={drill.videoEndSeconds} />
+          </section>
+        )}
         <section className="mt-16 border-t border-[var(--line)] pt-8">
           <h2 className="text-3xl">Shots in this drill</h2>
           <div className="mt-6 grid gap-3 sm:grid-cols-2">

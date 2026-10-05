@@ -15,6 +15,16 @@ export type AdminFormState = { error?: string };
 const optionalUrl = z
   .union([z.string().url(), z.literal("")])
   .transform((value) => value || null);
+const optionalSeconds = z
+  .union([z.coerce.number().int().min(0), z.literal("")])
+  .transform((value) => value === "" ? null : value);
+const videoFields = z.object({
+  videoUrl: optionalUrl,
+  videoStartSeconds: optionalSeconds,
+  videoEndSeconds: optionalSeconds,
+}).refine((data) => data.videoUrl === null || (data.videoStartSeconds !== null && data.videoEndSeconds !== null && data.videoEndSeconds > data.videoStartSeconds), {
+  message: "Video start and end times are required, and end must be greater than start.",
+});
 const shotSchema = z
   .object({
     name: z.string().trim().min(2),
@@ -35,7 +45,7 @@ const shotSchema = z
     ]),
     aggressionScore: z.coerce.number().int().min(0).max(100),
     difficulty: z.coerce.number().int().min(0).max(100),
-    videoUrl: optionalUrl,
+    ...videoFields.shape,
     description: z.string().trim().min(1),
     instructions: z.string().trim().min(1),
   })
@@ -47,6 +57,9 @@ const shotSchema = z
   })
   .refine((data) => data.ballHeightMin <= data.ballHeightMax, {
     message: "Ball height minimum must be no greater than maximum.",
+  })
+  .refine((data) => data.videoUrl === null || (data.videoStartSeconds !== null && data.videoEndSeconds !== null && data.videoEndSeconds > data.videoStartSeconds), {
+    message: "Video start and end times are required, and end must be greater than start.",
   });
 
 const drillSchema = z.object({
@@ -59,9 +72,11 @@ const drillSchema = z.object({
   ballHeightMin: z.coerce.number().min(0).max(10),
   ballHeightMax: z.coerce.number().min(0).max(10),
   description: z.string().trim().min(1),
-  videoUrl: optionalUrl,
+  ...videoFields.shape,
 }).refine((data) => data.courtXMin <= data.courtXMax && data.courtYMin <= data.courtYMax && data.ballHeightMin <= data.ballHeightMax, {
   message: "Court coverage minimums must not exceed maximums.",
+}).refine((data) => data.videoUrl === null || (data.videoStartSeconds !== null && data.videoEndSeconds !== null && data.videoEndSeconds > data.videoStartSeconds), {
+  message: "Video start and end times are required, and end must be greater than start.",
 });
 
 async function requireAdmin(nextPath = "/admin") {
@@ -136,6 +151,8 @@ export async function createShot(
       aggression_score: parsed.data.aggressionScore,
       difficulty: parsed.data.difficulty,
       video_url: parsed.data.videoUrl,
+      video_start_seconds: parsed.data.videoStartSeconds,
+      video_end_seconds: parsed.data.videoEndSeconds,
       description: parsed.data.description,
       instructions: parsed.data.instructions,
     })
@@ -174,6 +191,8 @@ export async function createDrill(
       ball_height_max: parsed.data.ballHeightMax,
       description: parsed.data.description,
       video_url: parsed.data.videoUrl,
+      video_start_seconds: parsed.data.videoStartSeconds,
+      video_end_seconds: parsed.data.videoEndSeconds,
     })
     .select("id")
     .single();
@@ -214,6 +233,8 @@ export async function updateShot(
       aggression_score: parsed.data.aggressionScore,
       difficulty: parsed.data.difficulty,
       video_url: parsed.data.videoUrl,
+      video_start_seconds: parsed.data.videoStartSeconds,
+      video_end_seconds: parsed.data.videoEndSeconds,
       description: parsed.data.description,
       instructions: parsed.data.instructions,
       updated_at: new Date().toISOString(),
@@ -257,6 +278,8 @@ export async function updateDrill(
       type: parsed.data.type,
       description: parsed.data.description,
       video_url: parsed.data.videoUrl,
+      video_start_seconds: parsed.data.videoStartSeconds,
+      video_end_seconds: parsed.data.videoEndSeconds,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id.data);
@@ -320,6 +343,25 @@ export async function updateDrillRequestStatus(formData: FormData) {
     throw new Error(`Unable to update drill request: ${error.message}`);
   if (savedRequest.status !== parsed.data.status)
     throw new Error("The drill request status was not saved.");
+  revalidatePath("/admin/requests");
+  redirect("/admin/requests");
+}
+
+export async function updateShotVideoRequestStatus(formData: FormData) {
+  const parsed = statusSchema.safeParse({
+    requestId: formData.get("requestId"),
+    status: formData.get("status"),
+  });
+  if (!parsed.success) throw new Error("Invalid video request update.");
+  const supabase = await requireAdmin();
+  const { error } = await supabase
+    .from("shot_video_requests")
+    .update({
+      status: parsed.data.status,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", parsed.data.requestId);
+  if (error) throw new Error(`Unable to update video request: ${error.message}`);
   revalidatePath("/admin/requests");
   redirect("/admin/requests");
 }

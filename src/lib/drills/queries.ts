@@ -4,7 +4,7 @@ import { drillTypes, type Drill, type DrillType } from "@/lib/drills/types";
 export { drillTypes };
 export type { Drill, DrillType };
 
-const drillFields = "id,name,type,description,video_url,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max";
+const drillFields = "id,name,type,description,video_url,video_start_seconds,video_end_seconds,court_x_min,court_x_max,court_x_left_min,court_x_left_max,court_y_min,court_y_max,ball_height_min,ball_height_max";
 
 function toDrill(row: Record<string, unknown>, shots: { id: string; name: string }[] = []): Drill {
   return {
@@ -13,6 +13,8 @@ function toDrill(row: Record<string, unknown>, shots: { id: string; name: string
     type: drillTypes.includes(row.type as DrillType) ? row.type as DrillType : "Solo",
     description: String(row.description ?? ""),
     videoUrl: typeof row.video_url === "string" ? row.video_url : null,
+    videoStartSeconds: row.video_start_seconds == null ? null : Number(row.video_start_seconds),
+    videoEndSeconds: row.video_end_seconds == null ? null : Number(row.video_end_seconds),
     courtXMin: Number(row.court_x_min),
     courtXMax: Number(row.court_x_max),
     courtXLeftMin: Number(row.court_x_left_min),

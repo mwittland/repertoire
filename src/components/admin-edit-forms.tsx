@@ -116,6 +116,10 @@ export function EditShotForm({
         defaultValue={shot.videoUrl}
         required={false}
       />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input name="videoStartSeconds" label="Video start (seconds)" type="number" defaultValue={shot.videoStartSeconds ?? ""} required={false} />
+        <Input name="videoEndSeconds" label="Video end (seconds)" type="number" defaultValue={shot.videoEndSeconds ?? ""} required={false} />
+      </div>
       <TextArea
         name="description"
         label="Description"
@@ -194,6 +198,10 @@ export function EditDrillForm({
         defaultValue={drill.videoUrl}
         required={false}
       />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input name="videoStartSeconds" label="Video start (seconds)" type="number" defaultValue={drill.videoStartSeconds ?? ""} required={false} />
+        <Input name="videoEndSeconds" label="Video end (seconds)" type="number" defaultValue={drill.videoEndSeconds ?? ""} required={false} />
+      </div>
       {state.error && (
         <p role="alert" className="text-sm text-[var(--coral)]">
           {state.error}
