@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { recordQuizCompletion } from "@/app/actions/metrics";
 import { applyPreset } from "@/app/actions/repertoire-quiz";
+import { HowItWorksMap } from "@/components/how-it-works-map";
 import {
   getPreset,
   getPresetShotMastery,
@@ -270,7 +271,7 @@ function recommendPreset(answers: Record<string, string>) {
   const sideScore = sideBias;
   const sideLabel =
     Math.abs(sideScore) < 1
-      ? "balanced-side"
+      ? "balanced"
       : sideScore > 0
         ? "forehand-led"
         : "backhand-led";
@@ -421,6 +422,45 @@ function PreviewList({
         </div>
       ))}
     </div>
+  );
+}
+
+function QuizCoverageMap({
+  preset,
+  shots,
+  answers,
+  handedness,
+}: {
+  preset: RepertoirePreset;
+  shots: DiscoverableShot[];
+  answers: Record<string, string>;
+  handedness: Handedness;
+}) {
+  const profileShots = shots
+    .filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType))
+    .map((shot) => ({
+      ...shot,
+      confidence: getShotMastery(preset, shot, answers, handedness, shots),
+    }));
+
+  return (
+    <HowItWorksMap
+      shots={profileShots}
+      mapModes={["relative"]}
+      initialMapMode="relative"
+      relativeMasteryNote
+      mapSize="small"
+      bare
+      showShotTypeFilter={false}
+      showShotTypeColors={false}
+      showShotTypeLegend={false}
+      showMasteryLegend
+      showHandednessFilter={false}
+      showBallHeightFilter={false}
+      hideSidePanel
+      heading="See your starting coverage."
+      description="This map shows the relative strength of your recommended shot profile across the court."
+    />
   );
 }
 
@@ -592,6 +632,12 @@ export function RepertoireQuiz({
             handedness={handedness}
           />
         </div>
+        <QuizCoverageMap
+          preset={recommendation}
+          shots={shots}
+          answers={answers}
+          handedness={handedness}
+        />
         {error && (
           <p role="alert" className="mt-6 text-sm text-[var(--coral)]">
             {error}

@@ -22,12 +22,12 @@ export default async function HowItWorksPage() {
             Your pickleball repertoire
           </p>
           <h1 className="mt-4 max-w-4xl text-6xl leading-none sm:text-7xl">
-            Build a game you can rely on.
+            Turn your weaknesses into strengths.
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-            Repertoire turns the shots you are learning into a game you can rely
-            on. Discover the right option for each court situation, save the
-            shots you want to practice, and build dependable coverage over time.
+            Repertoire stores your mastery of every shot in pickleball,
+            generating a map of your court coverage and identifying the shots
+            you need to work on to up your game.
           </p>
           {!user && (
             <p className="mt-4 max-w-2xl text-[var(--muted)]">
@@ -67,7 +67,7 @@ export default async function HowItWorksPage() {
           <FeatureMetric
             value={metrics.quizCompletions}
             label="Player profiles generated"
-            description="Answer the profile quiz to get a shot starting point tailored to your game."
+            description="Take a quick quiz to see your personal repertoire."
             actionLabel="Take the profile quiz"
             href="/repertoire/quiz"
             accountRequired

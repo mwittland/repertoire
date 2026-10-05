@@ -9,7 +9,7 @@ export default function SignupPage() {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Start your repertoire
           </p>
-          <h1 className="mt-3 text-4xl">Keep the good shots.</h1>
+          <h1 className="mt-3 text-4xl">Signup</h1>
           <AuthForm action={signUp} mode="signup" />
         </section>
       </div>

@@ -14,7 +14,7 @@ export default async function LoginPage({
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
             Welcome back
           </p>
-          <h1 className="mt-3 text-4xl">Return to your game.</h1>
+          <h1 className="mt-3 text-4xl">Login</h1>
           {message && (
             <p className="mt-5 text-sm text-[var(--teal)]">{message}</p>
           )}

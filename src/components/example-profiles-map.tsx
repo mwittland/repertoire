@@ -7,18 +7,17 @@ import type { DiscoverableShot } from "@/lib/discovery/types";
 type ExampleProfile = {
   id: string;
   name: string;
-  description: string;
   coverage: number;
   mastery: number;
   shotTypes: DiscoverableShot["shotType"][];
 };
 
 const profiles: ExampleProfile[] = [
-  { id: "new-player", name: "New to pickleball", description: "Building the basics.", coverage: 0.45, mastery: 38, shotTypes: ["Dink", "Drop", "Drive"] },
-  { id: "rec-player", name: "Recreational regular", description: "Growing consistency.", coverage: 0.62, mastery: 55, shotTypes: ["Dink", "Drop", "Drive", "Lob"] },
-  { id: "club-competitor", name: "3.5 club competitor", description: "Balanced and developing.", coverage: 0.76, mastery: 68, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Lob"] },
-  { id: "tournament-player", name: "4.0 tournament player", description: "Pressure-ready options.", coverage: 0.9, mastery: 82, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] },
-  { id: "elite-player", name: "5.0 all-court player", description: "Complete and reliable.", coverage: 1, mastery: 94, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] },
+  { id: "new-player", name: "New to pickleball", coverage: 0.45, mastery: 38, shotTypes: ["Dink", "Drop", "Drive"] },
+  { id: "rec-player", name: "Recreational regular", coverage: 0.62, mastery: 55, shotTypes: ["Dink", "Drop", "Drive", "Lob"] },
+  { id: "club-competitor", name: "3.5 club competitor", coverage: 0.76, mastery: 68, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Lob"] },
+  { id: "tournament-player", name: "4.0 tournament player", coverage: 0.9, mastery: 82, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] },
+  { id: "elite-player", name: "5.0 all-court player", coverage: 1, mastery: 94, shotTypes: ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] },
 ];
 
 function profileShots(shots: DiscoverableShot[], profile: ExampleProfile) {
@@ -63,7 +62,6 @@ export function ExampleProfilesMap({
               aria-pressed={active}
             >
               <span className="font-bold">{profile.name}</span>
-              <span className="mt-1 block leading-5 text-[var(--muted)]">{profile.description}</span>
             </button>
           );
         })}
@@ -88,7 +86,7 @@ export function ExampleProfilesMap({
         extraControls={profileControls}
         hideSidePanel
         heading="Compare example players."
-        description="Coverage shows where each player has options across the court."
+        description="The coverage map shows how effective each player is across the court."
       />
   );
 }

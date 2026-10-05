@@ -69,7 +69,7 @@ export function AuthForm({
           href={isLogin ? "/signup" : "/login"}
           className="font-bold text-[var(--teal)]"
         >
-          {isLogin ? "Create one" : "Sign in"}
+          {isLogin ? "Create an account" : "Sign in"}
         </Link>
       </p>
     </form>

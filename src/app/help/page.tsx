@@ -56,29 +56,17 @@ export default async function HelpPage() {
           </p>
         </header>
 
-        <HelpSection eyebrow="01 / Discover" title="Search by the moment">
-          <p>
-            Choose a court position, ball height, and handedness. Discovery
-            returns shots whose coverage includes that point.
-          </p>
-          <p>If nothing fits, try a nearby position or request a new shot.</p>
-        </HelpSection>
-
         <HelpSection
-          eyebrow="02 / Your collection"
+          eyebrow="01 / Your collection"
           title="Build your repertoire"
         >
           <p>
             Add shots to your repertoire. The Repertoire page shows your shot
             coverage across the court.
           </p>
-          <p>
-            Shot locations are stored as court ranges. Left-handed views mirror
-            those ranges automatically from the right-handed source location.
-          </p>
         </HelpSection>
 
-        <HelpSection eyebrow="03 / Shot types" title="Every shot has a job">
+        <HelpSection eyebrow="02 / Shot types" title="Every shot has a job">
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {shotTypes.map((shot) => (
               <Explanation
@@ -91,7 +79,7 @@ export default async function HelpPage() {
           </div>
         </HelpSection>
 
-        <HelpSection eyebrow="04 / Ratings" title="Read the signals">
+        <HelpSection eyebrow="03 / Ratings" title="Read the signals">
           <div className="grid gap-5 md:grid-cols-3">
             <Explanation
               title="Aggression"
@@ -105,14 +93,14 @@ export default async function HelpPage() {
             />
             <Explanation
               title="Mastery"
-              text="Your current readiness for saved shots, from 0 to 100."
+              text="Your current ability to execute a shot."
               color="#d8a43f"
             />
           </div>
         </HelpSection>
 
         <HelpSection
-          eyebrow="05 / Catalog map"
+          eyebrow="04 / Catalog map"
           title="See the catalog at a glance"
         >
           <p>

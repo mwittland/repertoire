@@ -71,7 +71,7 @@ export default async function RepertoirePage() {
             href="/repertoire/build"
             className="mt-6 inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
           >
-            Just getting started? Quick-fill your shot repertoire
+            Just getting started? Click here
           </Link>
           {shots.length > 0 ? (
             <>
