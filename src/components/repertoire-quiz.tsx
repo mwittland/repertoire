@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { applyPreset } from "@/app/actions/repertoire-quiz";
 import { getPreset, getPresetShotMastery, type RepertoirePreset } from "@/lib/repertoire/presets";
-import type { Drill } from "@/lib/drills/types";
 import type { DiscoverableShot } from "@/lib/discovery/types";
 
 type Answer = { label: string; value: string; scores: Partial<Record<string, number>> };
 type Question = { id: string; title: string; description: string; answers: Answer[] };
+type Handedness = "Right" | "Left";
 
 const ratingAnswers = [
   { label: "Needs significant work", value: "0", scores: {} },
@@ -23,15 +23,17 @@ const questions: Question[] = [
     title: "What level do you usually play at?",
     description: "Choose the level that best matches your current games.",
     answers: [
-      { label: "Beginner", value: "25", scores: {} },
-      { label: "Around 3.0–3.5", value: "40", scores: {} },
-      { label: "Around 3.5–4.0", value: "52", scores: {} },
-      { label: "Around 4.0–4.5", value: "68", scores: {} },
-      { label: "Around 4.5–5.0", value: "80", scores: {} },
-      { label: "5.0+", value: "92", scores: {} },
+      { label: "Beginner", value: "20", scores: {} },
+      { label: "Around 3.0–3.5", value: "32", scores: {} },
+      { label: "Around 3.5–4.0", value: "44", scores: {} },
+      { label: "Around 4.0–4.5", value: "58", scores: {} },
+      { label: "Around 4.5–5.0", value: "68", scores: {} },
+      { label: "5.0+", value: "78", scores: {} },
     ],
   },
   ...([
+    ["left-side", "How would you rate your ability to play the left side?", "Think about positioning, decisions, and consistency when you play on the left side of the court."],
+    ["right-side", "How would you rate your ability to play the right side?", "Think about positioning, decisions, and consistency when you play on the right side of the court."],
     ["forehand", "How would you rate your forehand compared with your peers?", "Think about consistency, placement, and confidence under pressure."],
     ["backhand", "How would you rate your backhand compared with your peers?", "Think about consistency, placement, and confidence under pressure."],
     ["baseline", "How would you rate your baseline game?", "Consider your ability to defend, drive, lob, and start moving forward."],
@@ -61,7 +63,7 @@ const questions: Question[] = [
 ];
 
 function recommendPreset(answers: Record<string, string>) {
-  const skill = Number(answers.skill ?? 25);
+  const skill = Number(answers.skill ?? 20);
   const shotTypes = ["Dink", "Drop", "Drive", "Reset", "Attack", "Putaway", "Lob"] as RepertoirePreset["shotTypes"];
   const phaseByShot: Record<string, keyof typeof phaseRatings> = {
     Dink: "kitchen", Drop: "transition", Drive: "baseline", Reset: "transition",
@@ -78,71 +80,93 @@ function recommendPreset(answers: Record<string, string>) {
   const count = skill < 40 ? 4 : skill < 52 ? 5 : skill < 68 ? 6 : 7;
   const includedShots = [...shotTypes].sort((a, b) => shotRatings[b] - shotRatings[a]).slice(0, count);
   if (!includedShots.includes(weakestShot)) includedShots[includedShots.length - 1] = weakestShot;
+  const forehandRating = Number(answers.forehand ?? 1);
+  const backhandRating = Number(answers.backhand ?? 1);
+  const sideAverage = (forehandRating + backhandRating) / 2;
+  const sideBias = forehandRating - backhandRating;
   const shotMastery = Object.fromEntries(includedShots.map((shot) => [
     shot,
-    Math.max(5, Math.min(95, skill + (shotRatings[shot] - 1.5) * 12 + (phaseRatings[phaseByShot[shot]] - 1.5) * 6)),
+    Math.round(Math.max(5, Math.min(90, skill + (shotRatings[shot] - 1.5) * 10 + (phaseRatings[phaseByShot[shot]] - 1.5) * 5 + (sideAverage - 1.5) * 7 + sideBias * 3))),
   ])) as RepertoirePreset["shotMastery"];
   const strongestPhase = Object.entries(phaseRatings).sort(([, a], [, b]) => b - a)[0][0];
-  const sideScore = Number(answers.forehand ?? 1) - Number(answers.backhand ?? 1);
+  const sideScore = sideBias;
   const sideLabel = Math.abs(sideScore) < 1 ? "balanced-side" : sideScore > 0 ? "forehand-led" : "backhand-led";
+  const leftSideRating = Number(answers["left-side"] ?? 1);
+  const rightSideRating = Number(answers["right-side"] ?? 1);
+  const strongerCourtSide = leftSideRating === rightSideRating
+    ? "balanced court-side coverage"
+    : leftSideRating > rightSideRating
+      ? "left-side coverage"
+      : "right-side coverage";
   return {
     id: `analytical-${sideLabel}-${strongestPhase}-${skill}-${strongestShot}-${weakestShot}`,
     name: `${sideLabel} ${strongestPhase} profile`,
     tagline: `A ${sideLabel} ${strongestPhase} game built around your ${strongestShot}.`,
     description: `Your strongest shot is the ${strongestShot}, while ${weakestShot} is the clearest development opportunity.`,
     bestFor: `Players building a ${strongestPhase} game`,
-    mastery: skill,
+    mastery: Math.max(5, skill - 3),
     shotMastery,
-    strengths: [`${strongestShot} is your current anchor`, `${sideLabel} decision-making`, `${strongestPhase} awareness`],
+    strengths: [`${strongestShot} is your current anchor`, `${sideLabel} decision-making`, strongerCourtSide, `${strongestPhase} awareness`],
     focusAreas: [`Build your ${weakestShot}`, `Connect your ${strongestPhase} game to the rest of the court`, "Use a skill-appropriate shot selection"],
     shotTypes: includedShots,
-    drillTypes: ["Solo", "Wall", "Partner+", "Ball Machine"] as RepertoirePreset["drillTypes"],
+    drillTypes: [],
     highlights: [`${includedShots.length} shot families`, "Skill-appropriate starting point", `${sideLabel} emphasis`],
   };
+}
+
+function getShotMastery(
+  preset: RepertoirePreset,
+  shot: DiscoverableShot,
+  answers: Record<string, string>,
+  handedness: Handedness,
+) {
+  const baseMastery = getPresetShotMastery(preset, shot);
+  const xMin = handedness === "Left" ? shot.courtXLeftMin : shot.courtXMin;
+  const xMax = handedness === "Left" ? shot.courtXLeftMax : shot.courtXMax;
+  const centerX = (xMin + xMax) / 2;
+  const sideAnswer = Number(answers[centerX <= 0 ? "left-side" : "right-side"] ?? 1);
+  return Math.round(Math.max(5, Math.min(90, baseMastery + (sideAnswer - 1.5) * 6)));
 }
 
 function PreviewList({
   preset,
   shots,
-  drills,
+  answers,
+  handedness,
 }: {
   preset: RepertoirePreset;
   shots: DiscoverableShot[];
-  drills: Drill[];
+  answers: Record<string, string>;
+  handedness: Handedness;
 }) {
-  const presetShots = shots.filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType));
-  const presetDrills = drills.filter((drill) => preset.drillTypes.includes(drill.type));
+  const presetShots = shots
+    .filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType))
+    .map((shot) => ({ shot, mastery: getShotMastery(preset, shot, answers, handedness) }));
+  const bestShots = [...presetShots].sort((a, b) => b.mastery - a.mastery).slice(0, 3);
+  const worstShots = [...presetShots].sort((a, b) => a.mastery - b.mastery).slice(0, 3);
   return (
     <div className="grid gap-5 md:grid-cols-2">
-      <div>
+      {[["Best shots", bestShots], ["Shots to develop", worstShots]].map(([label, entries]) => (
+        <div key={label as string}>
         <p className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-          Shots · {presetShots.length}
+          {label as string}
         </p>
         <ul className="mt-3 space-y-2 text-[var(--muted)]">
-          {presetShots.slice(0, 8).map((shot) => <li key={shot.id} className="flex justify-between gap-4"><span>• {shot.name}</span><span className="font-bold text-[var(--ink)]">{getPresetShotMastery(preset, shot)}%</span></li>)}
+          {(entries as typeof bestShots).map(({ shot, mastery }) => <li key={shot.id} className="flex justify-between gap-4"><span>• {shot.name}</span><span className="font-bold text-[var(--ink)]">{mastery}%</span></li>)}
         </ul>
-        {presetShots.length > 8 && <p className="mt-3 text-sm text-[var(--muted)]">Plus {presetShots.length - 8} more catalog shots.</p>}
-      </div>
-      <div>
-        <p className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-          Drills · {presetDrills.length}
-        </p>
-        <ul className="mt-3 space-y-2 text-[var(--muted)]">
-          {presetDrills.slice(0, 8).map((drill) => <li key={drill.id}>• {drill.name}</li>)}
-        </ul>
-        {presetDrills.length > 8 && <p className="mt-3 text-sm text-[var(--muted)]">Plus {presetDrills.length - 8} more catalog drills.</p>}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
 
 export function RepertoireQuiz({
   shots,
-  drills,
+  handedness,
   initialPresetId,
 }: {
   shots: DiscoverableShot[];
-  drills: Drill[];
+  handedness: Handedness;
   initialPresetId?: string;
 }) {
   const [step, setStep] = useState(0);
@@ -158,7 +182,7 @@ export function RepertoireQuiz({
   function applySelectedPreset(preset: RepertoirePreset | null = selectedPreset) {
     if (!preset) return;
     if (!window.confirm(
-      "Replace your current repertoire with this preset? Your existing shots and drills will be removed.",
+      "Replace your current shot repertoire with this preset? Your existing shots will be removed.",
     )
     ) {
       return;
@@ -167,15 +191,10 @@ export function RepertoireQuiz({
       .filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType))
       .map((shot) => ({
         id: shot.id,
-        confidence: getPresetShotMastery(preset, shot),
+        confidence: getShotMastery(preset, shot, answers, handedness),
       }));
-    const drillIds = drills
-      .filter((drill) => preset.drillTypes.includes(drill.type))
-      .map((drill) => drill.id);
     const formData = new FormData();
     formData.set("shotEntries", JSON.stringify(shotEntries));
-    formData.set("drillIds", JSON.stringify(drillIds));
-    formData.set("mastery", String(preset.mastery));
     formData.set("mode", "replace");
     setError(null);
     startTransition(async () => {
@@ -220,7 +239,7 @@ export function RepertoireQuiz({
             {selectedPreset.highlights.map((highlight) => <span key={highlight} className="rounded-full bg-[#e8eee6] px-3 py-1 text-sm text-[#101714]">{highlight}</span>)}
           </div>
           <div className="mt-8 border-t border-[var(--line)] pt-8">
-            <PreviewList preset={selectedPreset} shots={shots} drills={drills} />
+            <PreviewList preset={selectedPreset} shots={shots} answers={answers} handedness={handedness} />
           </div>
           {error && <p role="alert" className="mt-6 text-sm text-[var(--coral)]">{error}</p>}
           <button
@@ -260,7 +279,7 @@ export function RepertoireQuiz({
           </div>
         </div>
         <div className="mt-8 border-t border-[var(--line)] pt-8">
-          <PreviewList preset={recommendation} shots={shots} drills={drills} />
+          <PreviewList preset={recommendation} shots={shots} answers={answers} handedness={handedness} />
         </div>
         {error && <p role="alert" className="mt-6 text-sm text-[var(--coral)]">{error}</p>}
         <button

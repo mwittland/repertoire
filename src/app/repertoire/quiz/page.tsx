@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { RepertoireQuiz } from "@/components/repertoire-quiz";
-import { listDrills } from "@/lib/drills/queries";
 import { listShots } from "@/lib/shots/queries";
 import { createClient } from "@/lib/supabase/server";
 
@@ -15,7 +14,11 @@ export default async function RepertoireQuizPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/repertoire/quiz");
-  const [shots, drills] = await Promise.all([listShots(), listDrills()]);
+  const [{ data: profile, error: profileError }, shots] = await Promise.all([
+    supabase.from("profiles").select("handedness").eq("id", user.id).maybeSingle(),
+    listShots(),
+  ]);
+  if (profileError) throw new Error(`Unable to load profile: ${profileError.message}`);
   const { preset } = await searchParams;
 
   return (
@@ -26,10 +29,14 @@ export default async function RepertoireQuizPage({
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">Build your repertoire</p>
           <h1 className="mt-4 text-5xl leading-none sm:text-6xl">Find a starting point that fits.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-            Answer a few questions and we will recommend a preset of shots and drills. Preview it first, then add it to your repertoire and make it your own.
+            Answer a few questions and we will recommend a shot profile that fits your game. Review it first, then replace your shot repertoire and make it your own.
           </p>
           <div className="mt-8">
-            <RepertoireQuiz shots={shots} drills={drills} initialPresetId={preset} />
+            <RepertoireQuiz
+              shots={shots}
+              handedness={profile?.handedness ?? "Right"}
+              initialPresetId={preset}
+            />
           </div>
         </section>
       </div>

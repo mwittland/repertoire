@@ -24,13 +24,19 @@ export default async function RepertoireBuildPage() {
             Get your repertoire moving.
           </h1>
           <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
-            Start with a player profile that sounds like you, or take the deeper quiz for a more tailored mix of shots, mastery, and drills.
+            Start with a player profile that sounds like you, or take the deeper quiz for a more tailored mix of shots and mastery.
           </p>
           <Link
             href="/repertoire/quiz"
             className="mt-8 inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
           >
             Take the player profile quiz
+          </Link>
+          <Link
+            href="/repertoire/drills/build"
+            className="mt-3 ml-0 inline-block rounded-xl border border-[var(--line)] px-5 py-4 font-bold text-[var(--ink)] sm:ml-3"
+          >
+            Quick-fill your drills
           </Link>
         </header>
 
@@ -43,7 +49,7 @@ export default async function RepertoireBuildPage() {
               <h2 className="mt-3 text-4xl">Choose a starting player profile.</h2>
             </div>
             <p className="max-w-md text-[var(--muted)]">
-              Preview any profile before adding it. You can edit your repertoire afterward.
+              Preview any profile before replacing your shot repertoire. You can edit it afterward.
             </p>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
