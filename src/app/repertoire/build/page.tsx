@@ -24,7 +24,8 @@ export default async function RepertoireBuildPage() {
             Get your repertoire moving.
           </h1>
           <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
-            Start with a player profile that sounds like you, or take the deeper quiz for a more tailored mix of shots.
+            Start with a player profile that sounds like you, or take the deeper
+            quiz for a more tailored mix of shots.
           </p>
           <Link
             href="/repertoire/quiz"
@@ -40,10 +41,13 @@ export default async function RepertoireBuildPage() {
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
                 Main presets
               </p>
-              <h2 className="mt-3 text-4xl">Choose a starting player profile.</h2>
+              <h2 className="mt-3 text-4xl">
+                Choose a starting player profile.
+              </h2>
             </div>
             <p className="max-w-md text-[var(--muted)]">
-              Preview any profile before replacing your shot repertoire. You can edit it afterward.
+              Preview any profile before replacing your shot repertoire. You can
+              edit it afterward.
             </p>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -56,18 +60,12 @@ export default async function RepertoireBuildPage() {
                   {preset.bestFor}
                 </p>
                 <h3 className="mt-3 text-2xl">{preset.name}</h3>
-                <p className="mt-2 text-lg text-[var(--muted)]">{preset.tagline}</p>
-                <p className="mt-4 leading-7 text-[var(--muted)]">{preset.description}</p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {preset.highlights.map((highlight) => (
-                    <span
-                      key={highlight}
-                      className="rounded-full bg-[#e8eee6] px-3 py-1 text-sm text-[#101714]"
-                    >
-                      {highlight}
-                    </span>
-                  ))}
-                </div>
+                <p className="mt-2 text-lg text-[var(--muted)]">
+                  {preset.tagline}
+                </p>
+                <p className="mt-4 leading-7 text-[var(--muted)]">
+                  {preset.description}
+                </p>
                 <Link
                   href={`/repertoire/quiz?preset=${preset.id}`}
                   className="mt-6 inline-block font-bold text-[var(--teal)]"
