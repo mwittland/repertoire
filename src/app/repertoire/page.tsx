@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { listRepertoireShots } from "@/lib/repertoire/queries";
+import {
+  listRecommendedDrills,
+  listRecommendedShots,
+  listRepertoireShots,
+} from "@/lib/repertoire/queries";
 import { listRoutineDrills } from "@/lib/drills/queries";
 import { HowItWorksMap } from "@/components/how-it-works-map";
+import { RecommendedShots } from "@/components/recommended-shots";
+import { RecommendedDrills } from "@/components/recommended-drills";
 
 export default async function RepertoirePage() {
   const supabase = await createClient();
@@ -19,6 +25,12 @@ export default async function RepertoirePage() {
   if (profileError) throw new Error(`Unable to load profile: ${profileError.message}`);
   const shots = await listRepertoireShots();
   const routineDrills = await listRoutineDrills();
+  const recommendedShots = await listRecommendedShots(
+    profile?.handedness ?? "Right",
+  );
+  const recommendedDrills = await listRecommendedDrills(
+    profile?.handedness ?? "Right",
+  );
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -58,7 +70,9 @@ export default async function RepertoirePage() {
                 heading="See your repertoire at a glance."
                 description="This map shows the mastery of the shots and drills in your repertoire. Switch between Shots and Drills, then compare your absolute and relative mastery."
               />
-              <div className="mt-8 grid gap-4 md:grid-cols-2">
+              <RecommendedShots shots={recommendedShots} />
+              <RecommendedDrills drills={recommendedDrills} />
+              <div className="mt-8 grid gap-4 md:grid-cols-3">
                 <Link
                   href="/repertoire/shots"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
@@ -81,10 +95,34 @@ export default async function RepertoirePage() {
                     Review your drills and update mastery.
                   </p>
                 </Link>
+                <Link
+                  href="/repertoire/recommendations"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    View recommended shots <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    See the full ranked list of shots to add or improve.
+                  </p>
+                </Link>
+                <Link
+                  href="/repertoire/drill-recommendations"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    View recommended drills <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    See the full ranked list of drills to work on.
+                  </p>
+                </Link>
               </div>
             </>
           ) : (
             <>
+              <RecommendedShots shots={recommendedShots} />
+              <RecommendedDrills drills={recommendedDrills} />
               <div className="mt-10 rounded-2xl border border-dashed border-[var(--line)] p-8">
                 <h2 className="text-2xl">Your collection is waiting.</h2>
                 <p className="mt-2 text-[var(--muted)]">
@@ -97,7 +135,7 @@ export default async function RepertoirePage() {
                   Open discovery
                 </Link>
               </div>
-              <div className="mt-8 grid gap-4 md:grid-cols-2">
+              <div className="mt-8 grid gap-4 md:grid-cols-3">
                 <Link
                   href="/repertoire/shots"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
@@ -118,6 +156,28 @@ export default async function RepertoirePage() {
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
                     Find drills to add to your repertoire.
+                  </p>
+                </Link>
+                <Link
+                  href="/repertoire/recommendations"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    View recommended shots <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    See the full ranked list of shots to add or improve.
+                  </p>
+                </Link>
+                <Link
+                  href="/repertoire/drill-recommendations"
+                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
+                >
+                  <h2 className="text-2xl">
+                    View recommended drills <span className="float-right text-[var(--teal)]">→</span>
+                  </h2>
+                  <p className="mt-3 leading-6 text-[var(--muted)]">
+                    See the full ranked list of drills to work on.
                   </p>
                 </Link>
               </div>
