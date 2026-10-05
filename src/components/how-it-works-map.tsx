@@ -64,6 +64,10 @@ export function HowItWorksMap({
   subjectLabels = { shots: "Shots", drills: "Drills" },
   showConfidenceToggle = false,
   confidenceToggleAtTop = false,
+  mapModes = ["coverage", "confidence", "relative"],
+  mapModeLabels,
+  initialMapMode = mapModes[0],
+  relativeMasteryNote = false,
   showShotTypeFilter = true,
   shotTypeFilterAtBottom = false,
   showHandednessFilter = true,
@@ -81,6 +85,10 @@ export function HowItWorksMap({
   subjectLabels?: { shots: string; drills: string };
   showConfidenceToggle?: boolean;
   confidenceToggleAtTop?: boolean;
+  mapModes?: Array<"coverage" | "confidence" | "relative">;
+  mapModeLabels?: Partial<Record<"coverage" | "confidence" | "relative", string>>;
+  initialMapMode?: "coverage" | "confidence" | "relative";
+  relativeMasteryNote?: boolean;
   showShotTypeFilter?: boolean;
   shotTypeFilterAtBottom?: boolean;
   showHandednessFilter?: boolean;
@@ -95,7 +103,7 @@ export function HowItWorksMap({
   const [minHeight, setMinHeight] = useState(0);
   const [maxHeight, setMaxHeight] = useState(10);
   const [selectedHandedness, setSelectedHandedness] = useState<"Right" | "Left">("Right");
-  const [mapMode, setMapMode] = useState<"coverage" | "confidence">("coverage");
+  const [mapMode, setMapMode] = useState<"coverage" | "confidence" | "relative">(initialMapMode);
   const [mapSubject, setMapSubject] = useState<"shots" | "drills">("shots");
   const [enabledDrillTypes, setEnabledDrillTypes] = useState<DrillType[]>([...drillTypes]);
   const handedness = accountHandedness ?? selectedHandedness;
@@ -209,6 +217,18 @@ export function HowItWorksMap({
       }),
     );
   })();
+  const confidenceValues = confidenceRegions.flatMap((region) =>
+    region.confidence === null ? [] : [region.confidence],
+  );
+  const masteryValues = masteryRegions.flatMap((region) =>
+    region.mastery === null ? [] : [region.mastery],
+  );
+  function relativeValue(value: number, values: number[]) {
+    const lowest = Math.min(...values);
+    const highest = Math.max(...values);
+    if (lowest === highest) return 50;
+    return ((value - lowest) / (highest - lowest)) * 100;
+  }
   function toggleType(type: ShotType) {
     setEnabledTypes((current) =>
       current.includes(type)
@@ -239,6 +259,8 @@ export function HowItWorksMap({
           <MapViewToggle
             mapMode={mapMode}
             onChange={setMapMode}
+            modes={mapModes}
+            labels={mapModeLabels}
             className="w-full max-w-3xl justify-self-center"
           />
         )}
@@ -261,7 +283,7 @@ export function HowItWorksMap({
             <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
               <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
             </div>
-            {mapSubject === "drills" && mapMode === "confidence"
+            {mapSubject === "drills" && (mapMode === "confidence" || mapMode === "relative")
               ? masteryRegions.map((region, index) =>
                   region.mastery === null ? null : (
                     <div
@@ -273,12 +295,16 @@ export function HowItWorksMap({
                         top: `${percentY(region.yMax)}%`,
                         width: `${percentX(region.xMax) - percentX(region.xMin)}%`,
                         height: `${percentY(region.yMin) - percentY(region.yMax)}%`,
-                        backgroundColor: masteryGradientColor(region.mastery),
+                        backgroundColor: masteryGradientColor(
+                          mapMode === "relative"
+                            ? relativeValue(region.mastery, masteryValues)
+                            : region.mastery,
+                        ),
                       }}
                     />
                   ),
                 )
-              : mapSubject === "shots" && mapMode === "confidence"
+              : mapSubject === "shots" && (mapMode === "confidence" || mapMode === "relative")
               ? confidenceRegions.map((region, index) => {
                   if (region.confidence === null) return null;
                   return (
@@ -291,7 +317,11 @@ export function HowItWorksMap({
                         top: `${percentY(region.yMax)}%`,
                         width: `${percentX(region.xMax) - percentX(region.xMin)}%`,
                         height: `${percentY(region.yMin) - percentY(region.yMax)}%`,
-                        backgroundColor: masteryGradientColor(region.confidence),
+                        backgroundColor: masteryGradientColor(
+                          mapMode === "relative"
+                            ? relativeValue(region.confidence, confidenceValues)
+                            : region.confidence,
+                        ),
                       }}
                     />
                   );
@@ -353,9 +383,17 @@ export function HowItWorksMap({
             {mapSubject === "drills"
               ? mapMode === "confidence"
                 ? "Each region shows the average mastery of drills covering that area."
+                : mapMode === "relative"
+                  ? relativeMasteryNote
+                    ? "Mastery is relative to your current skill level across the map."
+                    : "Each region is colored relative to your lowest and highest drill mastery areas."
                 : `${visibleDrills.length} drill ${visibleDrills.length === 1 ? "region" : "regions"}.`
               : mapMode === "confidence"
                 ? "Each region shows the average mastery of saved shots covering that area."
+                : mapMode === "relative"
+                  ? relativeMasteryNote
+                    ? "Mastery is relative to your current skill level across the map."
+                    : "Each region is colored relative to your lowest and highest shot mastery areas."
                 : `${visibleShots.length} matching shot regions across ${enabledTypes.length} enabled ${enabledTypes.length === 1 ? "type" : "types"}.`}
           </p>
           {mapSubject === "shots" && mapMode === "coverage" && (
@@ -392,18 +430,23 @@ export function HowItWorksMap({
               </div>}
             </div>
           )}
-          {mapMode === "confidence" && (
+          {(mapMode === "confidence" || mapMode === "relative") && (
             <div className="mt-3 flex items-center gap-3 text-xs text-[var(--muted)]">
-              <span>Low</span>
+              <span>{mapMode === "relative" ? "Lowest area" : "Low"}</span>
               <span className="h-2 flex-1 rounded-full bg-gradient-to-r from-[#d64143] via-[#f4c943] to-[#278459]" />
-              <span>High</span>
+              <span>{mapMode === "relative" ? "Highest area" : "High"}</span>
             </div>
           )}
         </div>
         {!hideSidePanel && <aside className="space-y-7 lg:pr-4">
           {sideControls}
           {!confidenceToggleAtTop && showConfidenceToggle && (
-            <MapViewToggle mapMode={mapMode} onChange={setMapMode} />
+            <MapViewToggle
+              mapMode={mapMode}
+              onChange={setMapMode}
+              modes={mapModes}
+              labels={mapModeLabels}
+            />
           )}
           {showShotTypeFilter && !shotTypeFilterAtBottom && mapSubject === "shots" && <fieldset>
             <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
@@ -478,10 +521,14 @@ export function HowItWorksMap({
 function MapViewToggle({
   mapMode,
   onChange,
+  modes,
+  labels,
   className = "",
 }: {
-  mapMode: "coverage" | "confidence";
-  onChange: (mode: "coverage" | "confidence") => void;
+  mapMode: "coverage" | "confidence" | "relative";
+  onChange: (mode: "coverage" | "confidence" | "relative") => void;
+  modes: Array<"coverage" | "confidence" | "relative">;
+  labels?: Partial<Record<"coverage" | "confidence" | "relative", string>>;
   className?: string;
 }) {
   return (
@@ -489,15 +536,18 @@ function MapViewToggle({
       <legend className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
         Map view
       </legend>
-      <div className="mt-4 grid grid-cols-2 rounded-xl border border-[var(--line)] p-1 text-sm font-bold">
-        {(["coverage", "confidence"] as const).map((option) => (
+      <div
+        className="mt-4 grid rounded-xl border border-[var(--line)] p-1 text-sm font-bold"
+        style={{ gridTemplateColumns: `repeat(${modes.length}, minmax(0, 1fr))` }}
+      >
+        {modes.map((option) => (
           <button
             key={option}
             type="button"
             onClick={() => onChange(option)}
             className={`rounded-lg px-4 py-3 capitalize transition ${mapMode === option ? "bg-[var(--button)] text-[var(--ink)]" : "text-[var(--muted)] hover:text-[var(--ink)]"}`}
           >
-            {option === "confidence" ? "Mastery" : option}
+            {labels?.[option] ?? (option === "confidence" ? "Mastery" : option === "relative" ? "Relative" : option)}
           </button>
         ))}
       </div>
