@@ -28,7 +28,6 @@ const checkinOptions = [
 ] as const;
 
 const targetedShotCount = 5;
-const minimumTargetedShotCount = 3;
 
 function buildInitialState(shots: DiscoverableShot[]) {
   return Object.fromEntries(
@@ -77,15 +76,15 @@ export function MasteryUpdate({
   );
   const targetedShots = useMemo(
     () => {
-      const repertoireShots = shots
+      const lowConfidenceShots = shots
         .filter((shot) => shot.confidence !== null && shot.confidence !== undefined)
         .sort((a, b) => (a.confidence ?? 0) - (b.confidence ?? 0))
-        .slice(0, targetedShotCount - 2);
+        .slice(0, targetedShotCount);
       const otherShots = shots
         .filter((shot) => shot.confidence === null || shot.confidence === undefined)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .slice(0, 2);
-      return [...repertoireShots, ...otherShots];
+        .slice(0, targetedShotCount - lowConfidenceShots.length);
+      return [...lowConfidenceShots, ...otherShots];
     },
     [shots],
   );
@@ -233,9 +232,9 @@ export function MasteryUpdate({
           <p className="mt-3 leading-7 text-[var(--muted)]">
             We selected your lowest-mastery shots. Tell us whether you have practiced each one.
           </p>
-          {targetedShots.length < minimumTargetedShotCount ? (
+          {targetedShots.length < targetedShotCount ? (
             <p className="mt-8 text-[var(--muted)]">
-              You need at least three shots in your repertoire to take this check-in.
+              You need at least five shots in your catalog to take this check-in.
             </p>
           ) : targetedComplete ? (
             <>
