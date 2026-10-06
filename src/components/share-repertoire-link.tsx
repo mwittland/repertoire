@@ -31,11 +31,11 @@ export function ShareRepertoireLink({
         return;
       }
       const shareUrl = `${window.location.origin}/repertoire/shared/${result.token}`;
-      const shareText = `Check out ${profileName}'s pickleball repertoire on Repertoire.`;
+      const shareText = `Check out ${profileName}'s Repertoire.`;
       try {
         if (navigator.share) {
           await navigator.share({
-            title: `${profileName}'s repertoire on Repertoire`,
+            title: `${profileName}'s Repertoire`,
             text: shareText,
             url: shareUrl,
           });

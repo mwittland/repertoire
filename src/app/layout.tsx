@@ -4,7 +4,7 @@ import { SiteNav } from "@/components/site-nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Repertoire | Pickleball shot learning",
+  title: "RepertoirePB",
   description: "Discover the right pickleball shot for the moment you are in.",
 };
 
