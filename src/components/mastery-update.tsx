@@ -76,15 +76,15 @@ export function MasteryUpdate({
   );
   const targetedShots = useMemo(
     () => {
-      const lowConfidenceShots = shots
-        .filter((shot) => shot.confidence !== null && shot.confidence !== undefined)
-        .sort((a, b) => (a.confidence ?? 0) - (b.confidence ?? 0))
-        .slice(0, targetedShotCount);
-      const otherShots = shots
+      const unassessedShots = shots
         .filter((shot) => shot.confidence === null || shot.confidence === undefined)
         .sort((a, b) => a.name.localeCompare(b.name))
-        .slice(0, targetedShotCount - lowConfidenceShots.length);
-      return [...lowConfidenceShots, ...otherShots];
+        .slice(0, 2);
+      const weakestShots = shots
+        .filter((shot) => shot.confidence !== null && shot.confidence !== undefined)
+        .sort((a, b) => (a.confidence ?? 0) - (b.confidence ?? 0))
+        .slice(0, targetedShotCount - unassessedShots.length);
+      return [...unassessedShots, ...weakestShots];
     },
     [shots],
   );
