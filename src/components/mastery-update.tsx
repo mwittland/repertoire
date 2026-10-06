@@ -28,7 +28,7 @@ const checkinOptions = [
 ] as const;
 
 const targetedShotCount = 5;
-const targetedQuestionCount = targetedShotCount * 2;
+const minimumTargetedShotCount = 3;
 
 function buildInitialState(shots: DiscoverableShot[]) {
   return Object.fromEntries(
@@ -89,6 +89,7 @@ export function MasteryUpdate({
     },
     [shots],
   );
+  const targetedQuestionCount = targetedShots.length * 2;
 
   function updateShot(shotId: string, confidence: number | null, learned?: boolean) {
     setStates((current) => ({
@@ -232,7 +233,7 @@ export function MasteryUpdate({
           <p className="mt-3 leading-7 text-[var(--muted)]">
             We selected your lowest-mastery shots. Tell us whether you have practiced each one.
           </p>
-          {targetedShots.length < targetedShotCount ? (
+          {targetedShots.length < minimumTargetedShotCount ? (
             <p className="mt-8 text-[var(--muted)]">
               You need at least three shots in your repertoire to take this check-in.
             </p>
