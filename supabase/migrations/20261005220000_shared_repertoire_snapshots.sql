@@ -1,7 +1,9 @@
+create extension if not exists "pgcrypto";
+
 create table public.shared_repertoires (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
-  share_token text not null unique default encode(gen_random_bytes(18), 'hex'),
+  share_token text not null unique,
   profile_name text not null,
   handedness text not null check (handedness in ('Right', 'Left')),
   shots jsonb not null check (jsonb_typeof(shots) = 'array'),
