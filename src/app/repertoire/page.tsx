@@ -9,6 +9,8 @@ import { HowItWorksMap } from "@/components/how-it-works-map";
 import { RecommendedShots } from "@/components/recommended-shots";
 import { RecommendedDrills } from "@/components/recommended-drills";
 import { ShareRepertoireLink } from "@/components/share-repertoire-link";
+import { RepertoireProfileSummary } from "@/components/repertoire-profile-summary";
+import { summarizeRepertoire } from "@/lib/repertoire/profile-summary";
 
 export default async function RepertoirePage() {
   const supabase = await createClient();
@@ -106,9 +108,10 @@ export default async function RepertoirePage() {
                 relativeMasteryNote
                 mapSize="small"
                 hideSidePanel
-                heading="See your repertoire at a glance."
+                heading={summarizeRepertoire(shots).profileTitle}
                 description="This map shows where the shots in your repertoire cover the court."
               />
+              <RepertoireProfileSummary shots={shots} />
               <RecommendedShots shots={recommendedShots} />
               <RecommendedDrills drills={recommendedDrills} />
               <h2 className="mt-10 text-3xl">Additional repertoire features</h2>
