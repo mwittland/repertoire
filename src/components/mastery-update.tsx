@@ -80,7 +80,7 @@ export function MasteryUpdate({
       const repertoireShots = shots
         .filter((shot) => shot.confidence !== null && shot.confidence !== undefined)
         .sort((a, b) => (a.confidence ?? 0) - (b.confidence ?? 0))
-        .slice(0, 3);
+        .slice(0, targetedShotCount - 2);
       const otherShots = shots
         .filter((shot) => shot.confidence === null || shot.confidence === undefined)
         .sort((a, b) => a.name.localeCompare(b.name))

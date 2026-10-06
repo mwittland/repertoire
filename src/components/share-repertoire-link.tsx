@@ -66,6 +66,7 @@ export function ShareRepertoireLink({
         Share
       </button>
       {error && <p role="alert" className="mt-2 text-sm text-[var(--coral)]">{error}</p>}
+      {message && <p role="status" className="mt-2 text-sm text-[var(--teal)]">{message}</p>}
     </div>
   );
 }
