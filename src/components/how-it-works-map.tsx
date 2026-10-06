@@ -282,7 +282,7 @@ export function HowItWorksMap({
             onChange={setMapMode}
             modes={mapModes}
             labels={mapModeLabels}
-            className="w-full max-w-3xl justify-self-center"
+            className="w-full max-w-3xl justify-self-center lg:col-span-2"
           />
         )}
         {showSubjectToggle && (
@@ -299,7 +299,7 @@ export function HowItWorksMap({
             ))}
           </div>
         )}
-        <div className={`mx-auto w-full ${mapSize === "small" ? "max-w-lg" : hideSidePanel ? "max-w-3xl" : "max-w-2xl"}`}>
+        <div className={`mx-auto w-full text-center ${mapSize === "small" ? "max-w-lg" : hideSidePanel ? "max-w-3xl" : "max-w-2xl"}`}>
           <div className={`relative aspect-square w-full overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] ${mapSize === "small" ? "max-w-lg" : "max-w-2xl"}`}>
             <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
               <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />

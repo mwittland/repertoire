@@ -2,12 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getShotById } from "@/lib/shots/queries";
 import { getRepertoireEntry } from "@/lib/repertoire/queries";
-import {
-  addToRepertoire,
-  removeFromRepertoire,
-} from "@/app/actions/repertoire";
 import { listDrillsForShot } from "@/lib/drills/queries";
-import { ConfidenceBar, ConfidenceForm } from "@/components/confidence-form";
+import { ConfidenceBar } from "@/components/confidence-form";
 import { ShotRangePreview } from "@/components/shot-range-preview";
 import { createClient } from "@/lib/supabase/server";
 import { YoutubePlayer } from "@/components/youtube-player";
@@ -65,28 +61,9 @@ export default async function ShotPage({
           </div>
           <aside className="rounded-3xl border border-[var(--line)] bg-[var(--card)] p-7">
             <ShotRangePreview range={viewerShot} embedded />
-            {!repertoireEntry && <div className="mt-4"><ConfidenceBar confidence={null} large /></div>}
-            {repertoireEntry ? (
-              <>
-                <ConfidenceForm shotId={shotId} initialConfidence={repertoireEntry.confidence} />
-                <form action={removeFromRepertoire} className="mt-3">
-                  <input type="hidden" name="shotId" value={shotId} />
-                  <button
-                    type="submit"
-                    className="w-full rounded-xl border border-[var(--coral)] px-5 py-3 font-bold text-[var(--coral)] transition hover:bg-[var(--coral)] hover:text-white"
-                  >
-                    Remove from repertoire
-                  </button>
-                </form>
-              </>
-            ) : (
-              <form action={addToRepertoire}>
-                <input type="hidden" name="shotId" value={shotId} />
-                <button className="mt-9 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white">
-                  Add to repertoire
-                </button>
-              </form>
-            )}
+            <div className="mt-6">
+              <ConfidenceBar confidence={repertoireEntry?.confidence ?? null} large />
+            </div>
           </aside>
         </div>
         {shot.videoUrl ? (

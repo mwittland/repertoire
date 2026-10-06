@@ -26,8 +26,8 @@ export default async function RepertoirePage() {
               Build your repertoire.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
-              Create an account to take the player profile quiz, save your
-              shots, and view your repertoire.
+              Create an account to take the player profile quiz and view your
+              personalized repertoire.
             </p>
             <Link
               href="/signup"
@@ -64,15 +64,22 @@ export default async function RepertoirePage() {
           </p>
           <h1 className="mt-4 text-6xl leading-none">Your repertoire.</h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
-            Build a collection of shots that covers the moments you encounter on
-            court.
+            Your quiz-driven repertoire maps the moments you encounter on court.
           </p>
-          <Link
-            href="/repertoire/build"
-            className="mt-6 inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
-          >
-            Just getting started? Click here
-          </Link>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/repertoire/build"
+              className="inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
+            >
+              Just getting started? Click here
+            </Link>
+            <Link
+              href="/repertoire/update"
+              className="inline-block rounded-xl bg-[var(--coral)] px-5 py-4 font-bold text-white"
+            >
+              Been practicing? Update your repertoire here
+            </Link>
+          </div>
           {shots.length > 0 ? (
             <>
               <HowItWorksMap
@@ -80,7 +87,8 @@ export default async function RepertoirePage() {
                 handedness={profile?.handedness ?? "Right"}
                 showSubjectToggle={false}
                 showConfidenceToggle
-                showShotTypeFilter
+                confidenceToggleAtTop
+                showShotTypeFilter={false}
                 showBallHeightFilter={false}
                 showShotTypeColors={false}
                 showShotTypeLegend={false}
@@ -89,6 +97,7 @@ export default async function RepertoirePage() {
                 initialMapMode="confidence"
                 relativeMasteryNote
                 mapSize="small"
+                hideSidePanel
                 heading="See your repertoire at a glance."
                 description="This map shows where the shots in your repertoire cover the court."
               />
@@ -105,7 +114,7 @@ export default async function RepertoirePage() {
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Sort, review, and open the shots you are practicing.
+                    Review and open the shots in your repertoire.
                   </p>
                 </Link>
                 <Link
@@ -117,7 +126,7 @@ export default async function RepertoirePage() {
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
-                    See the full ranked list of shots to add or improve.
+                    See the full ranked list of shots to work on.
                   </p>
                 </Link>
                 <Link
@@ -141,7 +150,7 @@ export default async function RepertoirePage() {
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Find a catalog shot to add to your repertoire.
+                    Find a catalog shot to learn more about.
                   </p>
                 </Link>
               </div>
@@ -167,7 +176,7 @@ export default async function RepertoirePage() {
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Find shots to add to your repertoire.
+                    Review shots available in the catalog.
                   </p>
                 </Link>
                 <Link
@@ -179,7 +188,7 @@ export default async function RepertoirePage() {
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
                   <p className="mt-3 leading-6 text-[var(--muted)]">
-                    See the full ranked list of shots to add or improve.
+                    See the full ranked list of shots to work on.
                   </p>
                 </Link>
                 <Link

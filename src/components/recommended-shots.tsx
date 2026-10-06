@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import Link from "next/link";
-import { quickAddToRepertoire } from "@/app/actions/repertoire";
+import { useState } from "react";
 import { ConfidenceBar } from "@/components/confidence-form";
 import type { RecommendedShot } from "@/lib/repertoire/queries";
 
@@ -13,10 +12,6 @@ export function RecommendedShots({
   shots: RecommendedShot[];
   showShotTypeFilter?: boolean;
 }) {
-  const [added, setAdded] = useState<string[]>([]);
-  const [pendingShot, setPendingShot] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
   const [shotType, setShotType] = useState("All");
   const shotTypes = ["All", ...new Set(shots.map((shot) => shot.shotType))];
   const visibleShots =
@@ -24,26 +19,13 @@ export function RecommendedShots({
       ? shots
       : shots.filter((shot) => shot.shotType === shotType);
 
-  function addShot(shotId: string) {
-    const formData = new FormData();
-    formData.set("shotId", shotId);
-    setError(null);
-    setPendingShot(shotId);
-    startTransition(async () => {
-      const result = await quickAddToRepertoire(formData);
-      if (result.success) setAdded((current) => [...current, shotId]);
-      else setError(result.error ?? "Unable to add this shot right now.");
-      setPendingShot(null);
-    });
-  }
-
   return (
     <section className="mt-10">
       <div className="max-w-2xl">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
           Recommended next
         </p>
-        <h2 className="mt-3 text-4xl">Shots to add or work on.</h2>
+        <h2 className="mt-3 text-4xl">Shots to work on.</h2>
         <p className="mt-3 leading-7 text-[var(--muted)]">
           These shots target areas with the lowest current coverage in your repertoire.
         </p>
@@ -64,8 +46,6 @@ export function RecommendedShots({
         )}
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {visibleShots.map((shot) => {
-          const isAdded = added.includes(shot.id);
-          const isPending = pending && pendingShot === shot.id;
           return (
             <article
               key={shot.id}
@@ -94,18 +74,8 @@ export function RecommendedShots({
                   <ScoreBar label="Aggression" value={shot.aggressionScore ?? 0} />
                   <ScoreBar label="Difficulty" value={shot.difficulty ?? 0} blue />
                 </Link>
-              ) : isAdded ? (
-                <div className="p-6">
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-                    {shot.shotType}
-                  </p>
-                  <h3 className="mt-3 text-2xl">{shot.name}</h3>
-                  <p className="mt-5 font-bold text-[var(--teal)]">
-                    Added to your repertoire
-                  </p>
-                </div>
               ) : (
-                <div className="p-6">
+                <Link href={`/shots/${shot.id}`} className="block p-6">
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
                     {shot.shotType}
                   </p>
@@ -123,15 +93,7 @@ export function RecommendedShots({
                     <ScoreBar label="Aggression" value={shot.aggressionScore ?? 0} />
                     <ScoreBar label="Difficulty" value={shot.difficulty ?? 0} blue />
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => addShot(shot.id)}
-                    disabled={pending}
-                    className="mt-5 rounded-xl bg-[var(--ink)] px-4 py-3 font-bold text-white disabled:opacity-50"
-                  >
-                    {isPending ? "Adding..." : "Add to repertoire"}
-                  </button>
-                </div>
+                </Link>
               )}
             </article>
           );
@@ -144,11 +106,6 @@ export function RecommendedShots({
       ) : (
         <p className="mt-6 rounded-2xl border border-dashed border-[var(--line)] p-6 text-[var(--muted)]">
           Recommendations will appear as soon as shots are available in the catalog.
-        </p>
-      )}
-      {error && (
-        <p role="alert" className="mt-4 text-sm text-[var(--coral)]">
-          {error}
         </p>
       )}
     </section>
