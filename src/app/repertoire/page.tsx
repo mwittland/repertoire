@@ -8,6 +8,7 @@ import {
 import { HowItWorksMap } from "@/components/how-it-works-map";
 import { RecommendedShots } from "@/components/recommended-shots";
 import { RecommendedDrills } from "@/components/recommended-drills";
+import { ShareRepertoireLink } from "@/components/share-repertoire-link";
 
 export default async function RepertoirePage() {
   const supabase = await createClient();
@@ -42,7 +43,7 @@ export default async function RepertoirePage() {
   }
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("handedness")
+    .select("email,handedness")
     .eq("id", user.id)
     .maybeSingle();
   if (profileError)
@@ -79,6 +80,13 @@ export default async function RepertoirePage() {
             >
               Been practicing? Update your repertoire here
             </Link>
+            {shots.length > 0 && (
+              <ShareRepertoireLink
+                shots={shots}
+                handedness={profile?.handedness ?? "Right"}
+                profileName={profile?.email?.split("@")[0] ?? "Player"}
+              />
+            )}
           </div>
           {shots.length > 0 ? (
             <>
