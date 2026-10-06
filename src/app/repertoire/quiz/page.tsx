@@ -17,7 +17,7 @@ export default async function RepertoireQuizPage({
   if (!user) redirect("/login?next=/repertoire/quiz");
   const [{ data: profile, error: profileError }, shots, currentShots] = await Promise.all([
     user
-      ? supabase.from("profiles").select("handedness").eq("id", user.id).maybeSingle()
+    ? supabase.from("profiles").select("handedness").eq("id", user.id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
     listShots(),
     listRepertoireShots(),

@@ -6,6 +6,7 @@ import { recordQuizCompletion } from "@/app/actions/metrics";
 import { applyPreset } from "@/app/actions/repertoire-quiz";
 import { saveMasteryUpdates } from "@/app/actions/mastery-update";
 import { HowItWorksMap } from "@/components/how-it-works-map";
+import { summarizeRepertoire } from "@/lib/repertoire/profile-summary";
 import {
   getPreset,
   getPresetShotMastery,
@@ -650,13 +651,31 @@ export function RepertoireQuiz({
           getShotMastery(recommendation, shot, answers, handedness, shots) * 0.3,
       ),
     }));
+    const profileShots = reassessment
+      ? reassessmentShots
+      : shots
+          .filter(
+            (shot) =>
+              shot.shotType && recommendation.shotTypes.includes(shot.shotType),
+          )
+          .map((shot) => ({
+            ...shot,
+            confidence: getShotMastery(
+              recommendation,
+              shot,
+              answers,
+              handedness,
+              shots,
+            ),
+          }));
+    const profileTitle = summarizeRepertoire(profileShots).profileTitle;
     return (
       <section className="rounded-2xl border border-[var(--teal)] bg-[var(--card)] p-6 shadow-[var(--shadow)] sm:p-8">
         <p className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
           {reassessment ? "Your updated mastery" : "Your recommendation"}
         </p>
         <h2 className="mt-3 text-4xl">
-          {reassessment ? "Review your updated profile" : recommendation.name}
+          {profileTitle}
         </h2>
         <p className="mt-3 text-xl text-[var(--muted)]">
           {recommendation.tagline}

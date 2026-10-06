@@ -86,7 +86,7 @@ export default async function RepertoirePage() {
               <ShareRepertoireLink
                 shots={shots}
                 handedness={profile?.handedness ?? "Right"}
-                profileName={profile?.email?.split("@")[0] ?? "Player"}
+                profileName={summarizeRepertoire(shots).profileTitle}
               />
             )}
           </div>
@@ -102,9 +102,9 @@ export default async function RepertoirePage() {
                 showBallHeightFilter={false}
                 showShotTypeColors={false}
                 showShotTypeLegend={false}
-                mapModes={["confidence", "relative"]}
+                mapModes={["relative", "confidence"]}
                 mapModeLabels={{ confidence: "Total", relative: "Relative" }}
-                initialMapMode="confidence"
+                initialMapMode="relative"
                 relativeMasteryNote
                 mapSize="small"
                 hideSidePanel

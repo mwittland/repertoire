@@ -74,9 +74,9 @@ export function ExampleProfilesMap({
         shots={combinedShots}
         showConfidenceToggle
         confidenceToggleAtTop
-        mapModes={["confidence", "relative"]}
+        mapModes={["relative", "confidence"]}
         mapModeLabels={{ confidence: "Total", relative: "Relative" }}
-        initialMapMode="confidence"
+        initialMapMode="relative"
         relativeMasteryNote
         showShotTypeFilter={false}
         showShotTypeColors={false}
