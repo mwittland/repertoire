@@ -86,7 +86,7 @@ export default async function RepertoirePage() {
               <ShareRepertoireLink
                 shots={shots}
                 handedness={profile?.handedness ?? "Right"}
-                profileName={summarizeRepertoire(shots).profileTitle}
+                profileName={profile?.email?.split("@")[0] ?? "Player"}
               />
             )}
           </div>
