@@ -63,7 +63,7 @@ export function ShareRepertoireLink({
         disabled={pending}
         className="inline-block rounded-xl bg-[var(--teal)] px-5 py-4 font-bold text-white disabled:opacity-50"
       >
-        Share
+        Share your repertoire
       </button>
       {error && <p role="alert" className="mt-2 text-sm text-[var(--coral)]">{error}</p>}
       {message && <p role="status" className="mt-2 text-sm text-[var(--teal)]">{message}</p>}
