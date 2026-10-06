@@ -11,17 +11,18 @@ export default async function UpdateRepertoirePage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/repertoire/update");
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("handedness")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: profile, error: profileError }, catalogShots, repertoireShots] =
+    await Promise.all([
+      supabase
+        .from("profiles")
+        .select("handedness")
+        .eq("id", user.id)
+        .maybeSingle(),
+      listShots(),
+      listRepertoireShots(),
+    ]);
   if (profileError) throw new Error(`Unable to load profile: ${profileError.message}`);
 
-  const [catalogShots, repertoireShots] = await Promise.all([
-    listShots(),
-    listRepertoireShots(),
-  ]);
   const confidenceById = new Map(repertoireShots.map((shot) => [shot.id, shot.confidence]));
   const shots = catalogShots.map((shot) => ({
     ...shot,

@@ -31,11 +31,26 @@ export function ShareRepertoireLink({
         return;
       }
       const shareUrl = `${window.location.origin}/repertoire/shared/${result.token}`;
+      const shareText = `Check out ${profileName}'s pickleball repertoire on Repertoire.`;
       try {
-        await navigator.clipboard.writeText(shareUrl);
-        setMessage("Share link copied to your clipboard.");
-      } catch {
-        setError("The link was created, but could not be copied.");
+        if (navigator.share) {
+          await navigator.share({
+            title: `${profileName}'s repertoire on Repertoire`,
+            text: shareText,
+            url: shareUrl,
+          });
+          setMessage("Share sheet opened.");
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+          setMessage("Share link copied to your clipboard.");
+        } else {
+          setError("The link was created, but this browser cannot share or copy it.");
+        }
+      } catch (shareError) {
+        if (shareError instanceof DOMException && shareError.name === "AbortError") {
+          return;
+        }
+        setError("The link was created, but could not be shared.");
       }
     });
   }
@@ -48,7 +63,7 @@ export function ShareRepertoireLink({
         disabled={pending}
         className="inline-block rounded-xl bg-[var(--teal)] px-5 py-4 font-bold text-white disabled:opacity-50"
       >
-        {pending ? "Creating link..." : message ? "Link copied" : "Share your repertoire"}
+        Share
       </button>
       {error && <p role="alert" className="mt-2 text-sm text-[var(--coral)]">{error}</p>}
     </div>
