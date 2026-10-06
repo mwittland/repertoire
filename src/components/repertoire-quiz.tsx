@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { recordQuizCompletion } from "@/app/actions/metrics";
 import { applyPreset } from "@/app/actions/repertoire-quiz";
+import { saveMasteryUpdates } from "@/app/actions/mastery-update";
 import { HowItWorksMap } from "@/components/how-it-works-map";
 import {
   getPreset,
@@ -468,10 +469,14 @@ export function RepertoireQuiz({
   shots,
   handedness,
   initialPresetId,
+  reassessment = false,
+  currentShots = [],
 }: {
   shots: DiscoverableShot[];
   handedness: Handedness;
   initialPresetId?: string;
+  reassessment?: boolean;
+  currentShots?: DiscoverableShot[];
 }) {
   const [step, setStep] = useState(0);
   const [phase, setPhase] = useState<QuizPhase>("basic");
@@ -500,6 +505,7 @@ export function RepertoireQuiz({
     ) {
       return;
     }
+
     const shotEntries = shots
       .filter(
         (shot) => shot.shotType && preset.shotTypes.includes(shot.shotType),
@@ -519,6 +525,28 @@ export function RepertoireQuiz({
         router.refresh();
       } else {
         setError(result.error ?? "Unable to apply this preset.");
+      }
+    });
+  }
+
+  function saveReassessment() {
+    const updates = currentShots.map((shot) => ({
+      shotId: shot.id,
+      confidence: Math.round(
+        (shot.confidence ?? 25) * 0.7 +
+          getShotMastery(recommendation, shot, answers, handedness, shots) * 0.3,
+      ),
+    }));
+    const formData = new FormData();
+    formData.set("updates", JSON.stringify(updates));
+    setError(null);
+    startTransition(async () => {
+      const result = await saveMasteryUpdates(formData);
+      if (result.success) {
+        router.push("/repertoire");
+        router.refresh();
+      } else {
+        setError(result.error ?? "Unable to save this reassessment.");
       }
     });
   }
@@ -615,12 +643,21 @@ export function RepertoireQuiz({
   }
 
   if (phase === "complete") {
+    const reassessmentShots = currentShots.map((shot) => ({
+      ...shot,
+      confidence: Math.round(
+        (shot.confidence ?? 25) * 0.7 +
+          getShotMastery(recommendation, shot, answers, handedness, shots) * 0.3,
+      ),
+    }));
     return (
       <section className="rounded-2xl border border-[var(--teal)] bg-[var(--card)] p-6 shadow-[var(--shadow)] sm:p-8">
         <p className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-          Your recommendation
+          {reassessment ? "Your updated mastery" : "Your recommendation"}
         </p>
-        <h2 className="mt-3 text-4xl">{recommendation.name}</h2>
+        <h2 className="mt-3 text-4xl">
+          {reassessment ? "Review your updated profile" : recommendation.name}
+        </h2>
         <p className="mt-3 text-xl text-[var(--muted)]">
           {recommendation.tagline}
         </p>
@@ -632,12 +669,32 @@ export function RepertoireQuiz({
             handedness={handedness}
           />
         </div>
-        <QuizCoverageMap
-          preset={recommendation}
-          shots={shots}
-          answers={answers}
-          handedness={handedness}
-        />
+        {reassessment ? (
+          <HowItWorksMap
+            shots={reassessmentShots}
+            handedness={handedness}
+            mapModes={["relative"]}
+            initialMapMode="relative"
+            relativeMasteryNote
+            mapSize="small"
+            bare
+            showShotTypeFilter={false}
+            showShotTypeColors={false}
+            showShotTypeLegend={false}
+            showHandednessFilter={false}
+            showBallHeightFilter={false}
+            hideSidePanel
+            heading="Preview your updated map."
+            description="Your existing mastery counts for 70% and this reassessment counts for 30%."
+          />
+        ) : (
+          <QuizCoverageMap
+            preset={recommendation}
+            shots={shots}
+            answers={answers}
+            handedness={handedness}
+          />
+        )}
         {error && (
           <p role="alert" className="mt-6 text-sm text-[var(--coral)]">
             {error}
@@ -645,11 +702,11 @@ export function RepertoireQuiz({
         )}
         <button
           type="button"
-          onClick={() => applySelectedPreset(recommendation)}
+          onClick={() => reassessment ? saveReassessment() : applySelectedPreset(recommendation)}
           disabled={pending}
           className="mt-8 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
         >
-          {pending ? "Replacing..." : "Replace my repertoire"}
+          {pending ? "Saving..." : reassessment ? "Save updated mastery" : "Replace my repertoire"}
         </button>
         <button
           type="button"
