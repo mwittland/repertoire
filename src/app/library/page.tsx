@@ -18,11 +18,11 @@ export default async function LibraryPage({
       <div className="mx-auto max-w-7xl">
         <header className="max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
-            The library
+            Library
           </p>
-          <h1 className="mt-4 text-6xl leading-none">The practice system.</h1>
+          <h1 className="mt-4 text-6xl leading-none">The system.</h1>
           <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
-            Browse shots and drills by type and court coverage. Use your quiz-driven repertoire and drill recommendations to address weak spots.
+            Browse shots and drills by type and court coverage. Use your Repertoire to address weak spots.
           </p>
         </header>
         <LibraryTabs shots={shots} drills={drills} initialKind={kind} />

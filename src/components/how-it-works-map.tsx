@@ -89,6 +89,7 @@ export function HowItWorksMap({
   sideControls,
   hideSidePanel = false,
   bare = false,
+  hideHeader = false,
   heading = "See your game at a glance.",
   description = "Every colored region shows where your shots or drills apply. Adjust the ball-height range to see which options stay available for the moment you are in.",
 }: {
@@ -117,6 +118,7 @@ export function HowItWorksMap({
   sideControls?: ReactNode;
   hideSidePanel?: boolean;
   bare?: boolean;
+  hideHeader?: boolean;
   heading?: string;
   description?: string;
 }) {
@@ -266,14 +268,14 @@ export function HowItWorksMap({
   }
 
   return (
-    <section className="mt-16 border-t border-[var(--line)] pt-12">
-      <div className="max-w-3xl">
+    <section className={hideHeader ? "mt-8" : "mt-16 border-t border-[var(--line)] pt-12"}>
+      {!hideHeader && <div className="max-w-3xl">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
           Coverage map
         </p>
         <h2 className="mt-3 text-4xl">{heading}</h2>
         <p className="mt-5 text-lg leading-8 text-[var(--muted)]">{description}</p>
-      </div>
+      </div>}
       <div className={`mx-auto mt-8 grid ${bare ? "" : "rounded-2xl border border-[var(--line)] bg-[var(--card)]"} ${hideSidePanel ? `w-full max-w-5xl grid-cols-1 gap-6 ${bare ? "" : "p-4 sm:p-6"}` : hasDetailedControls ? `${bare ? "" : "p-5 sm:p-7 "}lg:justify-center lg:gap-7 lg:grid-cols-[minmax(0,42rem)_18rem]` : `${bare ? "" : "p-4 sm:p-6 "}lg:justify-center lg:grid-cols-[minmax(0,42rem)_12rem] lg:items-start`}`}>
         {extraControls}
         {confidenceToggleAtTop && showConfidenceToggle && (
@@ -300,7 +302,7 @@ export function HowItWorksMap({
           </div>
         )}
         <div className={`mx-auto w-full text-center ${mapSize === "small" ? "max-w-lg" : hideSidePanel ? "max-w-3xl" : "max-w-2xl"}`}>
-          <div className={`relative aspect-square w-full overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] ${mapSize === "small" ? "max-w-lg" : "max-w-2xl"}`}>
+          <div className={`relative mx-auto aspect-square w-full overflow-hidden rounded-2xl border-4 border-[#4d8a7a] bg-[#dcebdd] ${mapSize === "small" ? "max-w-lg" : "max-w-2xl"}`}>
             <div className="pointer-events-none absolute inset-x-[16.67%] bottom-[26.67%] top-0 overflow-hidden border-x-4 border-[#f9fff8] bg-[#dcebdd]">
               <div className="absolute inset-x-0 top-0 h-[31.82%] bg-[#c8e5d3]" />
             </div>

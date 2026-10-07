@@ -21,7 +21,7 @@ export function RecommendedDrills({
       <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">Recommended next</p>
       <h2 className="mt-3 text-4xl">Drills to work on.</h2>
       <p className="mt-3 max-w-2xl leading-7 text-[var(--muted)]">
-        These drills target court areas with the lowest coverage in your shot repertoire.
+        These drills target court areas with the lowest coverage.
       </p>
       {drills.length > 0 ? (
         <>

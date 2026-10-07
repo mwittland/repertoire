@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { listShots } from "@/lib/shots/queries";
 import { listRepertoireShots } from "@/lib/repertoire/queries";
 import { MasteryUpdate } from "@/components/mastery-update";
+import { ResetRepertoireLink } from "@/components/reset-repertoire-link";
 
 export default async function UpdateRepertoirePage() {
   const supabase = await createClient();
@@ -51,6 +52,9 @@ export default async function UpdateRepertoirePage() {
               shots={shots}
               handedness={profile?.handedness ?? "Right"}
             />
+          </div>
+          <div className="mt-8">
+            <ResetRepertoireLink />
           </div>
         </section>
       </div>

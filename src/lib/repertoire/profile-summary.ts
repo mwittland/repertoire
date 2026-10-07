@@ -9,6 +9,8 @@ const phaseByShotType: Record<ShotType, string> = {
   Putaway: "kitchen",
   Lob: "baseline",
 };
+const courtZones = ["kitchen", "transition", "baseline"] as const;
+type CourtZone = (typeof courtZones)[number];
 
 function average(values: number[]) {
   return values.length
@@ -43,6 +45,31 @@ function sideCoverage(shots: DiscoverableShot[], side: "left" | "right") {
   ) ?? 0;
 }
 
+function rankedCourtZone(
+  shots: DiscoverableShot[],
+  direction: "highest" | "lowest",
+) {
+  const ranked = courtZones
+    .map((zone) => {
+      const values = shots
+        .filter(
+          (shot) =>
+            shot.shotType &&
+            phaseByShotType[shot.shotType] === zone &&
+            shot.confidence !== null &&
+            shot.confidence !== undefined,
+        )
+        .map((shot) => shot.confidence as number);
+      return { zone, confidence: average(values) ?? 0 };
+    })
+    .sort((a, b) =>
+      direction === "highest"
+        ? b.confidence - a.confidence
+        : a.confidence - b.confidence,
+    );
+  return ranked[0] as { zone: CourtZone; confidence: number };
+}
+
 export function summarizeRepertoire(shots: DiscoverableShot[]) {
   const strongestFamily = rankedFamily(shots, "highest");
   const weakestFamily = rankedFamily(shots, "lowest");
@@ -66,6 +93,8 @@ export function summarizeRepertoire(shots: DiscoverableShot[]) {
         : "Backhand-dominant";
   const betterSide =
     Math.abs(left - right) < 5 ? "Balanced" : left > right ? "Left side" : "Right side";
+  const strongestCourtZone = rankedCourtZone(shots, "highest");
+  const weakestCourtZone = rankedCourtZone(shots, "lowest");
   const profileTitle = `${strongestFamily.type}-led ${phaseByShotType[strongestFamily.type as ShotType] ?? "all-court"} profile`;
 
   return {
@@ -73,6 +102,8 @@ export function summarizeRepertoire(shots: DiscoverableShot[]) {
     weakestFamily,
     handDominance,
     betterSide,
+    strongestCourtZone,
+    weakestCourtZone,
     profileTitle,
   };
 }

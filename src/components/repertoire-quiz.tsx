@@ -12,7 +12,7 @@ import {
   getPresetShotMastery,
   type RepertoirePreset,
 } from "@/lib/repertoire/presets";
-import type { DiscoverableShot } from "@/lib/discovery/types";
+import type { DiscoverableShot, ShotType } from "@/lib/discovery/types";
 
 type Answer = {
   label: string;
@@ -26,7 +26,7 @@ type Question = {
   answers: Answer[];
 };
 type Handedness = "Right" | "Left";
-type QuizPhase = "basic" | "personalized-prompt" | "personalized" | "complete";
+type QuizPhase = "basic" | "personalized" | "complete";
 
 const ratingAnswers = [
   { label: "Needs significant work at my level", value: "0", scores: {} },
@@ -96,50 +96,27 @@ const basicQuestions: Question[] = [
 ];
 
 const personalizedQuestions: Question[] = [
-  ...(
-    [
-      ["Dink", "soft"],
-      ["Drop", "transition"],
-      ["Drive", "baseline"],
-      ["Reset", "transition"],
-      ["Attack", "kitchen"],
-      ["Putaway", "kitchen"],
-      ["Lob", "baseline"],
-    ] as const
-  ).map(([shot, phase]) => ({
-    id: `shot-${shot.toLowerCase()}`,
-    title: `How well do you execute your ${shot.toLowerCase()}?`,
-    description: `Rate your consistency and decision-making compared with players at your current level.`,
-    answers: ratingAnswers,
-    phase,
-  })),
   {
-    id: "passive-play",
-    title: "How well do you execute passive, control-first shots?",
+    id: "aggression-preference",
+    title: "Which shots do you prefer to go for?",
     description:
-      "Rate your dinks, resets, drops, and patience compared with players at your current level.",
-    answers: ratingAnswers,
+      "Think about the opportunities you choose during games, not just the shots you can execute.",
+    answers: [
+      { label: "Control-first shots", value: "control", scores: {} },
+      { label: "A mix of control and aggression", value: "neutral", scores: {} },
+      { label: "Aggressive, pressure-creating shots", value: "aggressive", scores: {} },
+    ],
   },
   {
-    id: "aggressive-play",
-    title: "How well do you execute aggressive shots?",
+    id: "difficulty-preference",
+    title: "What level of shot difficulty do you prefer?",
     description:
-      "Rate your drives, attacks, pressure, and finishing opportunities compared with players at your current level.",
-    answers: ratingAnswers,
-  },
-  {
-    id: "simple-shots",
-    title: "How well do you execute simple, repeatable shots?",
-    description:
-      "Rate your ability to make high-margin choices consistently at your current level.",
-    answers: ratingAnswers,
-  },
-  {
-    id: "difficult-shots",
-    title: "How well do you execute challenging shots?",
-    description:
-      "Rate your precision, timing, and control on demanding shots compared with players at your current level.",
-    answers: ratingAnswers,
+      "Choose the level of risk and precision you usually want from the shots you select.",
+    answers: [
+      { label: "High-margin, repeatable shots", value: "simple", scores: {} },
+      { label: "A neutral mix of margin and challenge", value: "neutral", scores: {} },
+      { label: "Challenging, higher-reward shots", value: "difficult", scores: {} },
+    ],
   },
 ];
 
@@ -156,6 +133,19 @@ const phaseRanges = {
   transition: [12, 16],
   kitchen: [16, 23],
 } as const;
+
+const shotTypeStandards: Record<
+  ShotType,
+  { aggression: readonly [number, number]; difficulty: readonly [number, number] }
+> = {
+  Dink: { aggression: [35, 65], difficulty: [35, 65] },
+  Drop: { aggression: [40, 70], difficulty: [45, 75] },
+  Drive: { aggression: [45, 75], difficulty: [45, 75] },
+  Reset: { aggression: [30, 60], difficulty: [35, 65] },
+  Attack: { aggression: [60, 85], difficulty: [55, 85] },
+  Putaway: { aggression: [75, 95], difficulty: [65, 95] },
+  Lob: { aggression: [45, 70], difficulty: [55, 85] },
+};
 
 function ratingDelta(
   answers: Record<string, string>,
@@ -183,20 +173,15 @@ function overlapsSide(
   return side === "left" ? minimum < 0 : maximum > 0;
 }
 
-function relativeTypeScore(
-  shot: DiscoverableShot,
-  shots: DiscoverableShot[],
-  field: "aggressionScore" | "difficulty",
+function preferenceDelta(
+  answers: Record<string, string>,
+  questionId: string,
+  category: "control" | "aggressive" | "simple" | "difficult",
+  weight: number,
 ) {
-  const values = shots
-    .filter((candidate) => candidate.shotType === shot.shotType)
-    .map((candidate) => candidate[field] ?? 50);
-  const value = shot[field] ?? 50;
-  const minimum = Math.min(...values);
-  const maximum = Math.max(...values);
-  return minimum === maximum
-    ? value / 100
-    : (value - minimum) / (maximum - minimum);
+  const answer = answers[questionId];
+  if (!answer || answer === "neutral") return 0;
+  return answer === category ? weight : -weight;
 }
 
 function recommendPreset(answers: Record<string, string>) {
@@ -319,7 +304,6 @@ function getShotMastery(
   shot: DiscoverableShot,
   answers: Record<string, string>,
   handedness: Handedness,
-  shots: DiscoverableShot[],
 ) {
   const baseMastery = getPresetShotMastery(preset, shot);
   let adjustment = 0;
@@ -362,19 +346,38 @@ function getShotMastery(
     );
   }
 
-  const aggressionPosition = relativeTypeScore(shot, shots, "aggressionScore");
-  const difficultyPosition = relativeTypeScore(shot, shots, "difficulty");
-  if (aggressionPosition <= 0.35) {
-    adjustment += ratingDelta(answers, "passive-play", masteryWeights.tier2);
-  }
-  if (aggressionPosition >= 0.65) {
-    adjustment += ratingDelta(answers, "aggressive-play", masteryWeights.tier2);
-  }
-  if (difficultyPosition <= 0.35) {
-    adjustment += ratingDelta(answers, "simple-shots", masteryWeights.tier2);
-  }
-  if (difficultyPosition >= 0.65) {
-    adjustment += ratingDelta(answers, "difficult-shots", masteryWeights.tier2);
+  if (shot.shotType) {
+    const standards = shotTypeStandards[shot.shotType];
+    const aggression = shot.aggressionScore ?? 50;
+    const difficulty = shot.difficulty ?? 50;
+    const aggressionCategory =
+      aggression <= standards.aggression[0]
+        ? "control"
+        : aggression >= standards.aggression[1]
+          ? "aggressive"
+          : null;
+    const difficultyCategory =
+      difficulty <= standards.difficulty[0]
+        ? "simple"
+        : difficulty >= standards.difficulty[1]
+          ? "difficult"
+          : null;
+    if (aggressionCategory) {
+      adjustment += preferenceDelta(
+        answers,
+        "aggression-preference",
+        aggressionCategory,
+        masteryWeights.tier2,
+      );
+    }
+    if (difficultyCategory) {
+      adjustment += preferenceDelta(
+        answers,
+        "difficulty-preference",
+        difficultyCategory,
+        masteryWeights.tier2,
+      );
+    }
   }
 
   return Math.round(Math.max(5, Math.min(90, baseMastery + adjustment)));
@@ -395,7 +398,7 @@ function PreviewList({
     .filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType))
     .map((shot) => ({
       shot,
-      mastery: getShotMastery(preset, shot, answers, handedness, shots),
+      mastery: getShotMastery(preset, shot, answers, handedness),
     }));
   const bestShots = [...presetShots]
     .sort((a, b) => b.mastery - a.mastery)
@@ -442,7 +445,7 @@ function QuizCoverageMap({
     .filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType))
     .map((shot) => ({
       ...shot,
-      confidence: getShotMastery(preset, shot, answers, handedness, shots),
+      confidence: getShotMastery(preset, shot, answers, handedness),
     }));
 
   return (
@@ -513,7 +516,7 @@ export function RepertoireQuiz({
       )
       .map((shot) => ({
         id: shot.id,
-        confidence: getShotMastery(preset, shot, answers, handedness, shots),
+        confidence: getShotMastery(preset, shot, answers, handedness),
       }));
     const formData = new FormData();
     formData.set("shotEntries", JSON.stringify(shotEntries));
@@ -535,7 +538,7 @@ export function RepertoireQuiz({
       shotId: shot.id,
       confidence: Math.round(
         (shot.confidence ?? 25) * 0.7 +
-          getShotMastery(recommendation, shot, answers, handedness, shots) * 0.3,
+          getShotMastery(recommendation, shot, answers, handedness) * 0.3,
       ),
     }));
     const formData = new FormData();
@@ -599,56 +602,12 @@ export function RepertoireQuiz({
     );
   }
 
-  if (phase === "personalized-prompt") {
-    return (
-      <section className="rounded-2xl border border-[var(--teal)] bg-[var(--card)] p-6 shadow-[var(--shadow)] sm:p-8">
-        <p className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-          Basic profile complete
-        </p>
-        <h2 className="mt-3 text-4xl">Want more personalized feedback?</h2>
-        <p className="mt-4 max-w-2xl leading-7 text-[var(--muted)]">
-          Your starting profile is ready. Continue with a few optional questions
-          about shot types, aggression, and difficulty to make the mastery
-          recommendations more specific.
-        </p>
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => {
-              completeQuiz();
-              setStep(-1);
-            }}
-            className="rounded-xl border border-[var(--line)] p-4 text-left font-bold transition hover:border-[var(--teal)]"
-          >
-            Use my basic profile
-            <span className="mt-1 block text-sm font-normal text-[var(--muted)]">
-              Show my recommendation now.
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPhase("personalized");
-              setStep(0);
-            }}
-            className="rounded-xl bg-[var(--ink)] p-4 text-left font-bold text-white transition hover:bg-[var(--teal)]"
-          >
-            Continue for more detail
-            <span className="mt-1 block text-sm font-normal text-white/70">
-              Answer {personalizedQuestions.length} more questions.
-            </span>
-          </button>
-        </div>
-      </section>
-    );
-  }
-
   if (phase === "complete") {
     const reassessmentShots = currentShots.map((shot) => ({
       ...shot,
       confidence: Math.round(
         (shot.confidence ?? 25) * 0.7 +
-          getShotMastery(recommendation, shot, answers, handedness, shots) * 0.3,
+          getShotMastery(recommendation, shot, answers, handedness) * 0.3,
       ),
     }));
     const profileShots = reassessment
@@ -665,7 +624,6 @@ export function RepertoireQuiz({
               shot,
               answers,
               handedness,
-              shots,
             ),
           }));
     const profileTitle = summarizeRepertoire(profileShots).profileTitle;
@@ -750,8 +708,12 @@ export function RepertoireQuiz({
     setAnswers((current) => ({ ...current, [question.id]: value }));
     setSelectedPreset(null);
     if (phase === "basic") {
-      if (step === basicQuestions.length - 1) setPhase("personalized-prompt");
-      else setStep((current) => current + 1);
+      if (step === basicQuestions.length - 1) {
+        setPhase("personalized");
+        setStep(0);
+      } else {
+        setStep((current) => current + 1);
+      }
     } else if (step === personalizedQuestions.length - 1) {
       completeQuiz();
     } else {
@@ -761,8 +723,7 @@ export function RepertoireQuiz({
 
   const questionNumber =
     phase === "basic" ? step + 1 : basicQuestions.length + step + 1;
-  const totalQuestions =
-    phase === "basic" ? basicQuestions.length : questions.length;
+  const totalQuestions = questions.length;
 
   return (
     <section className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 shadow-[var(--shadow)] sm:p-8">

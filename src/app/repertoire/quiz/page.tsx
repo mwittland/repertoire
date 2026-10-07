@@ -35,7 +35,7 @@ export default async function RepertoireQuizPage({
           <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
             {mode === "reassessment"
               ? "Retake the full assessment to update your current mastery. Your existing scores will count for 70% and this assessment will count for 30%."
-              : "Answer a few questions and we will recommend a shot profile that fits your game. Review it first, then replace your shot repertoire and make it your own."}
+              : "Answer a few questions and we will recommend a shot profile that fits your game. Review it first, then make it your own."}
           </p>
           <div className="mt-8">
             <RepertoireQuiz
