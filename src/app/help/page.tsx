@@ -56,17 +56,7 @@ export default async function HelpPage() {
           </p>
         </header>
 
-        <HelpSection
-          eyebrow="01 / Your collection"
-          title="Build your repertoire"
-        >
-          <p>
-            Add shots to your repertoire. The Repertoire page shows your shot
-            coverage across the court.
-          </p>
-        </HelpSection>
-
-        <HelpSection eyebrow="02 / Shot types" title="Every shot has a job">
+        <HelpSection eyebrow="01 / Shot types" title="Every shot has a job">
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {shotTypes.map((shot) => (
               <Explanation
@@ -79,7 +69,7 @@ export default async function HelpPage() {
           </div>
         </HelpSection>
 
-        <HelpSection eyebrow="03 / Ratings" title="Read the signals">
+        <HelpSection eyebrow="02 / Ratings" title="Read the signals">
           <div className="grid gap-5 md:grid-cols-3">
             <Explanation
               title="Aggression"
@@ -100,12 +90,11 @@ export default async function HelpPage() {
         </HelpSection>
 
         <HelpSection
-          eyebrow="04 / Catalog map"
+          eyebrow="03 / Catalog map"
           title="See the catalog at a glance"
         >
           <p>
-            Filter the shot regions by type and ball height. The map shows the
-            full shot catalog.
+            The map shows the full shot catalog.
           </p>
           <div className="mx-auto w-full max-w-5xl">
             <HowItWorksMap
@@ -119,6 +108,7 @@ export default async function HelpPage() {
               showHandednessFilter={false}
               showBallHeightFilter={false}
               hideSidePanel
+              hideHeader
               heading="Explore the shot catalog."
               description="Filter the shot regions by type."
             />

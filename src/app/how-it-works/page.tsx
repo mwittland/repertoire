@@ -63,22 +63,28 @@ export default async function HowItWorksPage() {
           <ExampleProfilesMap shots={shots} />
         </div>
 
-        <section className="grid gap-4 border-t border-[var(--line)] py-10 sm:grid-cols-2">
-          <FeatureMetric
-            value={metrics.quizCompletions}
-            label="Player profiles generated"
-            description="Take a quick quiz to see your personal repertoire."
-            actionLabel="Take the profile quiz"
-            href="/repertoire/quiz"
-            accountRequired
-          />
-          <FeatureMetric
-            value={metrics.discoverySearches}
-            label="Shot discovery searches"
-            description="Search by court position and ball height to find shots that fit the moment."
-            actionLabel="Discover a shot"
-            href="/discover"
-          />
+        <section className="border-t border-[var(--line)] py-10">
+          <h2 className="text-3xl">Community stats</h2>
+          <p className="mt-2 text-[var(--muted)]">
+            Site-wide totals from everyone using Repertoire.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <FeatureMetric
+              value={metrics.quizCompletions}
+              label="Player profiles generated"
+              description="Take a quick quiz to see your personal repertoire."
+              actionLabel="Take the profile quiz"
+              href="/repertoire/quiz"
+              accountRequired
+            />
+            <FeatureMetric
+              value={metrics.discoverySearches}
+              label="Shot discovery searches"
+              description="Search by court position and ball height to find shots that fit the moment."
+              actionLabel="Discover a shot"
+              href="/discover"
+            />
+          </div>
         </section>
 
       </div>

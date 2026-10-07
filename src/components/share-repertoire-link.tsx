@@ -13,11 +13,13 @@ export function ShareRepertoireLink({
   handedness: "Right" | "Left";
   profileName: string;
 }) {
+  const disabled = shots.length === 0;
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function createLink() {
+    if (disabled) return;
     setError(null);
     setMessage(null);
     startTransition(async () => {
@@ -56,14 +58,15 @@ export function ShareRepertoireLink({
   }
 
   return (
-    <div>
+    <div className="h-full">
       <button
         type="button"
         onClick={createLink}
-        disabled={pending}
-        className="inline-block rounded-xl bg-[var(--teal)] px-5 py-4 font-bold text-white disabled:opacity-50"
+        disabled={disabled || pending}
+        className="block h-full w-full rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 text-left text-2xl font-bold transition hover:border-[var(--teal)] disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Share your repertoire
+        Share your repertoire{" "}
+        <span className="float-right text-[var(--teal)]">→</span>
       </button>
       {error && <p role="alert" className="mt-2 text-sm text-[var(--coral)]">{error}</p>}
       {message && <p role="status" className="mt-2 text-sm text-[var(--teal)]">{message}</p>}

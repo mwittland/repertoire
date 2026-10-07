@@ -48,7 +48,7 @@ export async function signIn(
     }
     return { error: "Those credentials did not work." };
   }
-  redirect("/repertoire");
+  redirect("/");
 }
 
 export async function signUp(
@@ -68,7 +68,7 @@ export async function signUp(
     options: { data: { handedness: credentials.data.handedness } },
   });
   if (error) return { error: error.message };
-  if (data.session) redirect("/repertoire");
+  if (data.session) redirect("/");
   redirect("/login?message=Check your email to confirm your account.");
 }
 

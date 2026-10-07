@@ -11,6 +11,7 @@ import { RecommendedDrills } from "@/components/recommended-drills";
 import { ShareRepertoireLink } from "@/components/share-repertoire-link";
 import { RepertoireProfileSummary } from "@/components/repertoire-profile-summary";
 import { summarizeRepertoire } from "@/lib/repertoire/profile-summary";
+import { getSiteMetrics } from "@/lib/metrics";
 
 export default async function RepertoirePage() {
   const supabase = await createClient();
@@ -23,7 +24,7 @@ export default async function RepertoirePage() {
         <div className="mx-auto max-w-3xl">
           <section className="py-24">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
-              Your collection
+              Home
             </p>
             <h1 className="mt-4 text-6xl leading-none">
               Build your repertoire.
@@ -50,45 +51,49 @@ export default async function RepertoirePage() {
     .maybeSingle();
   if (profileError)
     throw new Error(`Unable to load profile: ${profileError.message}`);
-  const shots = await listRepertoireShots();
-  const recommendedShots = await listRecommendedShots(
-    profile?.handedness ?? "Right",
-  );
-  const recommendedDrills = await listRecommendedDrills(
-    profile?.handedness ?? "Right",
-  );
+  const [shots, recommendedShots, recommendedDrills, metrics] =
+    await Promise.all([
+      listRepertoireShots(),
+      listRecommendedShots(profile?.handedness ?? "Right"),
+      listRecommendedDrills(profile?.handedness ?? "Right"),
+      getSiteMetrics(),
+    ]);
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <section className="py-20">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-[var(--coral)]">
-            Your collection
+            Home
           </p>
-          <h1 className="mt-4 text-6xl leading-none">Your repertoire.</h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-[var(--muted)]">
-            Your quiz-driven repertoire maps the moments you encounter on court.
+          <h1 className="mt-4 text-6xl leading-none">Your Repertoire</h1>
+          <p className="mt-6 text-lg leading-8 text-[var(--muted)]">
+            Build and share your Repertoire!
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              href="/repertoire/build"
-              className="inline-block rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white"
-            >
-              Just getting started? Click here
-            </Link>
-            <Link
-              href="/repertoire/update"
-              className="inline-block rounded-xl bg-[var(--coral)] px-5 py-4 font-bold text-white"
-            >
-              Been practicing? Update your repertoire here
-            </Link>
-            {shots.length > 0 && (
-              <ShareRepertoireLink
-                shots={shots}
-                handedness={profile?.handedness ?? "Right"}
-                profileName={profile?.email?.split("@")[0] ?? "Player"}
-              />
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {shots.length === 0 && (
+              <Link
+                href="/repertoire/build"
+                className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 text-2xl font-bold transition hover:border-[var(--teal)]"
+              >
+                Create your repertoire{" "}
+                <span className="float-right text-[var(--teal)]">→</span>
+              </Link>
             )}
+            {shots.length > 0 && (
+              <Link
+                href="/repertoire/update"
+                className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 text-2xl font-bold transition hover:border-[var(--teal)]"
+              >
+                Update your repertoire{" "}
+                <span className="float-right text-[var(--teal)]">→</span>
+              </Link>
+            )}
+            <ShareRepertoireLink
+              shots={shots}
+              handedness={profile?.handedness ?? "Right"}
+              profileName={profile?.email?.split("@")[0] ?? "Player"}
+            />
           </div>
           {shots.length > 0 ? (
             <>
@@ -109,48 +114,30 @@ export default async function RepertoirePage() {
                 mapSize="small"
                 hideSidePanel
                 heading={summarizeRepertoire(shots).profileTitle}
-                description="This map shows where the shots in your repertoire cover the court."
+                description="This map shows how well you cover the court."
               />
               <RepertoireProfileSummary shots={shots} />
               <RecommendedShots shots={recommendedShots} />
               <RecommendedDrills drills={recommendedDrills} />
               <h2 className="mt-10 text-3xl">Additional repertoire features</h2>
-              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <Link
-                  href="/repertoire/shots"
-                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
-                >
-                  <h2 className="text-2xl">
-                    Browse your shots{" "}
-                    <span className="float-right text-[var(--teal)]">→</span>
-                  </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Review and open the shots in your repertoire.
-                  </p>
-                </Link>
+              <div className="mt-5 grid gap-4 md:grid-cols-3">
                 <Link
                   href="/repertoire/recommendations"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended shots{" "}
+                    View more shots{" "}
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    See the full ranked list of shots to work on.
-                  </p>
                 </Link>
                 <Link
                   href="/repertoire/drill-recommendations"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended drills{" "}
+                    View more drills{" "}
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    See the full ranked list of drills to work on.
-                  </p>
                 </Link>
                 <Link
                   href="/discover"
@@ -160,59 +147,45 @@ export default async function RepertoirePage() {
                     Discover a shot{" "}
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Find a catalog shot to learn more about.
-                  </p>
                 </Link>
               </div>
             </>
           ) : (
             <>
+              <HowItWorksMap
+                shots={[]}
+                handedness={profile?.handedness ?? "Right"}
+                showSubjectToggle={false}
+                showShotTypeFilter={false}
+                showBallHeightFilter={false}
+                showShotTypeLegend={false}
+                showMasteryLegend={false}
+                hideSidePanel
+                heading="Your coverage map."
+                description="Your court coverage will appear here after you create your repertoire."
+              />
+              <RepertoireProfileSummary shots={[]} empty />
               <RecommendedShots shots={recommendedShots} />
               <RecommendedDrills drills={recommendedDrills} />
-              <div className="mt-10 rounded-2xl border border-dashed border-[var(--line)] p-8">
-                <h2 className="text-2xl">Your collection is waiting.</h2>
-                <p className="mt-2 text-[var(--muted)]">
-                  Find a shot that fits the moment and add it here.
-                </p>
-              </div>
               <h2 className="mt-10 text-3xl">Additional repertoire features</h2>
-              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <Link
-                  href="/repertoire/shots"
-                  className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
-                >
-                  <h2 className="text-2xl">
-                    Browse your shots{" "}
-                    <span className="float-right text-[var(--teal)]">→</span>
-                  </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Review shots available in the catalog.
-                  </p>
-                </Link>
+              <div className="mt-5 grid gap-4 md:grid-cols-3">
                 <Link
                   href="/repertoire/recommendations"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended shots{" "}
+                    View more shots{" "}
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    See the full ranked list of shots to work on.
-                  </p>
                 </Link>
                 <Link
                   href="/repertoire/drill-recommendations"
                   className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 transition hover:border-[var(--teal)]"
                 >
                   <h2 className="text-2xl">
-                    View recommended drills{" "}
+                    View more drills{" "}
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    See the full ranked list of drills to work on.
-                  </p>
                 </Link>
                 <Link
                   href="/discover"
@@ -222,15 +195,41 @@ export default async function RepertoirePage() {
                     Discover a shot{" "}
                     <span className="float-right text-[var(--teal)]">→</span>
                   </h2>
-                  <p className="mt-3 leading-6 text-[var(--muted)]">
-                    Find a catalog shot to start building your repertoire.
-                  </p>
                 </Link>
               </div>
             </>
           )}
         </section>
+        <section className="border-t border-[var(--line)] py-10">
+          <h2 className="text-3xl">Community stats</h2>
+          <p className="mt-2 text-[var(--muted)]">
+            Site-wide totals from everyone using Repertoire.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <SiteMetric
+              value={metrics.quizCompletions}
+              label="Player profiles generated"
+            />
+            <SiteMetric
+              value={metrics.discoverySearches}
+              label="Shot discovery searches"
+            />
+          </div>
+        </section>
       </div>
     </main>
+  );
+}
+
+function SiteMetric({ value, label }: { value: number; label: string }) {
+  return (
+    <article className="rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6">
+      <p className="text-4xl font-bold text-[var(--ink)]">
+        {value.toLocaleString()}
+      </p>
+      <p className="mt-2 text-sm font-bold uppercase tracking-[0.16em] text-[var(--muted)]">
+        {label}
+      </p>
+    </article>
   );
 }

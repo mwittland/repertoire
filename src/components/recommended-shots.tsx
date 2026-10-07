@@ -27,7 +27,7 @@ export function RecommendedShots({
         </p>
         <h2 className="mt-3 text-4xl">Shots to work on.</h2>
         <p className="mt-3 leading-7 text-[var(--muted)]">
-          These shots target areas with the lowest current coverage in your repertoire.
+          These shots target areas with the lowest current coverage.
         </p>
       </div>
       {shots.length > 0 ? (

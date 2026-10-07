@@ -58,3 +58,22 @@ export async function applyPreset(formData: FormData) {
   revalidatePath("/library");
   return { success: true };
 }
+
+export async function resetRepertoire() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login?next=/repertoire");
+
+  const { error } = await supabase
+    .from("repertoire_entries")
+    .delete()
+    .eq("user_id", user.id);
+  if (error) return { success: false, error: "Unable to reset your repertoire." };
+
+  revalidatePath("/repertoire");
+  revalidatePath("/repertoire/shots");
+  revalidatePath("/library");
+  return { success: true };
+}
