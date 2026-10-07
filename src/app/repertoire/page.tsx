@@ -73,7 +73,7 @@ export default async function RepertoirePage() {
           <div className="mt-5 grid gap-4 md:grid-cols-3">
             {shots.length === 0 && (
               <Link
-                href="/repertoire/build"
+                href="/repertoire/quiz"
                 className="block rounded-2xl border border-[var(--line)] bg-[var(--card)] p-6 text-2xl font-bold transition hover:border-[var(--teal)]"
               >
                 Create your repertoire{" "}

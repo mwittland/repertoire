@@ -85,14 +85,14 @@ export function summarizeRepertoire(shots: DiscoverableShot[]) {
   ) ?? 0;
   const left = sideCoverage(shots, "left");
   const right = sideCoverage(shots, "right");
-  const handDominance =
+  const foreStrokePreference =
     Math.abs(forehand - backhand) < 5
       ? "Balanced"
       : forehand > backhand
-        ? "Forehand-dominant"
-        : "Backhand-dominant";
+        ? "Forehand"
+        : "Backhand";
   const betterSide =
-    Math.abs(left - right) < 5 ? "Balanced" : left > right ? "Left side" : "Right side";
+    Math.abs(left - right) < 5 ? "Balanced" : left > right ? "Left" : "Right";
   const strongestCourtZone = rankedCourtZone(shots, "highest");
   const weakestCourtZone = rankedCourtZone(shots, "lowest");
   const profileTitle = `${strongestFamily.type}-led ${phaseByShotType[strongestFamily.type as ShotType] ?? "all-court"} profile`;
@@ -100,7 +100,7 @@ export function summarizeRepertoire(shots: DiscoverableShot[]) {
   return {
     strongestFamily,
     weakestFamily,
-    handDominance,
+    foreStrokePreference,
     betterSide,
     strongestCourtZone,
     weakestCourtZone,

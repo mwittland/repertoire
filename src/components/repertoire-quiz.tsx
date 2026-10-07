@@ -123,9 +123,10 @@ const personalizedQuestions: Question[] = [
 const questions = [...basicQuestions, ...personalizedQuestions];
 
 const masteryWeights = {
-  tier1: 7,
+  side: 6,
+  hand: 9,
   tier2: 4,
-  tier3: 2,
+  preference: 4,
 } as const;
 
 const phaseRanges = {
@@ -204,32 +205,15 @@ function recommendPreset(answers: Record<string, string>) {
     Putaway: "kitchen",
     Lob: "baseline",
   };
-  const shotRatings = Object.fromEntries(
-    shotTypes.map((shot) => [
-      shot,
-      Number(answers[`shot-${shot.toLowerCase()}`] ?? 1),
-    ]),
-  ) as Record<string, number>;
   const phaseRatings = {
     baseline: Number(answers.baseline ?? 1),
     transition: Number(answers.transition ?? 1),
     kitchen: Number(answers.kitchen ?? 1),
   };
-  const strongestShot = shotTypes.reduce(
-    (best, shot) => (shotRatings[shot] > shotRatings[best] ? shot : best),
-    shotTypes[0],
-  );
-  const weakestShot = shotTypes.reduce(
-    (weakest, shot) =>
-      shotRatings[shot] < shotRatings[weakest] ? shot : weakest,
-    shotTypes[0],
-  );
   const count = skill < 40 ? 4 : skill < 52 ? 5 : skill < 68 ? 6 : 7;
-  const includedShots = [...shotTypes]
-    .sort((a, b) => shotRatings[b] - shotRatings[a])
-    .slice(0, count);
-  if (!includedShots.includes(weakestShot))
-    includedShots[includedShots.length - 1] = weakestShot;
+  const includedShots = shotTypes.slice(0, count);
+  const strongestShot = includedShots[0];
+  const weakestShot = includedShots[includedShots.length - 1];
   const forehandRating = Number(answers.forehand ?? 1);
   const backhandRating = Number(answers.backhand ?? 1);
   const sideAverage = (forehandRating + backhandRating) / 2;
@@ -243,10 +227,9 @@ function recommendPreset(answers: Record<string, string>) {
           Math.min(
             90,
             skill +
-              (shotRatings[shot] - 1.5) * masteryWeights.tier3 +
               (phaseRatings[phaseByShot[shot]] - 1.5) * masteryWeights.tier2 +
-              (sideAverage - 1.5) * masteryWeights.tier1 +
-              sideBias * 2,
+              (sideAverage - 1.5) * masteryWeights.side +
+              sideBias * 3,
           ),
         ),
       ),
@@ -308,10 +291,10 @@ function getShotMastery(
   const baseMastery = getPresetShotMastery(preset, shot);
   let adjustment = 0;
   if (overlapsSide(shot, "left", handedness)) {
-    adjustment += ratingDelta(answers, "left-side", masteryWeights.tier1);
+    adjustment += ratingDelta(answers, "left-side", masteryWeights.side);
   }
   if (overlapsSide(shot, "right", handedness)) {
-    adjustment += ratingDelta(answers, "right-side", masteryWeights.tier1);
+    adjustment += ratingDelta(answers, "right-side", masteryWeights.side);
   }
 
   const forehandSide = handedness === "Right" ? "right" : "left";
@@ -321,13 +304,13 @@ function getShotMastery(
     shotName.includes("forehand") &&
     overlapsSide(shot, forehandSide, handedness)
   ) {
-    adjustment += ratingDelta(answers, "forehand", masteryWeights.tier1);
+    adjustment += ratingDelta(answers, "forehand", masteryWeights.hand);
   }
   if (
     shotName.includes("backhand") &&
     overlapsSide(shot, backhandSide, handedness)
   ) {
-    adjustment += ratingDelta(answers, "backhand", masteryWeights.tier1);
+    adjustment += ratingDelta(answers, "backhand", masteryWeights.hand);
   }
 
   for (const phase of Object.keys(phaseRanges) as Array<
@@ -336,14 +319,6 @@ function getShotMastery(
     if (overlapsRange(shot.courtYMin, shot.courtYMax, phaseRanges[phase])) {
       adjustment += ratingDelta(answers, phase, masteryWeights.tier2);
     }
-  }
-
-  if (shot.shotType) {
-    adjustment += ratingDelta(
-      answers,
-      `shot-${shot.shotType.toLowerCase()}`,
-      masteryWeights.tier3,
-    );
   }
 
   if (shot.shotType) {
@@ -595,7 +570,7 @@ export function RepertoireQuiz({
             disabled={pending}
             className="mt-8 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
           >
-            {pending ? "Replacing..." : "Replace my repertoire"}
+            {pending ? "Saving..." : "Save my Repertoire"}
           </button>
         </section>
       </div>
@@ -683,7 +658,7 @@ export function RepertoireQuiz({
           disabled={pending}
           className="mt-8 w-full rounded-xl bg-[var(--ink)] px-5 py-4 font-bold text-white disabled:opacity-50"
         >
-          {pending ? "Saving..." : reassessment ? "Save updated mastery" : "Replace my repertoire"}
+          {pending ? "Saving..." : reassessment ? "Save updated mastery" : "Save my Repertoire"}
         </button>
         <button
           type="button"

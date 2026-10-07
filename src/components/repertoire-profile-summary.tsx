@@ -17,7 +17,7 @@ export function RepertoireProfileSummary({
         {[
           ["Strongest shot family", value(`${summary.strongestFamily.type} · ${Math.round(summary.strongestFamily.confidence)}%`)],
           ["Weakest shot family", value(`${summary.weakestFamily.type} · ${Math.round(summary.weakestFamily.confidence)}%`)],
-          ["Forehand/backhand preference", value(summary.handDominance)],
+          ["Fore stroke preference", value(summary.foreStrokePreference)],
           ["Stronger court side", value(summary.betterSide)],
           ["Strongest court zone", value(capitalize(summary.strongestCourtZone.zone))],
           ["Weakest court zone", value(capitalize(summary.weakestCourtZone.zone))],
