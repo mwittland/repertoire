@@ -358,53 +358,6 @@ function getShotMastery(
   return Math.round(Math.max(5, Math.min(90, baseMastery + adjustment)));
 }
 
-function PreviewList({
-  preset,
-  shots,
-  answers,
-  handedness,
-}: {
-  preset: RepertoirePreset;
-  shots: DiscoverableShot[];
-  answers: Record<string, string>;
-  handedness: Handedness;
-}) {
-  const presetShots = shots
-    .filter((shot) => shot.shotType && preset.shotTypes.includes(shot.shotType))
-    .map((shot) => ({
-      shot,
-      mastery: getShotMastery(preset, shot, answers, handedness),
-    }));
-  const bestShots = [...presetShots]
-    .sort((a, b) => b.mastery - a.mastery)
-    .slice(0, 3);
-  const worstShots = [...presetShots]
-    .sort((a, b) => a.mastery - b.mastery)
-    .slice(0, 3);
-  return (
-    <div className="grid gap-5 md:grid-cols-2">
-      {[
-        ["Best shots", bestShots],
-        ["Shots to develop", worstShots],
-      ].map(([label, entries]) => (
-        <div key={label as string}>
-          <p className="text-sm font-bold uppercase tracking-[0.16em] text-[var(--coral)]">
-            {label as string}
-          </p>
-          <ul className="mt-3 space-y-2 text-[var(--muted)]">
-            {(entries as typeof bestShots).map(({ shot, mastery }) => (
-              <li key={shot.id} className="flex justify-between gap-4">
-                <span>• {shot.name}</span>
-                <span className="font-bold text-[var(--ink)]">{mastery}%</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function QuizCoverageMap({
   preset,
   shots,
@@ -551,14 +504,6 @@ export function RepertoireQuiz({
           <p className="mt-5 max-w-2xl leading-7 text-[var(--muted)]">
             {selectedPreset.description}
           </p>
-          <div className="mt-8 border-t border-[var(--line)] pt-8">
-            <PreviewList
-              preset={selectedPreset}
-              shots={shots}
-              answers={answers}
-              handedness={handedness}
-            />
-          </div>
           {error && (
             <p role="alert" className="mt-6 text-sm text-[var(--coral)]">
               {error}
@@ -613,14 +558,6 @@ export function RepertoireQuiz({
         <p className="mt-3 text-xl text-[var(--muted)]">
           {recommendation.tagline}
         </p>
-        <div className="mt-8 border-t border-[var(--line)] pt-8">
-          <PreviewList
-            preset={recommendation}
-            shots={shots}
-            answers={answers}
-            handedness={handedness}
-          />
-        </div>
         {reassessment ? (
           <HowItWorksMap
             shots={reassessmentShots}
