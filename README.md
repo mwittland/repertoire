@@ -20,6 +20,8 @@ Repertoire is a pickleball shot-learning app. Its central workflow is point-base
 - Shot and drill requests with reversible admin moderation
 - Admin creation, editing, and deletion for shots and drills
 - Public site metrics for quiz completions and discovery searches
+- Public pickleball match analytics generated from the PKLMarts Kaggle extracts
+- Dynamic BigQuery analytics setup for skill-level strategy comparisons
 - GitHub Actions CI for pull requests and pushes to `main`
 
 ## Local setup
@@ -147,3 +149,5 @@ This project taught me how to:
 - Drill recommendations use weak court coverage in a player’s shot repertoire.
 - Video moderation could use stronger preview and invalid-video handling workflows.
 - Pagination, search, archiving, and production backup/rollback procedures should be added before broad launch.
+- The analytics pipeline currently produces a static public summary; BigQuery loading and scheduled refreshes still require Google Cloud project configuration.
+- BigQuery setup instructions are documented in [supabase/analytics/README.md](supabase/analytics/README.md); the dynamic query path does not connect to the shot library.

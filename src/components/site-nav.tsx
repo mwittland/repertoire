@@ -19,6 +19,9 @@ export function SiteNav() {
           <Link href="/library" className="nav-link">
             Library
           </Link>
+          <Link href="/analytics" className="nav-link">
+            Analytics
+          </Link>
           <Link href="/help" className="nav-link">
             Help
           </Link>
