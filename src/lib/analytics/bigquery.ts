@@ -148,6 +148,7 @@ export async function getSkillLevelAnalytics(): Promise<SkillLevelAnalytics[]> {
       handBattlesPerRally: Number(row.handBattlesPerRally),
     }));
   } catch (error) {
+    console.error("BigQuery skill-level analytics query failed.", error);
     throw new BigQueryQueryError(
       "BigQuery could not run the skill-level analytics query.",
       { cause: error },

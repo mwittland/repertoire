@@ -20,6 +20,9 @@ the page. No credentials or raw dataset files belong in this repository.
 The `/analytics` page dynamically queries the raw BigQuery tables for the
 skill-level comparison when the project and dataset are configured.
 The API response is also available at `/api/analytics/skill-levels`.
+The live section includes a **Run query again** button, which calls that API
+without reloading the rest of the page. Responses are explicitly marked
+`no-store`, so the button requests fresh BigQuery results.
 
 For local development, authenticate with Google Application Default
 Credentials:
@@ -61,6 +64,19 @@ Do not paste the private key into chat, commit it, or expose it to the browser.
 7. Run `analytics.sql` if you want persisted aggregate tables.
 8. Start Next.js after setting `.env.local`; the page query uses the raw tables
    directly and does not read from the shot library or Supabase.
+
+### Production troubleshooting
+
+The live route is pinned to the Node.js runtime because the BigQuery SDK is a
+server-side Node dependency. In Vercel, set the four deployment variables for
+the same environment as the deployment, then redeploy; changing an environment
+variable does not update an existing deployment.
+
+If the page shows a query error, inspect the Vercel function logs for the
+underlying BigQuery error. Common causes are a missing variable, a private key
+with incorrect newline formatting, a service account without `BigQuery Job
+User` or dataset `BigQuery Data Viewer`, a dataset in a different project, or
+raw tables with names/types that differ from `game`, `rally`, and `shot`.
 
 The query is intentionally server-side and parameter-free for now: the SQL
 uses fixed table identifiers from validated environment values, while shot

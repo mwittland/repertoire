@@ -23,7 +23,7 @@ SHOT_LABELS = {
     "SE": "Serve",
     "SP": "Speed Up",
     "U": "Unknown",
-    "tsApp": "Transition Zone - Approach",
+    "tzApp": "Transition Zone - Approach",
     "tsDrp": "3rd Shot Drop",
     "tsDrv": "3rd Shot Drive",
     "tsLob": "3rd Shot Lob",
