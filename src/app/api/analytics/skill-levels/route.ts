@@ -7,6 +7,7 @@ import {
 } from "@/lib/analytics/bigquery";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET() {
   try {
@@ -17,15 +18,23 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json({
-      configured: true,
-      data: await getSkillLevelAnalytics(),
-    });
+    return NextResponse.json(
+      {
+        configured: true,
+        data: await getSkillLevelAnalytics(),
+      },
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      },
+    );
   } catch (error) {
     if (
       error instanceof BigQueryConfigurationError ||
       error instanceof BigQueryQueryError
     ) {
+      console.error("BigQuery analytics endpoint failed.", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     throw error;
