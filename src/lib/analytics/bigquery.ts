@@ -57,12 +57,37 @@ function getConfig() {
     );
   }
 
+  const privateKey = normalizePrivateKey(values.privateKey);
   return {
     projectId: values.projectId!,
     dataset: values.dataset!,
     clientEmail: values.clientEmail,
-    privateKey: values.privateKey?.replace(/\\n/g, "\n"),
+    privateKey,
   };
+}
+
+function normalizePrivateKey(value: string | undefined) {
+  if (!value) return undefined;
+
+  let unquoted = value.trim();
+  if (
+    (unquoted.startsWith('"') && unquoted.endsWith('"')) ||
+    (unquoted.startsWith("'") && unquoted.endsWith("'"))
+  ) {
+    unquoted = unquoted.slice(1, -1);
+  }
+  const privateKey = unquoted.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").trim();
+
+  if (
+    !privateKey.includes("-----BEGIN PRIVATE KEY-----") ||
+    !privateKey.includes("-----END PRIVATE KEY-----")
+  ) {
+    throw new BigQueryConfigurationError(
+      "BIGQUERY_PRIVATE_KEY must contain a valid PEM private key with BEGIN and END markers.",
+    );
+  }
+
+  return privateKey;
 }
 
 export function isBigQueryConfigured() {
