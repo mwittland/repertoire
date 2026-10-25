@@ -49,6 +49,11 @@ BIGQUERY_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_KEY\n-----END PRIVATE KE
 
 Do not use the `NEXT_PUBLIC_` prefix. These values are read only by the server.
 Do not paste the private key into chat, commit it, or expose it to the browser.
+In Vercel, paste the complete value from the service-account JSON file's
+`private_key` property into `BIGQUERY_PRIVATE_KEY`. It must include the
+`-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` markers. Either
+literal newlines or `\n` sequences are accepted; do not paste the surrounding
+JSON property name. After changing a Vercel variable, redeploy the project.
 
 ### Google Cloud setup
 
