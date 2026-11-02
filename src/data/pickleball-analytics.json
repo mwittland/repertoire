@@ -244,6 +244,98 @@
       "percent": 0.4
     }
   ],
+  "skillLevelInsights": [
+    {
+      "code": "2.5",
+      "label": "2.5",
+      "rallies": 232,
+      "averageRallyLength": 4.19,
+      "medianRallyLength": 4.0,
+      "dinksPerRally": 0.16,
+      "thirdShotDropPercent": 11.6,
+      "thirdShotDrivePercent": 51.7
+    },
+    {
+      "code": "3.0",
+      "label": "3.0",
+      "rallies": 699,
+      "averageRallyLength": 5.07,
+      "medianRallyLength": 5,
+      "dinksPerRally": 0.21,
+      "thirdShotDropPercent": 15.5,
+      "thirdShotDrivePercent": 65.1
+    },
+    {
+      "code": "3.5",
+      "label": "3.5",
+      "rallies": 2673,
+      "averageRallyLength": 6.11,
+      "medianRallyLength": 5,
+      "dinksPerRally": 0.59,
+      "thirdShotDropPercent": 44.2,
+      "thirdShotDrivePercent": 40.7
+    },
+    {
+      "code": "4.0",
+      "label": "4.0",
+      "rallies": 14439,
+      "averageRallyLength": 6.6,
+      "medianRallyLength": 6,
+      "dinksPerRally": 0.78,
+      "thirdShotDropPercent": 46.4,
+      "thirdShotDrivePercent": 40.9
+    },
+    {
+      "code": "4.5",
+      "label": "4.5",
+      "rallies": 5453,
+      "averageRallyLength": 7.27,
+      "medianRallyLength": 6,
+      "dinksPerRally": 1.41,
+      "thirdShotDropPercent": 53.5,
+      "thirdShotDrivePercent": 36.4
+    },
+    {
+      "code": "5.0",
+      "label": "5.0",
+      "rallies": 7428,
+      "averageRallyLength": 8.07,
+      "medianRallyLength": 7.0,
+      "dinksPerRally": 1.95,
+      "thirdShotDropPercent": 58.2,
+      "thirdShotDrivePercent": 34.6
+    },
+    {
+      "code": "5.5",
+      "label": "5.5",
+      "rallies": 934,
+      "averageRallyLength": 7.87,
+      "medianRallyLength": 7.0,
+      "dinksPerRally": 1.59,
+      "thirdShotDropPercent": 50.7,
+      "thirdShotDrivePercent": 42.3
+    },
+    {
+      "code": "Pro",
+      "label": "Pro",
+      "rallies": 7996,
+      "averageRallyLength": 10.12,
+      "medianRallyLength": 8.0,
+      "dinksPerRally": 2.84,
+      "thirdShotDropPercent": 53.3,
+      "thirdShotDrivePercent": 41.6
+    },
+    {
+      "code": "Senior Pro",
+      "label": "Senior Pro",
+      "rallies": 119,
+      "averageRallyLength": 8.53,
+      "medianRallyLength": 7,
+      "dinksPerRally": 1.85,
+      "thirdShotDropPercent": 60.5,
+      "thirdShotDrivePercent": 30.3
+    }
+  ],
   "thirdShotOutcomes": [
     {
       "code": "tsDrp",

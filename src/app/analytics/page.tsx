@@ -1,20 +1,10 @@
-import { SkillLevelAnalytics as SkillLevelAnalyticsTable } from "@/components/skill-level-analytics";
 import analytics from "@/data/pickleball-analytics.json";
-import {
-  BigQueryConfigurationError,
-  BigQueryQueryError,
-  getSkillLevelAnalytics,
-  isBigQueryConfigured,
-  type SkillLevelAnalytics,
-} from "@/lib/analytics/bigquery";
-
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+import { RallyForecast } from "@/components/rally-forecast";
+import forecast from "@/data/rally-forecast-predictions.json";
 
 const numberFormat = new Intl.NumberFormat("en-US");
 
-export default async function AnalyticsPage() {
-  const skillLevelQuery = await loadSkillLevelQuery();
+export default function AnalyticsPage() {
   const maxShotCount = analytics.shotTypes[0].count;
   const maxRallyBucket = Math.max(
     ...analytics.rallyLengths.map((bucket) => bucket.count),
@@ -72,10 +62,10 @@ export default async function AnalyticsPage() {
           <Panel
             eyebrow="02 / Shot mix"
             title="Dinks lead the shot mix"
-            description="The ten most common shot labels show how much of the dataset is played at and around the non-volley zone."
+            description="The four most common shot labels show the dominant patterns in the dataset."
           >
             <div className="space-y-4">
-              {analytics.shotTypes.slice(0, 10).map((shot) => (
+              {analytics.shotTypes.slice(0, 4).map((shot) => (
                 <Bar
                   key={shot.code}
                   label={shot.label}
@@ -91,11 +81,13 @@ export default async function AnalyticsPage() {
         <section className="mt-5">
           <Panel
             eyebrow="03 / Third-shot comparison"
-            title="Drop, drive, or lob?"
-            description="The rally ending is counted after the selected third shot. Small samples, especially the lob, should be interpreted carefully."
+            title="Drop versus drive"
+            description="The rally ending is counted after the selected third shot. These results compare the two most common third-shot approaches in the dataset."
           >
-            <div className="grid gap-5 md:grid-cols-3">
-              {analytics.thirdShotOutcomes.map((shot) => (
+            <div className="grid gap-5 md:grid-cols-2">
+              {analytics.thirdShotOutcomes
+                .filter((shot) => shot.code === "tsDrp" || shot.code === "tsDrv")
+                .map((shot) => (
                 <article
                   key={shot.code}
                   className="rounded-xl border border-[var(--line)] p-5"
@@ -113,44 +105,61 @@ export default async function AnalyticsPage() {
                     ))}
                   </div>
                 </article>
-              ))}
+                ))}
             </div>
           </Panel>
         </section>
 
         <section className="mt-5">
           <Panel
-            eyebrow="04 / BigQuery live query"
-            title="How strategy changes by skill level"
-            description="Compare third-shot selection and rally outcomes across skill levels using the competitive match data."
+            eyebrow="04 / Skill-level patterns"
+            title="How rally patterns vary by skill level"
+            description="These aggregates compare rally length, dink volume, and third-shot drop and drive selection across the skill levels represented in the source data."
           >
-            <SkillLevelAnalyticsTable initialState={skillLevelQuery} />
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead className="border-b border-[var(--line)] text-[var(--muted)]">
+                  <tr>
+                    <th className="px-3 py-3 font-bold">Level</th>
+                    <th className="px-3 py-3 font-bold">Rallies</th>
+                    <th className="px-3 py-3 font-bold">Avg. length</th>
+                    <th className="px-3 py-3 font-bold">Dinks / rally</th>
+                    <th className="px-3 py-3 font-bold">3rd-shot drop</th>
+                    <th className="px-3 py-3 font-bold">3rd-shot drive</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analytics.skillLevelInsights.map((row) => (
+                    <tr
+                      key={row.code}
+                      className="border-b border-[var(--line)] last:border-0"
+                    >
+                      <td className="px-3 py-4 font-bold">{row.label}</td>
+                      <td className="px-3 py-4">{numberFormat.format(row.rallies)}</td>
+                      <td className="px-3 py-4">{row.averageRallyLength}</td>
+                      <td className="px-3 py-4">{row.dinksPerRally}</td>
+                      <td className="px-3 py-4">{row.thirdShotDropPercent}%</td>
+                      <td className="px-3 py-4">{row.thirdShotDrivePercent}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Panel>
+        </section>
+
+        <section className="mt-5">
+          <Panel
+            eyebrow="05 / Rally forecast"
+            title="The odds of reaching 11 shots"
+            description="This machine-learning model estimates the chance that the current rally will reach at least 11 shots based on skill level, rally length, and the most recent shots."
+          >
+            <RallyForecast predictions={forecast.predictions} />
           </Panel>
         </section>
       </div>
     </main>
   );
-}
-
-type SkillLevelQueryState =
-  | { status: "not-configured" }
-  | { status: "ready"; data: SkillLevelAnalytics[] }
-  | { status: "error" };
-
-async function loadSkillLevelQuery(): Promise<SkillLevelQueryState> {
-  try {
-    if (!isBigQueryConfigured()) return { status: "not-configured" };
-    return { status: "ready", data: await getSkillLevelAnalytics() };
-  } catch (error) {
-    if (
-      error instanceof BigQueryConfigurationError ||
-      error instanceof BigQueryQueryError
-    ) {
-      console.error(error.message);
-      return { status: "error" };
-    }
-    throw error;
-  }
 }
 
 function Metric({ label, value }: { label: string; value: number | string }) {
