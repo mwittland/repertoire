@@ -55,6 +55,69 @@ def distribution(counter: Counter[str], total: int, labels: dict[str, str] | Non
     ]
 
 
+def skill_level_insights(
+    games: list[dict[str, str]],
+    rallies: list[dict[str, str]],
+    shots: list[dict[str, str]],
+) -> list[dict[str, Any]]:
+    skill_by_game = {game["game_id"]: game["skill_lvl"] for game in games}
+    shots_by_rally: defaultdict[str, list[dict[str, str]]] = defaultdict(list)
+    for shot in shots:
+        shots_by_rally[shot["rally_id"]].append(shot)
+
+    grouped: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
+    for rally in rallies:
+        skill_level = skill_by_game.get(rally["game_id"])
+        if not skill_level or not rally["rally_len"].isdigit():
+            continue
+        rally_shots = shots_by_rally.get(rally["rally_id"], [])
+        grouped[skill_level].append(
+            {
+                "length": int(rally["rally_len"]),
+                "dinks": sum(shot["shot_type"] == "D" for shot in rally_shots),
+                "thirdShot": next(
+                    (
+                        shot["shot_type"]
+                        for shot in rally_shots
+                        if shot["shot_nbr"] == "3"
+                    ),
+                    None,
+                ),
+            }
+        )
+
+    def sort_key(skill_level: str) -> tuple[int, float | str]:
+        if skill_level == "Senior Pro":
+            return (2, 0)
+        if skill_level == "Pro":
+            return (1, 0)
+        try:
+            return (0, float(skill_level))
+        except ValueError:
+            return (0, skill_level)
+
+    return [
+        {
+            "code": skill_level,
+            "label": skill_level,
+            "rallies": len(rows),
+            "averageRallyLength": round(statistics.mean(row["length"] for row in rows), 2),
+            "medianRallyLength": statistics.median(row["length"] for row in rows),
+            "dinksPerRally": round(statistics.mean(row["dinks"] for row in rows), 2),
+            "thirdShotDropPercent": percentage(
+                sum(row["thirdShot"] == "tsDrp" for row in rows),
+                len(rows),
+            ),
+            "thirdShotDrivePercent": percentage(
+                sum(row["thirdShot"] == "tsDrv" for row in rows),
+                len(rows),
+            ),
+        }
+        for skill_level in sorted(grouped, key=sort_key)
+        for rows in [grouped[skill_level]]
+    ]
+
+
 def summarize(root: Path) -> dict[str, Any]:
     games = read_csv(root, "game.csv")
     rallies = read_csv(root, "rally.csv")
@@ -172,6 +235,7 @@ def summarize(root: Path) -> dict[str, Any]:
             Counter(game["skill_lvl"] for game in games),
             len(games),
         ),
+        "skillLevelInsights": skill_level_insights(games, rallies, shots),
         "thirdShotOutcomes": third_shot_outcomes,
         "topSequences": top_sequences,
     }

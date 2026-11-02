@@ -1,0 +1,932 @@
+{
+  "model": {
+    "name": "rally-forecast-11-model",
+    "vertexModelId": "5306111724007456768",
+    "target": "rally_reaches_11",
+    "source": "Locally run Vertex AI AutoML export"
+  },
+  "generatedAt": "2026-11-02T18:26:01.761921+00:00",
+  "note": "Static predictions generated offline; the website does not call the model at runtime.",
+  "predictions": [
+    {
+      "currentLength": 3,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrp",
+      "probabilityRallyReaches11": 0.1872
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrv",
+      "probabilityRallyReaches11": 0.1667
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2096
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0956
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.217
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0624
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2664
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0598
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2685
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "SP",
+      "probabilityRallyReaches11": 0.1767
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3281
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1089
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3282
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3035
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0768
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.074
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2637
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4213
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1226
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4318
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.416
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1018
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "3.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1165
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrp",
+      "probabilityRallyReaches11": 0.2167
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrv",
+      "probabilityRallyReaches11": 0.1886
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2487
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1149
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2465
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.072
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3021
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0681
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2881
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "SP",
+      "probabilityRallyReaches11": 0.1578
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3709
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1118
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3603
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3224
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0748
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0822
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2848
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4763
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1267
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4732
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4355
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1008
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1183
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrp",
+      "probabilityRallyReaches11": 0.2645
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrv",
+      "probabilityRallyReaches11": 0.216
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3025
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1572
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.2939
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0995
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3599
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0845
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3435
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "SP",
+      "probabilityRallyReaches11": 0.1873
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4381
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1302
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4286
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.397
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1021
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3455
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5383
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1415
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.535
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5077
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1278
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "4.5",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1388
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrp",
+      "probabilityRallyReaches11": 0.3039
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrv",
+      "probabilityRallyReaches11": 0.2518
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3496
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.2036
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3406
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1328
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4197
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.0958
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3967
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "SP",
+      "probabilityRallyReaches11": 0.2303
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5041
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1481
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4971
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4652
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1286
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1146
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.3992
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5931
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1513
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5898
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.565
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1481
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "5.0",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1539
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrp",
+      "probabilityRallyReaches11": 0.4037
+    },
+    {
+      "currentLength": 3,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "SE",
+      "shotOneAgo": "R",
+      "latestShot": "tsDrv",
+      "probabilityRallyReaches11": 0.3515
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4533
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrp",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.3307
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.4536
+    },
+    {
+      "currentLength": 4,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "R",
+      "shotOneAgo": "tsDrv",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.2524
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5287
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1351
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5151
+    },
+    {
+      "currentLength": 5,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "SP",
+      "probabilityRallyReaches11": 0.315
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.6144
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1975
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.6025
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5789
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1884
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "tsDrp",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1674
+    },
+    {
+      "currentLength": 6,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "tsDrv",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.5289
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.6903
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.1945
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "D",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.6788
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "D",
+      "probabilityRallyReaches11": 0.6642
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "HB",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.2007
+    },
+    {
+      "currentLength": 7,
+      "skillLevel": "Pro",
+      "shotTwoAgo": "HB",
+      "shotOneAgo": "D",
+      "latestShot": "HB",
+      "probabilityRallyReaches11": 0.2037
+    }
+  ]
+}
